@@ -133,8 +133,16 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                 foo_usage = True
 
         if transpile_result.has_music:
-            #TODO
+            if interact == "none":
+                python_code = python_code.replace("play", "foo")
+                foo_usage = True
+            elif interact in ["auto", "full", "cmd"]:
+                python_code = python_code.replace("play", "foo")
+                foo_usage = True
+                if not donot_execute:
+                    print("PLAY🎵 ... (no implementat)")
             pass
+            # TODO MILLORAR
 
         if transpile_result.has_pressed:
             #TODO
