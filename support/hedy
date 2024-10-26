@@ -1,0 +1,5 @@
+#!/bin/bash
+source /home/super/hedyCli/env/bin/activate  # Activa l'entorn virtual
+python3.12 /home/super/hedyCli/hedy_cli.py       # Executa el teu codi Python
+
+
