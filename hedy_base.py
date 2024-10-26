@@ -114,8 +114,7 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
 
     if 'Error' not in response:
 
-        if transpile_result.has_turtle:
-
+        if not donot_execute and transpile_result.has_turtle:
             if interact in ["none", "cmd"]:
                 response["Error"] = "No es pot utilitzar la tortuga. Assegura't d'utilitzar un mode interactiu."
                 return response
@@ -132,18 +131,18 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
 
         python_code = transpile_result.code
 
-        if interact == "none" and transpile_result.has_sleep:
+        if not donot_execute and interact == "none" and transpile_result.has_sleep:
             python_code = python_code.replace("time.sleep", "foo")
             foo_usage = True
 
-        if transpile_result.has_clear:
+        if not donot_execute and transpile_result.has_clear:
             if interact == "none":
                 python_code = python_code.replace("extensions.clear", "_clear")
             else:
                 python_code = python_code.replace("extensions.clear", "_foo")
                 foo_usage = True
 
-        if transpile_result.has_music:
+        if not donot_execute and transpile_result.has_music:
             if interact == "none":
                 python_code = python_code.replace("play", "_foo")
                 python_code = python_code.replace("note_with_error", "_foo")
@@ -154,12 +153,11 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                 python_code = python_code.replace("note_with_error", "_foo")
                 python_code = python_code.replace("localize", "_foo")
                 foo_usage = True
-                if not donot_execute:
-                    print("PLAY🎵 ... (no implementat)")
+                print("PLAY🎵 ... (no implementat)")
             pass
             # TODO MILLORAR
 
-        if transpile_result.has_pressed:
+        if not donot_execute and transpile_result.has_pressed:
             #TODO
             pass
 
