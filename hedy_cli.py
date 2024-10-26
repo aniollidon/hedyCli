@@ -46,8 +46,12 @@ def console_hedy():
                         type=int,
                         default=0)
 
-    parser.add_argument('-d', "--not_interactive", help="Desactiva interactivitat",
-                        action='store_true')
+    parser.add_argument('-i', "--interact", help="Tipus d'interactivitat: "
+                                                 "full(tortuga+musica+sleep+pausa), "
+                                                 "cmd(sleep+pausa), "
+                                                 "none(sense interactivitat),"
+                                                 "auto(detecta per sistema)",
+                        default="auto")
 
     parser.add_argument('-m', "--microbit", help="Codi microbit",
                         action='store_true')
@@ -85,7 +89,7 @@ def console_hedy():
     with open(args.file, encoding='utf-8') as f:
         hedy_code = f.read()
         try:
-            res = execute_hedy(hedy_code, args.level, interactive=not args.not_interactive, microbit=args.microbit,
+            res = execute_hedy(hedy_code, args.level, interact=args.interact, microbit=args.microbit,
                                donot_execute=args.code)
 
             if 'Error' in res or 'Warning' in res:

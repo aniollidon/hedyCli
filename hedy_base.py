@@ -47,6 +47,16 @@ def hedy_error_to_response(ex, keyword_lang='en'):
     }
 
 
+def interaction_available():
+    try:
+        import tkinter as tk
+        root = tk.Tk()
+        root.update()
+        root.destroy()
+        return True
+    except (ImportError, tk.TclError):
+        return False
+
 def parse(code, level, lang='en', keyword_lang='en', microbit=False):
     response = {}
     transpile_result = {}
@@ -85,7 +95,7 @@ def parse(code, level, lang='en', keyword_lang='en', microbit=False):
     return response, transpile_result
 
 
-def execute_hedy(hedy_code, level, testing=None, interactive=False, microbit=False, donot_execute=False):
+def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False):
     response, transpile_result = parse(hedy_code, level, 'ca', 'en', microbit=microbit)
     pause_after_turtle = False
     foo_usage = False
@@ -93,21 +103,29 @@ def execute_hedy(hedy_code, level, testing=None, interactive=False, microbit=Fal
     if 'Error' not in response:
 
         if transpile_result.has_turtle:
-            if not interactive:
+
+            if interact in ["none", "cmd"]:
                 response["Error"] = "No es pot utilitzar la tortuga. Assegura't d'utilitzar un mode interactiu."
                 return response
             else:
-                import turtle as t
-                pause_after_turtle = True
+                if interact in ["auto", "full"]:
+                    available = interaction_available()
+
+                    if not available:
+                        response["Error"] = "No es pot utilitzar la tortuga en aquest sistema."
+                        return response
+                    else:
+                        import turtle as t
+                        pause_after_turtle = True
 
         python_code = transpile_result.code
 
-        if not interactive and transpile_result.has_sleep:
+        if interact == "none" and transpile_result.has_sleep:
             python_code = python_code.replace("time.sleep", "foo")
             foo_usage = True
 
         if transpile_result.has_clear:
-            if interactive:
+            if interact == "none":
                 python_code = python_code.replace("extensions.clear", "_clear")
             else:
                 python_code = python_code.replace("extensions.clear", "foo")

@@ -1,3 +1,1 @@
-print hola
-ask Com et dius?
-echo et dius 
+forward 10
