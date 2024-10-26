@@ -1,0 +1,99 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "hedy4",
+	"patterns": [
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "comment.line.hedy4",
+			"match": "#.*"
+		},
+		{
+			"name": "string.quoted.double.hedy4",
+			"begin": "\"",
+			"end": "\""
+		},
+		{
+			"name": "string.quoted.single.hedy4",
+			"begin": "'",
+			"end": "'"
+		},
+		{
+			"name": "constant.numeric.hedy4",
+			"match": "[0-9]+"
+		},
+		{
+			"name": "invalid.illegal.character.hedy4",
+			"match": "\\b_\\b"
+		},
+		{
+			"name": "keyword.command.hedy4",
+			"match": "\\b(is|at|to|from)\\b"
+		},
+		{
+			"name": "support.function.hedy4",
+			"match": "\\b(random)\\b"
+		}
+	],
+	"repository": {
+	"commands": {
+		"patterns": [
+		{
+			"name": "support.function.ask.hedy4",
+			"match": "\\bask\\b"
+		},
+		{
+			"name": "support.function.clear.hedy4",
+			"match": "\\bclear\\b"
+		},
+		{
+			"name": "support.function.print.hedy4",
+			"match": "\\bprint\\b"
+		},
+		{
+			"name": "support.function.play.hedy4",
+			"match": "\\bplay\\b"
+		},
+		{
+			"name": "invalid.deprecated.echo.hedy3",
+			"match": "\\becho\\b"
+		},
+		{
+			"name": "support.function.sleep.hedy4",
+			"match": "\\bsleep\\b"
+		},
+		{
+			"name": "support.function.add.hedy4",
+			"match": "\\badd\\b"
+		},
+		{
+			"name": "support.function.remove.hedy4",
+			"match": "\\bremove\\b"
+		},
+		{
+			"name": "invalid.illegal.errorinvalid.hedy4",
+			"match": "\\bErrorInvalid\\b"
+		},
+		{
+			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy4"
+				},
+				"2": {
+					"name": "support.class.color.hedy4"
+				}
+			}
+
+		},
+		{
+			"name": "support.function.turtle.hedy4",
+			"match": "\\b(forward|turn)\\b"
+		}
+		]
+	}
+	
+	},
+	"scopeName": "source.hedy4"
+}

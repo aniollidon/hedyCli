@@ -1,0 +1,82 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "hedy1",
+	"patterns": [
+		{
+			"name": "string.quoted.double.hedy1",
+			"begin": "(?<=\\b(?:print|ask|echo)\\s)",
+			"end": "$"
+		},
+		{
+			"name": "constant.numeric.hedy1",
+			"match": "[0-9]+"
+		},
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "comment.line.hedy1",
+			"match": "#.*"
+		},
+		{
+			"name": "invalid.illegal.character.hedy1",
+			"match": "\\b_\\b"
+		}
+	],
+	"repository": {
+	"commands": {
+		"patterns": [
+		{
+			"name": "support.function.ask.hedy1",
+			"match": "\\bask\\b"
+		},
+		{
+			"name": "support.function.print.hedy1",
+			"match": "\\bprint\\b"
+		},
+		{
+			"name": "support.function.play.hedy1",
+			"match": "\\bplay\\b"
+		},
+		{
+			"name": "support.function.echo.hedy1",
+			"match": "\\becho\\b"
+		},
+		{
+			"name": "invalid.illegal.errorinvalid.hedy1",
+			"match": "\\bErrorInvalid\\b"
+		},
+		{
+			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy1"
+				},
+				"2": {
+					"name": "support.class.color.hedy1"
+				}
+			}
+
+		},
+		{
+			"match": "\\b(turn)[\\t ]+\\b(left|right)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy1"
+				},
+				"2": {
+					"name": "support.class.direction.hedy1"
+				}
+			}
+
+		},
+		{
+			"name": "support.function.turtle.hedy1",
+			"match": "\\b(forward|turn)\\b"
+		}
+		]
+	}
+	
+	},
+	"scopeName": "source.hedy1"
+}

@@ -1,0 +1,19 @@
+options is rock, paper, scissors
+computer_choice is options at random
+choice is ask 'What do you choose?'
+print 'you chose choice'
+print 'computer chose ' computer_choice 
+add pedra to options
+remove pedra from options
+color red
+clear
+sleep 2
+
+print You enter the haunted house.
+print options at random ' ' options at random ' ' options at random
+
+
+print red green
+turn 90
+turn right
+

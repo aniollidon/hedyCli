@@ -1,0 +1,3 @@
+[submodule "hedyweb"]
+	path = hedy_web
+	url = https://github.com/hedyorg/hedy

@@ -1,0 +1,67 @@
+
+print "hola"
+aniol is ask "hola"
+sleep 1
+print "adios"
+clear
+print "hola"
+print aniol
+{}
+
+print "hola"
+aniol is ask "hola"
+sleep 1
+print "adios"
+clear
+print "hola"
+print aniol
+{}
+echo k
+play w
+turn 30
+forward 20
+color red
+fsdfdfs
+dvdsfsdfsdf
+color red
+color red
+print hola
+echo hola
+# Hola
+
+print How did I get here?
+print I remember my friend telling me to go into the old mansion...
+print and suddenly everything went black.
+print But how did I end up on the floor...?
+print My head hurts like Ive been hit by a baseball bat!
+print What's that sound?
+print Oh no! I feel like Im not alone in this house!
+print I need to get out of here!
+print There are 3 doors in front of me..
+ask Which door should i pick?
+echo I choose door
+print ...?
+
+monster_1 is 👻
+monster_2 is 🤡
+monster_3 is 👶
+print You enter the haunted house.
+print Suddenly you see a monster_1
+print You run into the other room, but a monster_2 is waiting there for you!
+print Oh no! Quickly get to the kitchen.
+print But as you enter monster_3 attacks you!
+
+print I'm Hedy the fortune teller! 
+opcions is yes, no, maybe
+print ssa opcions at random dd
+question is ask What do you want to know? at random
+print This is what you want to know: question
+answers is yes, no, maybe
+print My crystal ball says...
+sleep 2
+print answers at random kmkmkmk
+print fsdfs
+hola is opcions at random
+print sssssssssssssss answers at random  ssss
+
+sleep 10

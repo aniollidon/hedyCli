@@ -1,0 +1,120 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "hedy11",
+	"patterns": [
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "comment.line.hedy11",
+			"match": "#.*"
+		},
+		{
+			"name": "string.quoted.double.hedy11",
+			"begin": "\"",
+			"end": "\""
+		},
+		{
+			"name": "string.quoted.single.hedy11",
+			"begin": "'",
+			"end": "'"
+		},
+		{
+			"name": "constant.numeric.hedy11",
+			"match": "[0-9]+"
+		},
+		{
+			"name": "invalid.illegal.character.hedy11",
+			"match": "\\b_\\b"
+		},
+		{
+			"name": "keyword.command.hedy11",
+			"match": "\\b(is|at|to|from|in|not)\\b"
+		},
+		{
+			"name": "keyword.command.hedy11",
+			"match": "[=+\\-*\\/]"
+		},
+		{
+			"name": "support.function.hedy11",
+			"match": "\\b(random)\\b"
+		}
+	],
+	"repository": {
+	"commands": {
+		"patterns": [
+		{
+			"name": "keyword.control.conditional.hedy11",
+			"match": "\\b(if|else)\\b"
+		},
+		{
+			"name": "keyword.control.iterative.hedy11",
+			"match": "\\b(repeat|times|for)\\b"
+		},
+		{
+			"name": "support.function.ask.hedy11",
+			"match": "\\bask\\b"
+		},
+		{
+			"name": "support.function.clear.hedy11",
+			"match": "\\bclear\\b"
+		},
+		{
+			"name": "support.function.print.hedy11",
+			"match": "\\bprint\\b"
+		},
+		{
+			"name": "support.function.play.hedy11",
+			"match": "\\bplay\\b"
+		},
+		{
+			"name": "invalid.deprecated.echo.hedy11",
+			"match": "\\becho\\b"
+		},
+		{
+			"name": "support.function.sleep.hedy11",
+			"match": "\\bsleep\\b"
+		},
+		{
+			"name": "support.function.add.hedy11",
+			"match": "\\badd\\b"
+		},
+		{
+			"name": "support.function.remove.hedy11",
+			"match": "\\bremove\\b"
+		},
+		
+		{
+			"name": "support.function.range.hedy11",
+			"match": "\\brange\\b"
+		},
+		{
+			"name": "invalid.illegal.errorinvalid.hedy11",
+			"match": "\\bErrorInvalid\\b"
+		},
+		{
+			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy11"
+				},
+				"2": {
+					"name": "support.class.color.hedy11"
+				}
+			}
+
+		},
+		{
+			"name": "support.function.turtle.hedy11",
+			"match": "\\b(forward|turn)\\b"
+		},
+		{
+			"name": "support.class.pressed.hedy11",
+			"match": "\\b(pressed)\\b"
+		}
+		]
+	}
+	
+	},
+	"scopeName": "source.hedy11"
+}

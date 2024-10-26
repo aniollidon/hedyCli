@@ -1,0 +1,43 @@
+options is rock, paper, scissors
+computer_choice is options at random
+choice = ask 'What do you choose?'
+print 'you chose choice'
+print 'computer chose ' computer_choice 
+add pedra to options
+remove pedra from options
+color red
+turn 90
+turn right
+clear
+sleep 2
+
+print You enter the haunted house.
+print options at random ' ' options at random ' ' options at random
+
+nom is ask 'Qui camina pel bosc?'
+print nom ' camina pel bosc'
+print nom ' troba un monstre'
+final = ask 'Vols un final bo o dolent?'
+if final is bo print nom " agafa l'espasa i el monstre fuig ràpidament"
+else print 'El monstre menja ' nom ' per sopar'
+print 4+4-3*2/1
+pretty_colors is green, yellow
+favorite_color is ask 'What is your favorite color?'
+if favorite_color not in pretty_colors print 'pretty!'
+else print 'meh'
+
+print 'Do you want a good (g) or bad (b) ending?'
+if g is pressed print 'They lived happily ever after ❤'
+else print 'The prince was eaten by a hippopotamus 😭'
+
+remove ddd from ddd
+
+add ssds to dsdsd
+
+aa is 2 + 2
+
+
+repeat 2 times answer = ask 'Did you know you could ask a question multiple times?'
+if answer is yes repeat 2 times print 'You knew that already!'
+else repeat 3 times print 'You have learned something new!'
+print hola times

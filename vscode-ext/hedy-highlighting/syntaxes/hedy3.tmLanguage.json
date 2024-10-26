@@ -1,0 +1,111 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "hedy3",
+	"patterns": [
+		{	
+			"match": "\\b(print|ask)[ \\t]+(.+)[ \\t]+(at)[ \\t]+(random)[ \\t]*(.*)",
+			"captures": {
+				
+				"1": {
+					"name": "support.function.hedy3"
+				},
+				"2": {
+					"name": "string.quoted.double.hedy3"
+				},
+				"3": {
+					"name": "keyword.command.hedy3"
+				},
+				"4": {
+					"name": "support.function.hedy3"
+				},
+				"5": {
+					"name": "string.quoted.double.hedy3"
+				}
+			}
+		},
+		{
+			"name": "string.quoted.double.hedy3",
+			"begin": "(?<=\\b(?:print|ask)\\s)",
+			"end": "$"
+		},
+		{
+			"name": "constant.numeric.hedy3",
+			"match": "[0-9]+"
+		},
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "comment.line.hedy3",
+			"match": "#.*"
+		},
+		{
+			"name": "invalid.illegal.character.hedy3",
+			"match": "\\b_\\b"
+		},
+		{
+			"name": "keyword.command.hedy3",
+			"match": "\\b(is|at|to|from)\\b"
+		},
+		{
+			"name": "support.function.hedy3",
+			"match": "\\b(random)\\b"
+		}
+	],
+	"repository": {
+	"commands": {
+		"patterns": [
+		{
+			"name": "support.function.ask.hedy3",
+			"match": "\\bask\\b"
+		},
+		{
+			"name": "support.function.print.hedy3",
+			"match": "\\bprint\\b"
+		},
+		{
+			"name": "support.function.play.hedy3",
+			"match": "\\bplay\\b"
+		},
+		{
+			"name": "invalid.deprecated.echo.hedy3",
+			"match": "\\becho\\b"
+		},
+		{
+			"name": "support.function.sleep.hedy3",
+			"match": "\\bsleep\\b"
+		},
+		{
+			"name": "support.function.add.hedy3",
+			"match": "\\badd\\b"
+		},
+		{
+			"name": "support.function.remove.hedy3",
+			"match": "\\bremove\\b"
+		},
+		{
+			"name": "invalid.illegal.errorinvalid.hedy3",
+			"match": "\\bErrorInvalid\\b"
+		},
+		{
+			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy3"
+				},
+				"2": {
+					"name": "support.class.color.hedy3"
+				}
+			}
+
+		},
+		{
+			"name": "support.function.turtle.hedy3",
+			"match": "\\b(forward|turn)\\b"
+		}
+		]
+	}
+	
+	},
+	"scopeName": "source.hedy3"
+}

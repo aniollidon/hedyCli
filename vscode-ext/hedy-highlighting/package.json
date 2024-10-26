@@ -1,0 +1,149 @@
+{
+  "name": "hedy",
+  "displayName": "Hedy",
+  "description": "Suport per llenguatge Hedy als diferents nivells",
+  "version": "0.0.1",
+  "main": "src/extension.js",
+  "engines": {
+    "vscode": "^1.94.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "hedy1",
+      "aliases": ["hedy1", "Hedy1"],
+      "extensions": [".hy1"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy2",
+      "aliases": ["hedy2", "Hedy2"],
+      "extensions": [".hy2"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy3",
+      "aliases": ["hedy3", "Hedy3"],
+      "extensions": [".hy3"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy4",
+      "aliases": ["hedy4", "Hedy4"],
+      "extensions": [".hy4"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy5",
+      "aliases": ["hedy5", "Hedy5"],
+      "extensions": [".hy5"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy6",
+      "aliases": ["hedy6", "Hedy6"],
+      "extensions": [".hy6"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy7",
+      "aliases": ["hedy7", "Hedy7"],
+      "extensions": [".hy7"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy8",
+      "aliases": ["hedy8", "Hedy8"],
+      "extensions": [".hy8"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy9",
+      "aliases": ["hedy9", "Hedy9"],
+      "extensions": [".hy9"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy10",
+      "aliases": ["hedy10", "Hedy10"],
+      "extensions": [".hy10"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy11",
+      "aliases": ["hedy11", "Hedy11"],
+      "extensions": [".hy11"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy12",
+      "aliases": ["hedy12", "Hedy12"],
+      "extensions": [".hy12"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [
+      {
+        "language": "hedy1",
+        "scopeName": "source.hedy1",
+        "path": "./syntaxes/hedy1.tmLanguage.json"
+      },
+      {
+        "language": "hedy2",
+        "scopeName": "source.hedy2",
+        "path": "./syntaxes/hedy2.tmLanguage.json"
+      },
+      {
+        "language": "hedy3",
+        "scopeName": "source.hedy3",
+        "path": "./syntaxes/hedy3.tmLanguage.json"
+      },
+      {
+        "language": "hedy4",
+        "scopeName": "source.hedy4",
+        "path": "./syntaxes/hedy4.tmLanguage.json"
+      },
+      {
+        "language": "hedy5",
+        "scopeName": "source.hedy5",
+        "path": "./syntaxes/hedy5.tmLanguage.json"
+      },
+      {
+        "language": "hedy6",
+        "scopeName": "source.hedy6",
+        "path": "./syntaxes/hedy6.tmLanguage.json"
+      },
+      {
+        "language": "hedy7",
+        "scopeName": "source.hedy789",
+        "path": "./syntaxes/hedy789.tmLanguage.json"
+      },
+      {
+        "language": "hedy8",
+        "scopeName": "source.hedy789",
+        "path": "./syntaxes/hedy789.tmLanguage.json"
+      },
+      {
+        "language": "hedy9",
+        "scopeName": "source.hedy789",
+        "path": "./syntaxes/hedy789.tmLanguage.json"
+      },
+      {
+        "language": "hedy10",
+        "scopeName": "source.hedy10",
+        "path": "./syntaxes/hedy10.tmLanguage.json"
+      },
+      {
+        "language": "hedy11",
+        "scopeName": "source.hedy11",
+        "path": "./syntaxes/hedy11.tmLanguage.json"
+      },
+      {
+        "language": "hedy12",
+        "scopeName": "source.hedy12",
+        "path": "./syntaxes/hedy12.tmLanguage.json"
+      }
+    ]
+  }
+}

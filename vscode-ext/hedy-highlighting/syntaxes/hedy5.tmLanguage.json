@@ -1,0 +1,107 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "hedy5",
+	"patterns": [
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "comment.line.hedy5",
+			"match": "#.*"
+		},
+		{
+			"name": "string.quoted.double.hedy5",
+			"begin": "\"",
+			"end": "\""
+		},
+		{
+			"name": "string.quoted.single.hedy5",
+			"begin": "'",
+			"end": "'"
+		},
+		{
+			"name": "constant.numeric.hedy5",
+			"match": "[0-9]+"
+		},
+		{
+			"name": "invalid.illegal.character.hedy5",
+			"match": "\\b_\\b"
+		},
+		{
+			"name": "keyword.command.hedy5",
+			"match": "\\b(is|at|to|from|in|not)\\b"
+		},
+		{
+			"name": "support.function.hedy5",
+			"match": "\\b(random)\\b"
+		}
+	],
+	"repository": {
+	"commands": {
+		"patterns": [
+		{
+			"name": "keyword.control.conditional.hedy5",
+			"match": "\\b(if|else)\\b"
+		},
+		{
+			"name": "support.function.ask.hedy5",
+			"match": "\\bask\\b"
+		},
+		{
+			"name": "support.function.clear.hedy5",
+			"match": "\\bclear\\b"
+		},
+		{
+			"name": "support.function.print.hedy5",
+			"match": "\\bprint\\b"
+		},
+		{
+			"name": "support.function.play.hedy5",
+			"match": "\\bplay\\b"
+		},
+		{
+			"name": "invalid.deprecated.echo.hedy3",
+			"match": "\\becho\\b"
+		},
+		{
+			"name": "support.function.sleep.hedy5",
+			"match": "\\bsleep\\b"
+		},
+		{
+			"name": "support.function.add.hedy5",
+			"match": "\\badd\\b"
+		},
+		{
+			"name": "support.function.remove.hedy5",
+			"match": "\\bremove\\b"
+		},
+		{
+			"name": "invalid.illegal.errorinvalid.hedy5",
+			"match": "\\bErrorInvalid\\b"
+		},
+		{
+			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy5"
+				},
+				"2": {
+					"name": "support.class.color.hedy5"
+				}
+			}
+
+		},
+		{
+			"name": "support.function.turtle.hedy5",
+			"match": "\\b(forward|turn)\\b"
+		},
+		{
+			"name": "support.class.pressed.hedy5",
+			"match": "\\b(pressed)\\b"
+		}
+		]
+	}
+	
+	},
+	"scopeName": "source.hedy5"
+}

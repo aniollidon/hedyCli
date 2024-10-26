@@ -1,0 +1,111 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "hedy6",
+	"patterns": [
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "comment.line.hedy6",
+			"match": "#.*"
+		},
+		{
+			"name": "string.quoted.double.hedy6",
+			"begin": "\"",
+			"end": "\""
+		},
+		{
+			"name": "string.quoted.single.hedy6",
+			"begin": "'",
+			"end": "'"
+		},
+		{
+			"name": "constant.numeric.hedy6",
+			"match": "[0-9]+"
+		},
+		{
+			"name": "invalid.illegal.character.hedy6",
+			"match": "\\b_\\b"
+		},
+		{
+			"name": "keyword.command.hedy6",
+			"match": "\\b(is|at|to|from|in|not)\\b"
+		},
+		{
+			"name": "keyword.command.hedy6",
+			"match": "[=+\\-*\\/]"
+		},
+		{
+			"name": "support.function.hedy6",
+			"match": "\\b(random)\\b"
+		}
+	],
+	"repository": {
+	"commands": {
+		"patterns": [
+		{
+			"name": "keyword.control.conditional.hedy6",
+			"match": "\\b(if|else)\\b"
+		},
+		{
+			"name": "support.function.ask.hedy6",
+			"match": "\\bask\\b"
+		},
+		{
+			"name": "support.function.clear.hedy6",
+			"match": "\\bclear\\b"
+		},
+		{
+			"name": "support.function.print.hedy6",
+			"match": "\\bprint\\b"
+		},
+		{
+			"name": "support.function.play.hedy6",
+			"match": "\\bplay\\b"
+		},
+		{
+			"name": "invalid.deprecated.echo.hedy3",
+			"match": "\\becho\\b"
+		},
+		{
+			"name": "support.function.sleep.hedy6",
+			"match": "\\bsleep\\b"
+		},
+		{
+			"name": "support.function.add.hedy6",
+			"match": "\\badd\\b"
+		},
+		{
+			"name": "support.function.remove.hedy6",
+			"match": "\\bremove\\b"
+		},
+		{
+			"name": "invalid.illegal.errorinvalid.hedy6",
+			"match": "\\bErrorInvalid\\b"
+		},
+		{
+			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy6"
+				},
+				"2": {
+					"name": "support.class.color.hedy6"
+				}
+			}
+
+		},
+		{
+			"name": "support.function.turtle.hedy6",
+			"match": "\\b(forward|turn)\\b"
+		},
+		{
+			"name": "support.class.pressed.hedy6",
+			"match": "\\b(pressed)\\b"
+		}
+		]
+	}
+	
+	},
+	"scopeName": "source.hedy6"
+}
