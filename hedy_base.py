@@ -95,7 +95,8 @@ def parse(code, level, lang='en', keyword_lang='en', microbit=False):
     return response, transpile_result
 
 
-def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False):
+def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False,
+                 debug=False):
     response, transpile_result = parse(hedy_code, level, 'ca', 'en', microbit=microbit)
     pause_after_turtle = False
     foo_usage = False
@@ -145,6 +146,11 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
 
         try:
             if not donot_execute:
+                if debug:
+                    print(">>>>>> EXECUTANT PYTHON <<<<<<")
+                    print(python_code)
+                    print(">>>>>> FI <<<<<<")
+
                 exec(python_code)
 
                 if pause_after_turtle:
@@ -156,7 +162,8 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                 print(python_code)
 
         except Exception as e:
-            raise e
+            if debug:
+                raise e
             response["Error"] = "Unexpected error"
             response["details"] = str(e)
 

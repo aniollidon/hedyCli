@@ -59,6 +59,9 @@ def console_hedy():
     parser.add_argument('-c', "--code", help="No executis el codi, només transpila",
                         action='store_true')
 
+    parser.add_argument('-d', "--debug", help="Activa el mode debug",
+                        action='store_true')
+
     parser.add_argument("file", help="Fitxer amb el codi HEDY que vols executar")
 
     args = parser.parse_args()
@@ -90,14 +93,15 @@ def console_hedy():
         hedy_code = f.read()
         try:
             res = execute_hedy(hedy_code, args.level, interact=args.interact, microbit=args.microbit,
-                               donot_execute=args.code)
+                               donot_execute=args.code, debug=args.debug)
 
             if 'Error' in res or 'Warning' in res:
                 print_error(res)
         except KeyboardInterrupt:
             print("\nFinal: Procés interromput per l'usuari", file=sys.stderr)
         except Exception as e:
-            raise e
+            if args.debug:
+                raise e
             print("Error inesperat:", str(e), file=sys.stderr)
 
 
