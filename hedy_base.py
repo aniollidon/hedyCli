@@ -54,7 +54,7 @@ def interaction_available():
         root.update()
         root.destroy()
         return True
-    except (ImportError, tk.TclError):
+    except ImportError:
         return False
 
 def parse(code, level, lang='en', keyword_lang='en', microbit=False):
