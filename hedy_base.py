@@ -95,6 +95,17 @@ def parse(code, level, lang='en', keyword_lang='en', microbit=False):
     return response, transpile_result
 
 
+# Funció per netejar la pantalla
+def _clear():
+    import os
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+
+# Funció Tonta
+def _foo(*args):
+    pass
+
+
 def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False,
                  debug=False):
     response, transpile_result = parse(hedy_code, level, 'ca', 'en', microbit=microbit)
@@ -129,15 +140,15 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
             if interact == "none":
                 python_code = python_code.replace("extensions.clear", "_clear")
             else:
-                python_code = python_code.replace("extensions.clear", "foo")
+                python_code = python_code.replace("extensions.clear", "_foo")
                 foo_usage = True
 
         if transpile_result.has_music:
             if interact == "none":
-                python_code = python_code.replace("play", "foo")
+                python_code = python_code.replace("play", "_foo")
                 foo_usage = True
             elif interact in ["auto", "full", "cmd"]:
-                python_code = python_code.replace("play", "foo")
+                python_code = python_code.replace("play", "_foo")
                 foo_usage = True
                 if not donot_execute:
                     print("PLAY🎵 ... (no implementat)")
@@ -166,7 +177,7 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
 
             else:
                 if foo_usage:
-                    python_code = '''def foo(*args): pass\n''' + python_code
+                    python_code = '''def _foo(*args): pass\n''' + python_code
                 print(python_code)
 
         except Exception as e:

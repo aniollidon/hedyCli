@@ -1,17 +1,6 @@
 from hedy_base import *
 
 
-# Funció Foo (tonta), agafa qualsevol argument i passa
-def foo(*args):
-    pass
-
-
-# Funció per netejar la pantalla
-def _clear():
-    import os
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-
 def print_error(res):
     avis = "Error inesperat"
     missatge = "Error desconegut"
