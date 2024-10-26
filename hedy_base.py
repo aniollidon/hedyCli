@@ -146,9 +146,13 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
         if transpile_result.has_music:
             if interact == "none":
                 python_code = python_code.replace("play", "_foo")
+                python_code = python_code.replace("note_with_error", "_foo")
+                python_code = python_code.replace("localize", "_foo")
                 foo_usage = True
             elif interact in ["auto", "full", "cmd"]:
                 python_code = python_code.replace("play", "_foo")
+                python_code = python_code.replace("note_with_error", "_foo")
+                python_code = python_code.replace("localize", "_foo")
                 foo_usage = True
                 if not donot_execute:
                     print("PLAY🎵 ... (no implementat)")
