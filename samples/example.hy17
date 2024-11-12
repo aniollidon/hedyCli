@@ -1,0 +1,9 @@
+prizes = ['1 million dollars', 'an apple pie', 'nothing']
+your_prize = prizes[random]
+print 'You win ' your_prize
+if your_prize == '1 million dollars' :
+    print 'Yeah! You are rich!'
+elif your_prize == 'an apple pie' :
+    print 'Lovely, an apple pie!'
+else:
+    print 'Better luck next time..'

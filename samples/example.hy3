@@ -1,0 +1,20 @@
+words is squawk, Hedy
+print Train your parrot!
+new_word is ask Which word do you want to teach them?
+add new_word to words
+print 🧒 Say new_word, Hedy!
+print 🦜 words at random
+
+# Errors
+llista is _ 
+llista is hola, adeu, hola_4
+
+is hhh, 222
+at random
+print _
+echo hola
+ask blabal
+a ask knjkdnkj
+print then he ask you
+
+"llll"

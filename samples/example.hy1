@@ -1,1 +1,17 @@
-forward 10
+print How did I get here?
+print I remember my friend telling me to go into the old mansion...
+print and suddenly everything went black.
+print But how did I end up on the floor...?
+print My head hurts like Ive been hit by a baseball bat!
+print What's that sound?
+print Oh no! I feel like Im not alone in this house!
+print I need to get out of here!
+print There are 3 doors in front of me..
+ask Which door should i pick?
+echo I choose door
+print ...?
+
+# Errors
+print "hola"
+print 2
+print _

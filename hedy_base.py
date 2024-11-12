@@ -7,7 +7,23 @@ import os
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'hedy_web/'))
 import hedy
 from prefixes.normal import *
+from hedy_error import get_error_text
+from flask import g, Flask
+from flask_babel import Babel
+from website.flask_helpers import render_template, proper_tojson, JinjaCompatibleJsonProvider
+import jinja_partials
 
+
+def get_locale():
+    return 'ca'
+
+
+app = Flask(__name__, static_url_path='')
+babel = Babel(app, locale_selector=get_locale)
+app.url_map.strict_slashes = False  # Ignore trailing slashes in URLs
+app.json = JinjaCompatibleJsonProvider(app)
+jinja_partials.register_extensions(app)
+app.template_filter('tojson')(proper_tojson)
 
 class Testing:
     def __init__(self):
@@ -41,6 +57,7 @@ class Testing:
 
 
 def hedy_error_to_response(ex, keyword_lang='en'):
+    print(get_error_text(ex, 'ca'))
     return {
         "Error": ex.error_code,
         "Location": ex.error_location
@@ -56,6 +73,7 @@ def interaction_available():
         return True
     except ImportError:
         return False
+
 
 def parse(code, level, lang='en', keyword_lang='en', microbit=False):
     response = {}
@@ -108,87 +126,121 @@ def _foo(*args):
 
 def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False,
                  debug=False):
-    response, transpile_result = parse(hedy_code, level, 'ca', 'en', microbit=microbit)
-    pause_after_turtle = False
-    foo_usage = False
+    with app.app_context():
+        # SETUP LANG
+        g.lang = 'ca'
+        g.keyword_lang = 'en'
+        g.dir = 'ltr'
+        g.latin = True
 
-    if 'Error' not in response:
+        # Busca extencions al codi amb regex: !import <extensio>
+        # Un cop trobat modifica la linia afegint # al principi i importa l'extensio
+        extensions = []
+        for line in hedy_code.split('\n'):
+            match = re.match(r'^!import\s+(\w+)', line)
+            if match:
+                extensions.append(match.group(1))
 
-        if not donot_execute and transpile_result.has_turtle:
-            if interact in ["none", "cmd"]:
-                response["Error"] = "No es pot utilitzar la tortuga. Assegura't d'utilitzar un mode interactiu."
-                return response
-            else:
-                if interact in ["auto", "full"]:
-                    available = interaction_available()
+        if debug and extensions:
+            print("Extensions:", extensions)
 
-                    if not available:
-                        response["Error"] = "No es pot utilitzar la tortuga en aquest sistema."
-                        return response
-                    else:
-                        import turtle as t
-                        pause_after_turtle = True
+        response, transpile_result = parse(hedy_code, level, 'ca', 'en', microbit=microbit)
+        pause_after_turtle = False
+        foo_usage = False
 
-        python_code = transpile_result.code
+        if 'Error' not in response:
 
-        if not donot_execute and interact == "none" and transpile_result.has_sleep:
-            python_code = python_code.replace("time.sleep", "foo")
-            foo_usage = True
+            if not donot_execute and transpile_result.has_turtle:
+                if interact in ["none", "cmd"]:
+                    response["Error"] = "No es pot utilitzar la tortuga. Assegura't d'utilitzar un mode interactiu."
+                    return response
+                else:
+                    if interact in ["auto", "full"]:
+                        available = interaction_available()
 
-        if not donot_execute and transpile_result.has_clear:
-            if interact == "none":
-                python_code = python_code.replace("extensions.clear", "_clear")
-            else:
-                python_code = python_code.replace("extensions.clear", "_foo")
+                        if not available:
+                            response["Error"] = "No es pot utilitzar la tortuga en aquest sistema."
+                            return response
+                        else:
+                            import turtle as t
+                            pause_after_turtle = True
+
+            python_code = transpile_result.code
+
+            if not donot_execute and interact == "none" and transpile_result.has_sleep:
+                python_code = python_code.replace("time.sleep", "foo")
                 foo_usage = True
 
-        if not donot_execute and transpile_result.has_music:
-            if interact == "none":
-                python_code = python_code.replace("play", "_foo")
-                python_code = python_code.replace("note_with_error", "_foo")
-                python_code = python_code.replace("localize", "_foo")
-                foo_usage = True
-            elif interact in ["auto", "full", "cmd"]:
-                python_code = python_code.replace("play", "_foo")
-                python_code = python_code.replace("note_with_error", "_foo")
-                python_code = python_code.replace("localize", "_foo")
-                foo_usage = True
-                print("PLAY🎵 ... (no implementat)")
-            pass
-            # TODO MILLORAR
+            if not donot_execute and transpile_result.has_clear:
+                if interact == "none":
+                    python_code = python_code.replace("extensions.clear", "_clear")
+                else:
+                    python_code = python_code.replace("extensions.clear", "_foo")
+                    foo_usage = True
 
-        if not donot_execute and transpile_result.has_pressed:
-            #TODO
-            pass
+            if not donot_execute and transpile_result.has_music:
+                if interact == "none":
+                    python_code = python_code.replace("play", "_foo")
+                    python_code = python_code.replace("note_with_error", "_foo")
+                    python_code = python_code.replace("localize", "_foo")
+                    foo_usage = True
+                elif interact in ["auto", "full"]:
+                    from hedy_music import play, localize, note_with_error
+                elif interact in ["cmd"]:
+                    python_code = python_code.replace("play", "_foo")
+                    python_code = python_code.replace("note_with_error", "_foo")
+                    python_code = python_code.replace("localize", "_foo")
+                    foo_usage = True
+                    print("PLAY🎵 ... (no implementat)")
+                pass
+                # TODO MILLORAR
 
-        if testing:
-            python_code = python_code.replace("input", "testing.c_input")
-            python_code = python_code.replace("print", "testing.c_print")
+            if not donot_execute and transpile_result.has_pressed:
+                # TODO
+                pass
 
-        try:
-            if not donot_execute:
-                if debug:
-                    print(">>>>>> EXECUTANT PYTHON <<<<<<")
+            for ext in extensions:
+                # Busca l'extensió a la carpeta d'extensions
+                if not os.path.exists(
+                        os.path.join(os.path.dirname(os.path.realpath(__file__)), 'extensions', ext + '.py')):
+                    raise ValueError(f"No es pot importar l'extensió '{ext}'")
+                with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'extensions', ext + '.py'),
+                          'r') as f:
+                    extension_code = f.read()
+                    python_code = extension_code + "\n" + python_code
+
+            if testing:
+                python_code = python_code.replace("input", "testing.c_input")
+                python_code = python_code.replace("print", "testing.c_print")
+
+            try:
+                if not donot_execute:
+                    if debug:
+                        print(">>>>>> EXECUTANT PYTHON <<<<<<")
+                        print(python_code)
+                        print(">>>>>> FI <<<<<<")
+
+                    exec(python_code)
+
+                    if pause_after_turtle:
+                        t.mainloop()
+
+                else:
+                    if foo_usage:
+                        python_code = '''def _foo(*args): pass\n''' + python_code
                     print(python_code)
-                    print(">>>>>> FI <<<<<<")
 
-                exec(python_code)
+            except ValueError as e:
+                if debug:
+                    raise e
+                response["Error"] = str(e)
+            except Exception as e:
+                if debug:
+                    raise e
+                response["Error"] = "Unexpected error"
+                response["details"] = str(e)
 
-                if pause_after_turtle:
-                    t.mainloop()
-
-            else:
-                if foo_usage:
-                    python_code = '''def _foo(*args): pass\n''' + python_code
-                print(python_code)
-
-        except Exception as e:
-            if debug:
-                raise e
-            response["Error"] = "Unexpected error"
-            response["details"] = str(e)
-
-    return response
+        return response
 
 
 def location_to_line_column(location):
@@ -253,7 +305,7 @@ def hedy_testing(hedy_code, test_object):
             input_test = None
             test_description = "Execució del programa"
             test_results.append({"description": test_description, "inputs": None,
-                          "result": "success"})
+                                 "result": "success"})
             if 'inputs' in t:
                 testing.init_input(t['inputs'])
                 test_description = "Comparació amb entrada determinada"
@@ -346,5 +398,3 @@ def hedy_testing(hedy_code, test_object):
                     test_results[-1]["result"] = "failed"
 
     return tests_passed, total_tests, test_results, tests_failed
-
-

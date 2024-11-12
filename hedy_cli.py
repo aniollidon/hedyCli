@@ -22,7 +22,7 @@ def get_level_from_file(file):
 
 
 def get_level_from_file(file):
-    match = re.search(r'\.hy(\d)$', file)
+    match = re.search(r'\.hy(\d+)$', file)
     return int(match.group(1)) if match else 0
 
 

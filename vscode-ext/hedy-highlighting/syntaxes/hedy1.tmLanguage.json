@@ -3,6 +3,10 @@
 	"name": "hedy1",
 	"patterns": [
 		{
+			"name": "invalid.illegal.character.hedy1",
+			"match": "\\b_\\b"
+		},
+		{
 			"name": "string.quoted.double.hedy1",
 			"begin": "(?<=\\b(?:print|ask|echo)\\s)",
 			"end": "$"
@@ -17,10 +21,6 @@
 		{
 			"name": "comment.line.hedy1",
 			"match": "#.*"
-		},
-		{
-			"name": "invalid.illegal.character.hedy1",
-			"match": "\\b_\\b"
 		}
 	],
 	"repository": {

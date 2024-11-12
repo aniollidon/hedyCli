@@ -1,0 +1,128 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "hedy13",
+	"patterns": [
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "comment.line.hedy13",
+			"match": "#.*"
+		},
+		{
+			"name": "string.quoted.double.hedy13",
+			"begin": "\"",
+			"end": "\""
+		},
+		{
+			"name": "string.quoted.single.hedy13",
+			"begin": "'",
+			"end": "'"
+		},
+		{
+			"name": "constant.numeric.hedy13",
+			"match": "[0-9]+"
+		},
+		{
+			"name": "invalid.illegal.character.hedy13",
+			"match": "\\b_\\b"
+		},
+		{
+			"name": "keyword.command.hedy13",
+			"match": "\\b(is|at|to|from|in|not|with|and|or)\\b"
+		},
+		{
+			"name": "keyword.command.hedy13",
+			"match": "[=+\\-*\\/]"
+		},
+		{
+			"name": "support.function.hedy13",
+			"match": "\\b(random)\\b"
+		}
+	],
+	"repository": {
+	"commands": {
+		"patterns": [
+		{
+			"name": "storage.type.define.hedy13",
+			"match": "\\b(define)\\b"
+		},
+		{
+			"name": "storage.type.call.hedy13",
+			"match": "\\b(call)\\b"
+		},
+		{
+			"name": "keyword.control.conditional.hedy13",
+			"match": "\\b(if|else)\\b"
+		},
+		{
+			"name": "keyword.control.iterative.hedy13",
+			"match": "\\b(repeat|times|for)\\b"
+		},
+		{
+			"name": "support.function.ask.hedy13",
+			"match": "\\bask\\b"
+		},
+		{
+			"name": "support.function.clear.hedy13",
+			"match": "\\bclear\\b"
+		},
+		{
+			"name": "support.function.print.hedy13",
+			"match": "\\bprint\\b"
+		},
+		{
+			"name": "support.function.play.hedy13",
+			"match": "\\bplay\\b"
+		},
+		{
+			"name": "invalid.deprecated.echo.hedy13",
+			"match": "\\becho\\b"
+		},
+		{
+			"name": "support.function.sleep.hedy13",
+			"match": "\\bsleep\\b"
+		},
+		{
+			"name": "support.function.add.hedy13",
+			"match": "\\badd\\b"
+		},
+		{
+			"name": "support.function.remove.hedy13",
+			"match": "\\bremove\\b"
+		},
+		
+		{
+			"name": "support.function.range.hedy13",
+			"match": "\\brange\\b"
+		},
+		{
+			"name": "invalid.illegal.errorinvalid.hedy13",
+			"match": "\\bErrorInvalid\\b"
+		},
+		{
+			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy13"
+				},
+				"2": {
+					"name": "support.class.color.hedy13"
+				}
+			}
+
+		},
+		{
+			"name": "support.function.turtle.hedy13",
+			"match": "\\b(forward|turn)\\b"
+		},
+		{
+			"name": "support.class.pressed.hedy13",
+			"match": "\\b(pressed)\\b"
+		}
+		]
+	}
+	
+	},
+	"scopeName": "source.hedy13"
+}

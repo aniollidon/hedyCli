@@ -3,6 +3,7 @@
         "lineComment": "#"
     },
     "brackets": [
+        ["[", "]"]
     ],
     "autoClosingPairs": [
         ["remove ", " from"],

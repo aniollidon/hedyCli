@@ -82,6 +82,36 @@
       "aliases": ["hedy12", "Hedy12"],
       "extensions": [".hy12"],
       "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy13",
+      "aliases": ["hedy13", "Hedy13"],
+      "extensions": [".hy13"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy14",
+      "aliases": ["hedy14", "Hedy14"],
+      "extensions": [".hy14"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy15",
+      "aliases": ["hedy15", "Hedy15"],
+      "extensions": [".hy15"],
+      "configuration": "./language-configuration.json"
+    },
+    {
+      "id": "hedy16",
+      "aliases": ["hedy16", "Hedy16"],
+      "extensions": [".hy16"],
+      "configuration": "./language-configuration.after16.json"
+    },
+    {
+      "id": "hedy17",
+      "aliases": ["hedy17", "Hedy17"],
+      "extensions": [".hy17"],
+      "configuration": "./language-configuration.after16.json"
     }],
     "grammars": [
       {
@@ -143,6 +173,31 @@
         "language": "hedy12",
         "scopeName": "source.hedy12",
         "path": "./syntaxes/hedy12.tmLanguage.json"
+      },
+      {
+        "language": "hedy13",
+        "scopeName": "source.hedy13",
+        "path": "./syntaxes/hedy13.tmLanguage.json"
+      },
+      {
+        "language": "hedy14",
+        "scopeName": "source.hedy14",
+        "path": "./syntaxes/hedy14.tmLanguage.json"
+      },
+      {
+        "language": "hedy15",
+        "scopeName": "source.hedy15",
+        "path": "./syntaxes/hedy15.tmLanguage.json"
+      },
+      {
+        "language": "hedy16",
+        "scopeName": "source.hedy16",
+        "path": "./syntaxes/hedy16.tmLanguage.json"
+      },
+      {
+        "language": "hedy17",
+        "scopeName": "source.hedy17",
+        "path": "./syntaxes/hedy17.tmLanguage.json"
       }
     ]
   }

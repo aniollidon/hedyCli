@@ -1,0 +1,11 @@
+define song with place
+    print 'My Bonnie is over the ' place
+
+call song
+
+
+if hola in 3 and hola is 3
+    print 'hola'
+else
+    print 'no hola'
+

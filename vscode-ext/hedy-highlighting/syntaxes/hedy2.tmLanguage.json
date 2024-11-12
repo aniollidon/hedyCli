@@ -3,13 +3,21 @@
 	"name": "hedy2",
 	"patterns": [
 		{
+			"name": "invalid.illegal.character.hedy2",
+			"match": "\\b_\\b"
+		},
+		{
 			"name": "string.quoted.double.hedy2",
 			"begin": "(?<=\\b(?:print|ask|echo)\\s)",
 			"end": "$"
 		},
+
 		{
 			"name": "constant.numeric.hedy2",
 			"match": "[0-9]+"
+		},
+		{
+			"include": "#errors"
 		},
 		{
 			"include": "#commands"
@@ -17,10 +25,6 @@
 		{
 			"name": "comment.line.hedy2",
 			"match": "#.*"
-		},
-		{
-			"name": "invalid.illegal.character.hedy2",
-			"match": "\\b_\\b"
 		},
 		{
 			"match": "\\b(\\w+)[ \\t]+(is)\\b",
@@ -58,14 +62,6 @@
 			"match": "\\bplay\\b"
 		},
 		{
-			"name": "invalid.deprecated.echo.hedy2",
-			"match": "\\becho\\b"
-		},
-		{
-			"name": "invalid.illegal.errorinvalid.hedy2",
-			"match": "\\bErrorInvalid\\b"
-		},
-		{
 			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 			"captures": {
 				"1": {
@@ -81,6 +77,22 @@
 			"name": "support.function.turtle.hedy2",
 			"match": "\\b(forward|turn)\\b"
 		}
+		]
+	},
+	"errors": {
+		"patterns": [
+			{
+				"name": "invalid.deprecated.echo.hedy2",
+				"match": "\\becho\\b"
+			},
+			{
+				"name": "invalid.illegal.errorinvalid.hedy2",
+				"match": "\\bErrorInvalid\\b"
+			},
+			{
+				"name": "invalid.deprecated.ask.hedy2",
+				"match": "^[ \\t]*(?:\\s*\\w+\\s+)?ask\\b(?!\\s*[:]).*"
+			}
 		]
 	}
 	

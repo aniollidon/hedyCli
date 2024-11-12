@@ -1,0 +1,132 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "hedy15",
+	"patterns": [
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "comment.line.hedy15",
+			"match": "#.*"
+		},
+		{
+			"name": "string.quoted.double.hedy15",
+			"begin": "\"",
+			"end": "\""
+		},
+		{
+			"name": "string.quoted.single.hedy15",
+			"begin": "'",
+			"end": "'"
+		},
+		{
+			"name": "constant.numeric.hedy15",
+			"match": "[0-9]+"
+		},
+		{
+			"name": "invalid.illegal.character.hedy15",
+			"match": "\\b_\\b"
+		},
+		{
+			"name": "keyword.command.hedy15",
+			"match": "\\b(is|at|to|from|in|not|with|and|or)\\b"
+		},
+		{
+			"name": "keyword.command.hedy15",
+			"match": "[=+\\-*\\/><]|!="
+		},
+		{
+			"name": "support.function.hedy15",
+			"match": "\\b(random)\\b"
+		}
+	],
+	"repository": {
+	"commands": {
+		"patterns": [
+		{
+			"name": "storage.type.define.hedy15",
+			"match": "\\b(define)\\b"
+		},
+		{
+			"name": "storage.type.call.hedy15",
+			"match": "\\b(call)\\b"
+		},
+		{
+			"name": "keyword.control.conditional.hedy15",
+			"match": "\\b(if|else)\\b"
+		},
+		{
+			"name": "keyword.control.iterative.hedy15",
+			"match": "\\b(repeat|times|for|while)\\b"
+		},
+		{
+			"name": "keyword.control.flow.hedy15",
+			"match": "\\b(return)\\b"
+		},
+		{
+			"name": "support.function.ask.hedy15",
+			"match": "\\bask\\b"
+		},
+		{
+			"name": "support.function.clear.hedy15",
+			"match": "\\bclear\\b"
+		},
+		{
+			"name": "support.function.print.hedy15",
+			"match": "\\bprint\\b"
+		},
+		{
+			"name": "support.function.play.hedy15",
+			"match": "\\bplay\\b"
+		},
+		{
+			"name": "invalid.deprecated.echo.hedy15",
+			"match": "\\becho\\b"
+		},
+		{
+			"name": "support.function.sleep.hedy15",
+			"match": "\\bsleep\\b"
+		},
+		{
+			"name": "support.function.add.hedy15",
+			"match": "\\badd\\b"
+		},
+		{
+			"name": "support.function.remove.hedy15",
+			"match": "\\bremove\\b"
+		},
+		
+		{
+			"name": "support.function.range.hedy15",
+			"match": "\\brange\\b"
+		},
+		{
+			"name": "invalid.illegal.errorinvalid.hedy15",
+			"match": "\\bErrorInvalid\\b"
+		},
+		{
+			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"captures": {
+				"1": {
+					"name": "support.function.turtle.hedy15"
+				},
+				"2": {
+					"name": "support.class.color.hedy15"
+				}
+			}
+
+		},
+		{
+			"name": "support.function.turtle.hedy15",
+			"match": "\\b(forward|turn)\\b"
+		},
+		{
+			"name": "support.class.pressed.hedy15",
+			"match": "\\b(pressed)\\b"
+		}
+		]
+	}
+	
+	},
+	"scopeName": "source.hedy15"
+}

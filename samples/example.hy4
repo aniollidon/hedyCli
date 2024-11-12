@@ -9,11 +9,25 @@ color red
 clear
 sleep 2
 
-print You enter the haunted house.
 print options at random ' ' options at random ' ' options at random
 
+# Comentari
 
 print red green
 turn 90
 turn right
 
+#Errors
+llista is _ 
+llista is hola, adeu, hola_4
+print You enter the haunted house.
+
+is hhh, 222
+at random
+print _
+echo hola
+ask blabal
+a ask knjkdnkj
+print then he ask you
+
+"llll"

@@ -20,18 +20,32 @@ for name in names
     print name ' will marry ' loves at random
     print name ' will get a ' pets at random ' as their pet.'
     sleep
-
+    aniol is 2
+ 
 # lev 11
 number = 10
 for i in range 1 to 10
     print i * number
 
-# lev 12
-define twinkle
-    print 'Twinkle'
-    print '...'
+if number is 10
+    print 'The number is 10'
 
-call twinkle
-print 'Up above the world so high'
-print 'Like a diamond in the sky'
+    # lev 12
+    define twinkle with fsd
+        print 'Twinkle'
+        print '...'
+
+    call twinkle
+    print 'Up above the world so high'
+    print 'Like a diamond in the sky'
+
+
+# lev 13
+define song with place
+    print 'My Bonnie is over the ' place
+
+call song with 'ocean'
+call song with 'sea'
+call song with 'ocean'
+
 
