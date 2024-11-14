@@ -1,4 +1,4 @@
-print How did I get here?
+print How did I get here? # Comentari
 print I remember my friend telling me to go into the old mansion...
 print and suddenly everything went black.
 print But how did I end up on the floor...?
@@ -11,7 +11,14 @@ ask Which door should i pick?
 echo I choose door
 print ...?
 
+
+turn right
+turn left
+forward 10
+
+play C1
+
 # Errors
 print "hola"
 print 2
-print _
+print _ lglñ,lgd _ 

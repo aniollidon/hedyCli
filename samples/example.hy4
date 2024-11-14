@@ -1,13 +1,21 @@
-options is rock, paper, scissors
+options is pedra, paper, tisora  # Comentari
 computer_choice is options at random
 choice is ask 'What do you choose?'
 print 'you chose choice'
 print 'computer chose ' computer_choice 
 add pedra to options
-remove pedra from options
+remove pedra from options  # Comentari
 color red
-clear
+clear # Comentari
 sleep 2
+
+
+add hola to options
+remove hola from options  # Comentari
+
+variable is text dins una variable  # Comentari
+a is 2 + 2 #comentari
+llsita is ann, b, c # Comentari
 
 print options at random ' ' options at random ' ' options at random
 

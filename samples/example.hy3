@@ -1,13 +1,22 @@
-words is squawk, Hedy
+words is squawk, Hedy 
 print Train your parrot!
 new_word is ask Which word do you want to teach them?
 add new_word to words
 print 🧒 Say new_word, Hedy!
 print 🦜 words at random
 
+add hola to words
+remove hola from words  # Comentari
+
+words is squawk, Hedy  #comentari
+print text #comentari
+monster_4 is ask What do you do? #comentari
+
+
 # Errors
 llista is _ 
 llista is hola, adeu, hola_4
+a is hola #comentari
 
 is hhh, 222
 at random

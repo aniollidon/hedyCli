@@ -26,19 +26,22 @@
 			"begin": "'",
 			"end": "'"
 		},
-		
 		{
 			"name": "array.hedy4",
 			"begin": "(?<=\\b\\w+\\s+is\\s.*)(?=.*,)",
-			"end": "$",
+			"end": "(?=#|$)",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy4",
 					"match": "[0-9]+"
 				},
 				{
-					"name": "string.quoted.double.hedy4",
+					"name": "string.regexp.hedy4",
 					"match": "\\b(\\w+)\\b"
+				},
+				{
+					"name": "invalid.illegal.hedy4",
+					"match": ",$"
 				},
 				{
 					"name": "keyword.command.comma.separator.hedy4",
@@ -47,7 +50,7 @@
 			]
 		},
 		{ 
-			"name": "inline.quoted.array.element.hedy4",
+			"name": "inline.unquoted.array.element.hedy4",
 			"begin": "(?<=\\b(remove)\\s)",
 			"end": "(?=\\b(from)\\s)",
 			"patterns": [
@@ -56,14 +59,14 @@
 					"match": "[0-9]+"
 				},
 				{
-					"name": "string.quoted.double.hedy4",
+					"name": "string.regexp.hedy4",
 					"match": "\\b(\\w+)\\b"
 				}
 			]
 
 		},
 		{ 
-			"name": "inline.quoted.array.element.hedy4",
+			"name": "inline.unquoted.array.element.hedy4",
 			"begin": "(?<=\\b(add)\\s)",
 			"end": "(?=\\b(to)\\s)",
 			"patterns": [
@@ -72,11 +75,46 @@
 					"match": "[0-9]+"
 				},
 				{
-					"name": "string.quoted.double.hedy4",
+					"name": "string.regexp.hedy4",
 					"match": "\\b(\\w+)\\b"
 				}
 			]
 
+		},
+		{
+			"begin": "(?<=\\b(?:is)\\s)",
+			"end": "(?<=#|$)",
+			"patterns": [
+				
+				{
+					"match": "(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"captures": {
+						"2": {
+							"name": "keyword.command.hedy4"
+						},
+						"3": {
+							"name": "support.function.hedy4"
+						},
+						"4": {
+							"patterns":[
+								{
+									"include": "#unquoted_phrase"
+								}
+							]						
+						}
+					}
+				}
+			]
+		},
+		{
+			"begin": "(?<=\\bplay\\b)",
+			"end": "(?=#|$)",
+			"patterns": [
+				{
+					"name": "support.class.note.hedy4",
+					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-7][0-9]|70|[1-9])\\b"
+				}
+			]
 		},
 		{
 			"name": "constant.numeric.hedy4",
@@ -155,12 +193,25 @@
 				"match": "\\bErrorInvalid\\b"
 			},
 			{
-				"name": "invalid.deprecated.ask.hedy4",
+				"name": "invalid.illegal.ask.hedy4",
 				"match": "^[ \\t]*(?:\\s*\\w+\\s+)?ask\\b(?!\\s*[:]).*"
 			},
 			{
-				"name": "invalid.deprecated.at.hedy4",
-				"match": "^[ \\t]*(is|is|at|to|from|random).*"
+				"name": "invalid.illegal.at.hedy4",
+				"match": "^[ \\t]*(is|at|to|from|random).*"
+			}
+		]
+	},
+	"unquoted_phrase":{
+		"patterns": [
+			{
+				"name": "comment.line.hedy4",
+				"match": "#.*"
+			},
+			{
+				"name": "string.regexp.hedy4",
+				"begin": ".+?(?=#|$)",
+				"end": "(?=#|$)"
 			}
 		]
 	}

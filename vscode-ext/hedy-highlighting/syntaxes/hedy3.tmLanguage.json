@@ -8,15 +8,15 @@
 		},
 		{
 			"name": "array.hedy3",
-			"begin": "(?<=\\b\\w+\\s+is\\s)",
-			"end": "$",
+			"begin": "(?<=\\b\\w+\\s+is\\s.*)(?=.*,)",
+			"end": "(?=#|$)",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy3",
 					"match": "[0-9]+"
 				},
 				{
-					"name": "string.quoted.double.hedy3",
+					"name": "string.regexp.hedy3",
 					"match": "\\b(\\w+)\\b"
 				},
 				{
@@ -33,7 +33,7 @@
 					"name": "support.function.hedy3"
 				},
 				"2": {
-					"name": "string.quoted.double.hedy3"
+					"name": "string.unquoted.hedy3"
 				},
 				"3": {
 					"name": "keyword.command.hedy3"
@@ -42,14 +42,89 @@
 					"name": "support.function.hedy3"
 				},
 				"5": {
-					"name": "string.quoted.double.hedy3"
+					"patterns":[
+						{
+							"include": "#unquoted_phrase"
+						}
+					]
 				}
 			}
 		},
 		{
-			"name": "string.quoted.double.hedy3",
-			"begin": "(?<=\\b(?:print|ask)\\s)",
-			"end": "$"
+			"begin": "(?<=\\b(?:print|ask|echo)\\s)",
+			"end": "(?=#|$)",
+			"patterns": [
+				{
+					"include": "#unquoted_phrase"
+				}
+			]
+		},
+		{ 
+			"name": "inline.unquoted.array.element.hedy3",
+			"begin": "(?<=\\b(remove)\\s)",
+			"end": "(?=\\b(from)\\s)",
+			"patterns": [
+				{
+					"name": "constant.numeric.hedy3",
+					"match": "[0-9]+"
+				},
+				{
+					"name": "string.regexp.hedy3",
+					"match": "\\b(\\w+)\\b"
+				}
+			]
+
+		},
+		{ 
+			"name": "inline.unquoted.array.element.hedy3",
+			"begin": "(?<=\\b(add)\\s)",
+			"end": "(?=\\b(to)\\s)",
+			"patterns": [
+				{
+					"name": "constant.numeric.hedy3",
+					"match": "[0-9]+"
+				},
+				{
+					"name": "string.regexp.hedy3",
+					"match": "\\b(\\w+)\\b"
+				}
+			]
+
+		},
+		{
+			"begin": "(?<=\\b(?:is)\\s)(?!ask\\s)",
+			"end": "(?<=#|$)",
+			"patterns": [
+				
+				{
+					"match": "(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"captures": {
+						"2": {
+							"name": "keyword.command.hedy3"
+						},
+						"3": {
+							"name": "support.function.hedy3"
+						},
+						"4": {
+							"patterns":[
+								{
+									"include": "#unquoted_definition"
+								}
+							]						
+						}
+					}
+				}
+			]
+		},
+		{
+			"begin": "(?<=\\bplay\\b)",
+			"end": "(?=#|$)",
+			"patterns": [
+				{
+					"name": "support.class.note.hedy3",
+					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-7][0-9]|70|[1-9])\\b"
+				}
+			]
 		},
 		{
 			"name": "constant.numeric.hedy3",
@@ -134,12 +209,38 @@
 				"match": "\\bErrorInvalid\\b"
 			},
 			{
-				"name": "invalid.deprecated.ask.hedy3",
+				"name": "invalid.illegal.ask.hedy3",
 				"match": "^[ \\t]*(?:\\s*\\w+\\s+)?ask\\b(?!\\s*[:]).*"
 			},
 			{
-				"name": "invalid.deprecated.at.hedy3",
-				"match": "^[ \\t]*(is|is|at|to|from|random).*"
+				"name": "invalid.illegal.at.hedy3",
+				"match": "^[ \\t]*(is|at|to|from|random).*"
+			}
+		]
+	},
+	"unquoted_phrase":{
+		"patterns": [
+			{
+				"name": "comment.line.hedy3",
+				"match": "#.*"
+			},
+			{
+				"name": "string.unquoted.hedy3",
+				"begin": ".+?(?=#|$)",
+				"end": "(?=#|$)"
+			}
+		]
+	},
+	"unquoted_definition":{
+		"patterns": [
+			{
+				"name": "comment.line.hedy3",
+				"match": "#.*"
+			},
+			{
+				"name": "string.regexp.hedy3",
+				"begin": ".+?(?=#|$)",
+				"end": "(?=#|$)"
 			}
 		]
 	}

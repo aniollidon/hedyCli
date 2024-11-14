@@ -6,21 +6,37 @@
 			"name": "invalid.illegal.character.hedy1",
 			"match": "\\b_\\b"
 		},
+		
 		{
-			"name": "string.quoted.double.hedy1",
+			"name": "comment.line.hedy1",
+			"match": "#.*"
+		},
+		{
 			"begin": "(?<=\\b(?:print|ask|echo)\\s)",
-			"end": "$"
+			"end": "$",
+			"patterns": [
+				{
+					"include": "#unquoted_phrase"
+				}
+			]
 		},
 		{
 			"name": "constant.numeric.hedy1",
 			"match": "[0-9]+"
 		},
+		
 		{
-			"include": "#commands"
+			"begin": "(?<=\\bplay\\b)",
+			"end": "(?=#|$)",
+			"patterns": [
+				{
+					"name": "support.class.note.hedy1",
+					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-7][0-9]|70|[1-9])\\b"
+				}
+			]
 		},
 		{
-			"name": "comment.line.hedy1",
-			"match": "#.*"
+			"include": "#commands"
 		}
 	],
 	"repository": {
@@ -74,6 +90,19 @@
 			"name": "support.function.turtle.hedy1",
 			"match": "\\b(forward|turn)\\b"
 		}
+		]
+	},
+	"unquoted_phrase":{
+		"patterns": [
+			{
+				"name": "comment.line.hedy1",
+				"match": "#.*"
+			},
+			{
+				"name": "string.unquoted.hedy1",
+				"begin": ".+?(?=#|$)",
+				"end": "(?=#|$)"
+			}
 		]
 	}
 	

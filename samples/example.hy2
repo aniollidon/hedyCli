@@ -1,13 +1,24 @@
 monster_1 is 👻
 monster_2 is 🤡
 monster_3 is 👶
-print You enter the haunted house.
+print You enter the haunted house. 
 print Suddenly you see a monster_1 
 print You run into the other room, but a monster_2 is waiting there for you!
 print Oh no! Quickly get to the kitchen.
 print But as you enter monster_3 attacks you!
 monster_4 is ask What do you do?
 
+print text #comentari
+monster_4 is ask What do you do? #comentari
+ 
+a is hola #comentari
+
+
+turn right
+turn left
+forward 10
+
+play C1
 
 # Errors
 monster is _ 
