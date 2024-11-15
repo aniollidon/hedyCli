@@ -1,11 +1,9 @@
-define song with place
-    print 'My Bonnie is over the ' place
-
-call song
-
-
-if hola in 3 and hola is 3
-    print 'hola'
+usuari = ask 'Quin és el teu usuari?'
+contrassenya = ask 'Quina és la teva contrassenya?'
+if usuari is 'Hedy'
+    if contrassenya is 'secreta'
+        print 'Benvingut/da Hedy!'
+    else
+        print 'Accés denegat'
 else
-    print 'no hola'
-
+    print 'Accés denegat!'

@@ -1,8 +1,8 @@
 {
   "name": "hedy",
   "displayName": "Hedy",
-  "description": "Suport per llenguatge Hedy als diferents nivells",
-  "version": "0.0.1",
+  "description": "Hedy highlighting for Visual Studio Code, for all 17 levels of the language.",
+  "version": "0.0.2",
   "main": "src/extension.js",
   "engines": {
     "vscode": "^1.94.0"

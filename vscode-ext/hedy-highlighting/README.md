@@ -1,6 +1,4 @@
-# hedy4 README
- Extensió per donar suport als diferents nivells de llenguatge hedy
+# Hedy
 
-npm install -g @vscode/vsce
-vsce package
-code --install-extension hedy-0.0.1.vsix
+Hedy highlighting for Visual Studio Code, for all 17 levels of the language.
+Code is automaticlly detected form .hy1, .hy2, ... .hy17 files!

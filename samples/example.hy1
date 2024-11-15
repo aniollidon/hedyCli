@@ -17,6 +17,7 @@ turn left
 forward 10
 
 play C1
+play 70
 
 # Errors
 print "hola"

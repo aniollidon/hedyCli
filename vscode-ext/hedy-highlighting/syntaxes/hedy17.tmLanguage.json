@@ -2,139 +2,195 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "hedy17",
 	"patterns": [
-	  {
-		"include": "#commands"
-	  },
-	  {
-		"include": "#array"
-	  },
-	  {
-		"name": "comment.line.hedy17",
-		"match": "#.*"
-	  },
-	  {
-		"name": "string.quoted.double.hedy17",
-		"begin": "\"",
-		"end": "\""
-	  },
-	  {
-		"name": "string.quoted.single.hedy17",
-		"begin": "'",
-		"end": "'"
-	  },
-	  {
-		"name": "constant.numeric.hedy17",
-		"match": "[0-9]+"
-	  },
-	  {
-		"name": "invalid.illegal.character.hedy17",
-		"match": "\\b_\\b"
-	  },
-	  {
-		"name": "keyword.command.hedy17",
-		"match": "\\b(is|to|from|in|not|with|and|or)\\b"
-	  },
-	  {
-		"name": "keyword.command.operator.arithmetic.hedy17",
-		"match": "[=+\\-*\\/><]|!="
-	  },
-	  {
-		"name": "support.function.hedy17",
-		"match": "\\b(random)\\b"
-	  }
+		{
+			"name": "invalid.illegal.character.hedy17",
+			"match": "\\b_\\b"
+		},
+		{
+			"include": "#errors"
+		},
+		{
+			"name": "comment.line.hedy17",
+			"match": "#.*"
+		},
+		{
+			"include": "#commands"
+		},
+		{
+			"name": "string.quoted.double.hedy17",
+			"begin": "\"",
+			"end": "\""
+		},
+		{
+			"name": "string.quoted.single.hedy17",
+			"begin": "'",
+			"end": "'"
+		},
+		{
+			"name": "keyword.command.comma.separator.hedy17",
+			"match": ","
+		},
+		{
+			"begin": "(?<=\\bplay\\b)",
+			"end": "(?=#|$)",
+			"patterns": [
+				{
+					"name": "support.class.note.hedy17",
+					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
+				}
+			]
+		},
+		{
+			"name": "constant.numeric.hedy17",
+			"match": "[0-9]+"
+		},
+		{
+			"name": "keyword.command.hedy17",
+			"match": "\\b(is|to|from|in|not|with|and|or)\\b|="
+		},
+		{
+			"include": "#maths"
+		},
+		{
+			"name": "support.function.hedy17",
+			"match": "\\b(random)\\b"
+		},
+		{
+			"name": "support.function.range.hedy17",
+			"match": "\\b(range)\\b"
+		}
 	],
 	"repository": {
-	  "commands": {
-		"patterns": [
-		  {
-			"name": "storage.type.define.hedy17",
-			"match": "\\b(define)\\b"
-		  },
-		  {
-			"name": "storage.type.call.hedy17",
-			"match": "\\b(call)\\b"
-		  },
-		  {
-			"name": "keyword.control.conditional.hedy17",
-			"match": "\\b(if|else|elif)\\b"
-		  },
-		  {
-			"name": "keyword.control.iterative.hedy17",
-			"match": "\\b(repeat|times|for|while)\\b"
-		  },
-		  {
-			"name": "keyword.control.flow.hedy17",
-			"match": "\\b(return)\\b"
-		  },
-		  {
-			"name": "keyword.control.dots.hedy17",
-			"match": ":"
-		  },
-		  {
-			"name": "support.function.ask.hedy17",
-			"match": "\\bask\\b"
-		  },
-		  {
-			"name": "support.function.clear.hedy17",
-			"match": "\\bclear\\b"
-		  },
-		  {
-			"name": "support.function.print.hedy17",
-			"match": "\\bprint\\b"
-		  },
-		  {
-			"name": "support.function.play.hedy17",
-			"match": "\\bplay\\b"
-		  },
-		  {
-			"name": "invalid.deprecated.echo.hedy17",
-			"match": "\\b(echo|at)\\b"
-		  },
-		  {
-			"name": "support.function.sleep.hedy17",
-			"match": "\\bsleep\\b"
-		  },
-		  {
-			"name": "support.function.add.hedy17",
-			"match": "\\badd\\b"
-		  },
-		  {
-			"name": "support.function.remove.hedy17",
-			"match": "\\bremove\\b"
-		  },
-		  {
-			"name": "support.function.range.hedy17",
-			"match": "\\brange\\b"
-		  },
-		  {
-			"name": "invalid.illegal.errorinvalid.hedy17",
-			"match": "\\bErrorInvalid\\b"
-		  },
-		  {
-			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
-			"captures": {
-			  "1": {
-				"name": "support.function.turtle.hedy17"
-			  },
-			  "2": {
-				"name": "support.class.color.hedy17"
-			  }
+		"commands": {
+			"patterns": [
+			{
+				"name": "storage.type.define.hedy17",
+				"match": "\\b(define)\\b"
+			},
+			{
+				"name": "storage.type.call.hedy17",
+				"match": "\\b(call)\\b"
+			},
+			{
+				"name": "keyword.control.flow.hedy17",
+				"match": "\\b(return)\\b"
+			},
+			{
+				"name": "keyword.control.conditional.hedy17",
+				"match": "\\b(if|else|elif)\\b"
+			},
+			{
+				"name": "keyword.control.iterative.hedy17",
+				"match": "\\b(repeat|times|for|while)\\b"
+			},
+			{
+				"name": "support.function.ask.hedy17",
+				"match": "\\bask\\b"
+			},
+			{
+				"name": "support.function.clear.hedy17",
+				"match": "\\bclear\\b"
+			},
+			{
+				"name": "support.function.print.hedy17",
+				"match": "\\bprint\\b"
+			},
+			{
+				"name": "support.function.play.hedy17",
+				"match": "\\bplay\\b"
+			},
+			{
+				"name": "support.function.sleep.hedy17",
+				"match": "\\bsleep\\b"
+			},
+			{
+				"name": "support.function.add.hedy17",
+				"match": "\\badd\\b"
+			},
+			{
+				"name": "support.function.remove.hedy17",
+				"match": "\\bremove\\b"
+			},
+			{
+				"name": "invalid.illegal.errorinvalid.hedy17",
+				"match": "\\bErrorInvalid\\b"
+			},
+			{
+				"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+				"captures": {
+					"1": {
+						"name": "support.function.turtle.hedy17"
+					},
+					"2": {
+						"name": "support.class.color.hedy17"
+					}
+				}
+
+			},
+			{
+				"name": "support.function.turtle.hedy17",
+				"match": "\\b(forward|turn)\\b"
+			},
+			{
+				"name": "support.class.pressed.hedy17",
+				"match": "\\b(pressed)\\b"
 			}
-		  },
-		  {
-			"name": "support.function.turtle.hedy17",
-			"match": "\\b(forward|turn)\\b"
-		  },
-		  {
-			"name": "support.class.pressed.hedy17",
-			"match": "\\b(pressed)\\b"
-		  }
-		]
-	  },
-	  "array": {
-			"match": "[\\[\\]]",
-			"name": "punctuation.definition.array.begin.hedy17"
-	  }
+			]
+		},
+		"errors": {
+			"patterns": [
+				
+				{
+					"name": "invalid.deprecated.echo.hedy17",
+					"match": "\\bat\\b"
+				},
+				{
+					"name": "invalid.deprecated.echo.hedy17",
+					"match": "\\becho\\b"
+				},
+				{
+					"name": "invalid.illegal.errorinvalid.hedy17",
+					"match": "\\bErrorInvalid\\b"
+				},
+				{
+					"name": "invalid.illegal.ask.hedy17",
+					"match": "^[ \\t]*(?:[ \\t]*\\w+[ \\t]+)?ask\\b(?![ \\t]*[:]).*"
+				},
+				{
+					"name": "invalid.illegal.command.hedy17",
+					"match": "^[ \\t]*(is|=|to|from|random|in|with|and|or)"
+				},
+				{
+					"name": "invalid.illegal.errorinvalid.hedy17",
+					"match": "(?<!\\brepeat\\b.*)\\btimes\\b"
+				},
+				
+				{
+					"name": "invalid.illegal.hedy17",
+					"match": ",$"
+				},
+				{
+					"name": "invalid.illegal.elseif.hedy17",
+					"match": "else[ \\t]+if"
+				},
+				{
+					"name": "invalid.illegal.identation.hedy17",
+					"match": "(for|while|if|else|elif).*(!:)[^\\n][ \\t]+"
+				}
+			]
+		},
+		"maths":{ 
+			"patterns": [
+				{
+					"name": "keyword.command.hedy17",
+					"match": "[ \\t]*[+\\-*\\/><!][ \\t]*"
+				},
+				{
+					"name": "invalid.illegal.math.hedy17",
+					"match": "(?<=\\d)[ \\t]*[+\\-*\\/<>!][ \\t]*(?=[\\w\"'])"
+				}
+			]
+		}
 	},
 	"scopeName": "source.hedy17"
-  }
+}

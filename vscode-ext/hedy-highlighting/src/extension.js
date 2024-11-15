@@ -153,10 +153,10 @@ class Provider{
                   let contasimple = 0;
                   let contaDoble = 0;
                   for (let i = 0; i < startChar; i++) {
-                    if (text[i] === '"') 
+                    if (contasimple %2 === 0 && text[i] === '"') 
                       contaDoble++;
 
-                    if (text[i] === "'")
+                    if (contaDoble %2 === 0 &&  text[i] === "'")
                       contasimple++;
                   }
 

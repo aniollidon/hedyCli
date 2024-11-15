@@ -1,18 +1,25 @@
 options is rock, paper, scissors
 options = rock, paper, scissors
+options=rock, paper, scissors
+options= rock, paper, scissors
+options =rock, paper, scissors
 
-computer_choice = options at random
+
 computer_choice is options at random
+computer_choice = options at random
+computer_choice=options at random
 
 choice is ask 'What do you choose?'
 choice = ask 'What do you choose?'
+choice=ask 'What do you choose?'
 
 if hola is choice print 'you chose choice'
 if choice is hola print 'you chose choice'
 
 if hola = choice print 'you chose choice'
 if choice = hola print 'you chose choice'
-
+if hola=choice print 'you chose choice'
+if choice=hola print 'you chose choice'
 
 print 'you chose choice'
 print 'computer chose ' computer_choice 
@@ -20,43 +27,57 @@ print 'computer chose ' computer_choice
 add pedra to options
 remove pedra from options
 
+print "Bla" #comentari
+aa is 2+2  #comentari
+aa = 2+2 #comentari
+aaa  = 5
+aaa is 5
+a is bla #comentari
+a = bla #comentari
+a=bla #comentari
+a =bla #comentari
+a= bla #comentari
+
 color red
 turn 90
-turn right
-
 clear
 sleep 2
+print 4+4-3*2/1 'blabla' 4+4-3*2/1
 
-print You enter the haunted house.
 print options at random ' ' options at random ' ' options at random
 
-nom is ask 'Qui camina pel bosc?'
-print nom ' camina pel bosc'
-print nom ' troba un monstre'
-final = ask 'Vols un final bo o dolent?'
-if final is 4 print nom " agafa l'espasa i el monstre fuig ràpidament"
-else print 'El monstre menja ' nom ' per sopar'
-print 4+4-3*2/1 
-
-blabla is 2 + 2
-
 pretty_colors is green, yellow
-favorite_color is ask 'What is your favorite color?'
+favorite_color is ask 'Color?'
 if favorite_color not in pretty_colors print 'pretty!'
 else print 'meh'
 
-print 'Do you want a good (g) or bad (b) ending?'
-if g is pressed print 'They lived happily ever after ❤'
-else print 'The prince was eaten by a hippopotamus 😭'
+if g is pressed print 'Go'
+else print 'No go'
 
+llista is A, B, C, D, E
+if A in llista print "hi és" else print "no"
+
+
+# Errors
+suma = is ask 2+2 #comentari
+turn right
 remove 5 from ddd
-
 add ssds to dsdsd
-aa is 2 + 2 #comentari
-a is bla #comentari
 
+#Errors
+llista is _ 
+llista is hola, adeu, hola_4,
+print You enter the haunted house.
 
-aa is 2 + 2
+is hhh, 222
+at random
+print _
+echo hola
+ask blabal
+a ask knjkdnkj
+print then he ask you
+from remove ffdfs from
+to 
 
 # Encara no va 
 repeat 2 times answer = ask 'Did you know you could ask a question multiple times?'

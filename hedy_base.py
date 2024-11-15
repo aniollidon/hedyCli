@@ -57,7 +57,6 @@ class Testing:
 
 
 def hedy_error_to_response(ex, keyword_lang='en'):
-    print(get_error_text(ex, 'ca'))
     return {
         "Error": ex.error_code,
         "Location": ex.error_location
@@ -105,7 +104,6 @@ def parse(code, level, lang='en', keyword_lang='en', microbit=False):
         exception = ex
 
     except Exception as E:
-        raise E
         # print(f"error transpiling {code}")
         response["Error"] = str(E)
         exception = E
@@ -123,10 +121,18 @@ def _clear():
 def _foo(*args):
     pass
 
+def replace_second_occurrence(pattern, replacement, text):
+    matches = list(re.finditer(pattern, text))
+    if len(matches) >= 2:
+        second_match = matches[1]
+        start, end = second_match.span()
+        text = text[:start] + re.sub(pattern, replacement, text[start:end], 1) + text[end:]
+    return text
+
 
 def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False,
                  debug=False):
-    with app.app_context():
+    with ((app.app_context())):
         # SETUP LANG
         g.lang = 'ca'
         g.keyword_lang = 'en'
@@ -136,15 +142,30 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
         # Busca extencions al codi amb regex: !import <extensio>
         # Un cop trobat modifica la linia afegint # al principi i importa l'extensio
         extensions = []
+        mapa_funcions_extensio = {}
+        extra_hedy_code = ""
+
         for line in hedy_code.split('\n'):
-            match = re.match(r'^!import\s+(\w+)', line)
+            match = re.match(r'^#[ \t]*![ \t]*import\s+(.*)\s+from\s+(\w+)', line)
             if match:
-                extensions.append(match.group(1))
+                functions = match.group(1).replace(" ","").split(',')
+                extencio = match.group(2)
+                extensions.append(extencio)
+                for function in functions:
+                    match_usage = r"call[ \t]+" + re.escape(function)
+                    if re.search(match_usage, hedy_code):
+                        if function in mapa_funcions_extensio:
+                            raise ValueError(f"La funció '{function}' ja ha estat definida per l'ús d'una extensió.")
+
+                        mapa_funcions_extensio[function] = extencio
+                        extra_hedy_code += "define " + function + "\n  print \"$ERROR: la funció " + function + " no existeix al módul " + extencio  +"\"\n"
 
         if debug and extensions:
-            print("Extensions:", extensions)
+            print("Extensions actives:", extensions)
+            print("Mapa de funcions a extensions:", mapa_funcions_extensio)
+            print("Extra hedy code: \n" + extra_hedy_code)
 
-        response, transpile_result = parse(hedy_code, level, 'ca', 'en', microbit=microbit)
+        response, transpile_result = parse(extra_hedy_code + hedy_code, level, 'ca', 'en', microbit=microbit)
         pause_after_turtle = False
         foo_usage = False
 
@@ -199,8 +220,8 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                 # TODO
                 pass
 
+            # Afegeix les extencions al codi
             for ext in extensions:
-                # Busca l'extensió a la carpeta d'extensions
                 if not os.path.exists(
                         os.path.join(os.path.dirname(os.path.realpath(__file__)), 'extensions', ext + '.py')):
                     raise ValueError(f"No es pot importar l'extensió '{ext}'")
@@ -208,6 +229,11 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                           'r') as f:
                     extension_code = f.read()
                     python_code = extension_code + "\n" + python_code
+
+            # Elimina les definicions de funcions per falsejar hedy
+            for function in mapa_funcions_extensio:
+                # Reemplaça la segona definició amb el patró: def $function per def _$function
+                python_code = replace_second_occurrence(r'def[ \t]+' + re.escape(function) + r'[ \t]*\(', r'def _' + function + '(', python_code)
 
             if testing:
                 python_code = python_code.replace("input", "testing.c_input")
@@ -239,7 +265,13 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                     raise e
                 response["Error"] = "Unexpected error"
                 response["details"] = str(e)
-
+        else:
+            # Resta les linies de extra_hedy_code
+            if 'Location' in response:
+                if isinstance(response["Location"], list):
+                    response["Location"] = [int(response["Location"][0]) - extra_hedy_code.count('\n')]
+                else:
+                    response["Location"] = (int(response["Location"][0]) - extra_hedy_code.count('\n'), response["Location"][1])
         return response
 
 

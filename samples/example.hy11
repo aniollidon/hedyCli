@@ -1,36 +1,9 @@
-repeat 2 times 
-    answer = ask 'Did you know you could ask a question multiple times?'
-        if answer is yes repeat 2 times print 'You knew that already!'
-else repeat 3 times print 'You have learned something new!'
-print hola times
+animals = gossos, gats, pingüins
+for animal in animals
+    print "M'encanten els " animal
 
-repeat 3 times
+for comptador in range 1 to 10
+    print comptador
+print 'Llest o no. Ves que vinc!'
 
-turn 90
-distances = 10, 20, 30, 40, 50, 60
-for distance in distances
-    forward distance
-
-houses = mansion, apartment, shack, house
-loves = nobody, a royal, their neighbour, their true love
-pets = dog, cat, elephant
-names = Jenna, Ryan, Jim
-for name in names
-    print name ' lives in a ' houses at random
-    print name ' will marry ' loves at random
-    print name ' will get a ' pets at random ' as their pet.'
-    sleep
-
-# lev 11
-number = 10
-for i in range 1 to 10
-    print i * number
-
-# lev 12
-define twinkle
-    print 'Twinkle'
-    print '...'
-
-call twinkle
-print 'Up above the world so high'
-print 'Like a diamond in the sky'
+				

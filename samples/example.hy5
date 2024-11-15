@@ -37,6 +37,14 @@ aa is 2 + 2 #comentari
 a is bla
 llista is ss, ggg, gg #comentari
 
+llista is A, B, C, D, E
+if A in llista print "hi és" else print "no"
+
+#Errors
+llista is _ 
+llista is hola, adeu, hola_4,
+print You enter the haunted house.
+
 is hhh, 222
 at random
 print _

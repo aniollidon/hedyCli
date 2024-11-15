@@ -3,11 +3,18 @@
 	"name": "hedy12",
 	"patterns": [
 		{
-			"include": "#commands"
+			"name": "invalid.illegal.character.hedy12",
+			"match": "\\b_\\b"
+		},
+		{
+			"include": "#errors"
 		},
 		{
 			"name": "comment.line.hedy12",
 			"match": "#.*"
+		},
+		{
+			"include": "#commands"
 		},
 		{
 			"name": "string.quoted.double.hedy12",
@@ -20,109 +27,153 @@
 			"end": "'"
 		},
 		{
+			"name": "keyword.command.comma.separator.hedy12",
+			"match": ","
+		},
+		{
+			"begin": "(?<=\\bplay\\b)",
+			"end": "(?=#|$)",
+			"patterns": [
+				{
+					"name": "support.class.note.hedy12",
+					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
+				}
+			]
+		},
+		{
 			"name": "constant.numeric.hedy12",
 			"match": "[0-9]+"
 		},
 		{
-			"name": "invalid.illegal.character.hedy12",
-			"match": "\\b_\\b"
+			"name": "keyword.command.hedy12",
+			"match": "\\b(is|at|to|from|in|not)\\b|="
 		},
 		{
-			"name": "keyword.command.hedy12",
-			"match": "\\b(is|at|to|from|in|not)\\b"
-		},
-		{
-			"name": "keyword.command.hedy12",
-			"match": "[=+\\-*\\/]"
+			"include": "#maths"
 		},
 		{
 			"name": "support.function.hedy12",
 			"match": "\\b(random)\\b"
+		},
+		{
+			"name": "support.function.range.hedy12",
+			"match": "\\b(range)\\b"
 		}
 	],
 	"repository": {
-	"commands": {
-		"patterns": [
-		{
-			"name": "storage.type.define.hedy12",
-			"match": "\\b(define)\\b"
-		},
-		{
-			"name": "storage.type.call.hedy12",
-			"match": "\\b(call)\\b"
-		},
-		{
-			"name": "keyword.control.conditional.hedy12",
-			"match": "\\b(if|else)\\b"
-		},
-		{
-			"name": "keyword.control.iterative.hedy12",
-			"match": "\\b(repeat|times|for)\\b"
-		},
-		{
-			"name": "support.function.ask.hedy12",
-			"match": "\\bask\\b"
-		},
-		{
-			"name": "support.function.clear.hedy12",
-			"match": "\\bclear\\b"
-		},
-		{
-			"name": "support.function.print.hedy12",
-			"match": "\\bprint\\b"
-		},
-		{
-			"name": "support.function.play.hedy12",
-			"match": "\\bplay\\b"
-		},
-		{
-			"name": "invalid.deprecated.echo.hedy12",
-			"match": "\\becho\\b"
-		},
-		{
-			"name": "support.function.sleep.hedy12",
-			"match": "\\bsleep\\b"
-		},
-		{
-			"name": "support.function.add.hedy12",
-			"match": "\\badd\\b"
-		},
-		{
-			"name": "support.function.remove.hedy12",
-			"match": "\\bremove\\b"
-		},
-		
-		{
-			"name": "support.function.range.hedy12",
-			"match": "\\brange\\b"
-		},
-		{
-			"name": "invalid.illegal.errorinvalid.hedy12",
-			"match": "\\bErrorInvalid\\b"
-		},
-		{
-			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
-			"captures": {
-				"1": {
-					"name": "support.function.turtle.hedy12"
-				},
-				"2": {
-					"name": "support.class.color.hedy12"
+		"commands": {
+			"patterns": [
+			{
+				"name": "storage.type.define.hedy12",
+				"match": "\\b(define)\\b"
+			},
+			{
+				"name": "storage.type.call.hedy12",
+				"match": "\\b(call)\\b"
+			},
+			{
+				"name": "keyword.control.conditional.hedy12",
+				"match": "\\b(if|else)\\b"
+			},
+			{
+				"name": "keyword.control.iterative.hedy12",
+				"match": "\\b(repeat|times|for)\\b"
+			},
+			{
+				"name": "support.function.ask.hedy12",
+				"match": "\\bask\\b"
+			},
+			{
+				"name": "support.function.clear.hedy12",
+				"match": "\\bclear\\b"
+			},
+			{
+				"name": "support.function.print.hedy12",
+				"match": "\\bprint\\b"
+			},
+			{
+				"name": "support.function.play.hedy12",
+				"match": "\\bplay\\b"
+			},
+			{
+				"name": "support.function.sleep.hedy12",
+				"match": "\\bsleep\\b"
+			},
+			{
+				"name": "support.function.add.hedy12",
+				"match": "\\badd\\b"
+			},
+			{
+				"name": "support.function.remove.hedy12",
+				"match": "\\bremove\\b"
+			},
+			{
+				"name": "invalid.illegal.errorinvalid.hedy12",
+				"match": "\\bErrorInvalid\\b"
+			},
+			{
+				"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+				"captures": {
+					"1": {
+						"name": "support.function.turtle.hedy12"
+					},
+					"2": {
+						"name": "support.class.color.hedy12"
+					}
 				}
-			}
 
+			},
+			{
+				"name": "support.function.turtle.hedy12",
+				"match": "\\b(forward|turn)\\b"
+			},
+			{
+				"name": "support.class.pressed.hedy12",
+				"match": "\\b(pressed)\\b"
+			}
+			]
 		},
-		{
-			"name": "support.function.turtle.hedy12",
-			"match": "\\b(forward|turn)\\b"
+		"errors": {
+			"patterns": [
+				{
+					"name": "invalid.deprecated.echo.hedy12",
+					"match": "\\becho\\b"
+				},
+				{
+					"name": "invalid.illegal.errorinvalid.hedy12",
+					"match": "\\bErrorInvalid\\b"
+				},
+				{
+					"name": "invalid.illegal.ask.hedy12",
+					"match": "^[ \\t]*(?:[ \\t]*\\w+[ \\t]+)?ask\\b(?![ \\t]*[:]).*"
+				},
+				{
+					"name": "invalid.illegal.command.hedy12",
+					"match": "^[ \\t]*(is|=|at|to|from|random|in)"
+				},
+				{
+					"name": "invalid.illegal.errorinvalid.hedy12",
+					"match": "(?<!\\brepeat\\b.*)\\btimes\\b"
+				},
+				
+				{
+					"name": "invalid.illegal.hedy12",
+					"match": ",$"
+				}
+			]
 		},
-		{
-			"name": "support.class.pressed.hedy12",
-			"match": "\\b(pressed)\\b"
+		"maths":{ 
+			"patterns": [
+				{
+					"name": "keyword.command.hedy12",
+					"match": "[ \\t]*[+\\-*\\/][ \\t]*"
+				},
+				{
+					"name": "invalid.illegal.math.hedy12",
+					"match": "(?<=\\d)[ \\t]*[+\\-*\\/][ \\t]*(?=[\\w\"'])"
+				}
+			]
 		}
-		]
-	}
-	
 	},
 	"scopeName": "source.hedy12"
 }

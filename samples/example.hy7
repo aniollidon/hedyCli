@@ -1,14 +1,67 @@
-!import prova
-a is 9
-
-if a is 9 print 'a is 9'
-else print 'a is not 9'
-
-play C
+options is rock, paper, scissors
+options = rock, paper, scissors
+options=rock, paper, scissors
+options= rock, paper, scissors
+options =rock, paper, scissors
 
 
-    a is dsadasda
+computer_choice is options at random
+computer_choice = options at random
+computer_choice=options at random
 
-print a
+choice is ask 'What do you choose?'
+choice = ask 'What do you choose?'
+choice=ask 'What do you choose?'
 
-a is bla
+if hola is choice print 'you chose choice'
+if choice is hola print 'you chose choice'
+
+if hola = choice print 'you chose choice'
+if choice = hola print 'you chose choice'
+if hola=choice print 'you chose choice'
+if choice=hola print 'you chose choice'
+
+print 'you chose choice'
+print 'computer chose ' computer_choice 
+
+add pedra to options
+remove pedra from options
+
+print "Bla" #comentari
+aa is 2+2  #comentari
+aa = 2+2 #comentari
+a is bla #comentari
+a = bla #comentari
+a=bla #comentari
+a =bla #comentari
+a= bla #comentari
+
+color red
+turn 90
+clear
+sleep 2
+print 4+4-3*2/1 'blabla' 4+4-3*2/1
+
+print options at random ' ' options at random ' ' options at random
+
+pretty_colors is green, yellow
+favorite_color is ask 'Color?'
+if favorite_color not in pretty_colors print 'pretty!'
+else print 'meh'
+
+if g is pressed print 'Go'
+else print 'No go'
+
+# Errors
+suma = is ask 2+2 #comentari
+turn right
+remove 5 from ddd
+add ssds to dsdsd
+
+
+# N7
+repeat 2 times a is ask 'What is your name?'
+answer = ask 'Did you know you could ask a question multiple times?'
+if answer is yes repeat 2 times print 'You knew that already!'
+else repeat 3 times print 'You have learned something new!'
+print hola times
