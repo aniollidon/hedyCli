@@ -10,6 +10,24 @@
 			"include": "#errors"
 		},
 		{
+			"match": "^(#[ \\t]*![ \\t]*import)\\s+(.*)\\s+(from)\\s+(\\w+)",
+			"captures": {
+				"1": {
+					"name": "keyword.control.import.hedy12"
+				},
+				"2": {
+					"patterns": [{
+						"name": "keyword.command.comma.separator.hedy12",
+						"match": ","
+					}]
+				},
+				"3": {
+					"name": "keyword.control.from.hedy12"
+				}
+			}
+
+		},
+		{
 			"name": "comment.line.hedy12",
 			"match": "#.*"
 		},

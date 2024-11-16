@@ -1,3 +1,5 @@
-#!import encanteri1 from magia
+#!import encanteri1, encanteri2 from magia
 
 call encanteri1
+
+call encanteri2

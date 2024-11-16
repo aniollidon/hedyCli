@@ -14,6 +14,7 @@ class Provider{
     this._define_var_inline_bucle = define_var_inline_bucle;
     this._define_var_by_for = define_var_by_for;
     this._define_functions = define_functions;
+    this._define_fun_imports = define_functions; // Lligat a l'us de funcions
     this._define_fun_with = define_fun_with;
   }
   provideDocumentSemanticTokens(document, token){
@@ -30,9 +31,10 @@ class Provider{
 
           // troba la posició del primer caràcter no espaiat de la línia
           const firstNoSpaceChar = text.search(/\S/);
-          const textNotEmptyOrComment = firstNoSpaceChar !== -1 && text[firstNoSpaceChar] !== '#';
+          const specialComment = text.search("#!");
+          const textEmptyOrComment = firstNoSpaceChar === -1 || text[firstNoSpaceChar] === '#' && specialComment === -1;
           
-          if(!textNotEmptyOrComment) continue; // Si la línia està buida o és un comentari, no cal fer res
+          if(textEmptyOrComment) continue; // Si la línia està buida o és un comentari, no cal fer res
           const scope  = firstNoSpaceChar;
 
           // Posa a lloc les variables que s'han de setejar a la següent posició i esborra aquelles fora de l'abast
@@ -118,7 +120,6 @@ class Provider{
 
           // Si _define_functions és cert, busca declaracions de funcions 
           if (this._define_functions) {
-            // TODO
             
             const funtionDeclRegex = new RegExp('[\\t ]*(define)[\\t ]*\\b(\\w+)', 'g'); // Regex per trobar `define funcio`
             let match2;
@@ -139,6 +140,31 @@ class Provider{
               );
             }
               
+          }
+
+          // si _define_fun_imports és cert, busca usos de funcions
+          if (this._define_fun_imports) {
+
+            const importFunDeclRegex = new RegExp("^#[ \\t]*![ \\t]*import\\s+(.*)\\s+from\\s+\\w+", 'g'); // Regex per trobar `define funcio`
+            let match2;
+            while ((match2 = importFunDeclRegex.exec(text)) !== null) {
+              const functionlist = match2[1];
+              for (const functionName of functionlist.split(',')) {
+                if (!functionName) continue;
+                const startChar = match2.index + match2[0].indexOf(functionName);
+    
+                // Afegeix el nom de la variable al conjunt
+                if(!names[functionName])
+                  names[functionName] = {scope: scope, type: 'function'};
+
+                // Afegeix el token semàntic per a la declaració
+                tokensBuilder.push(
+                new vscode.Range(new vscode.Position(lineNumber, startChar), new vscode.Position(lineNumber, startChar + functionName.length)),
+                'function',
+                ['declaration']
+                );
+              }
+            }
           }
 
           // Busca referències a variables

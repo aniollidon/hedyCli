@@ -3,4 +3,4 @@
 
 npm install -g @vscode/vsce
 vsce package
-code --install-extension hedy-0.0.1.vsix
+code --install-extension hedy-0.0.2.vsix
