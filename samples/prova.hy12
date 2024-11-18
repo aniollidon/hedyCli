@@ -1,5 +1,7 @@
-#!import encanteri1, encanteri2 from magia
+#!import encanteri, encanteri2 from magia
 
 call encanteri1
 
-call encanteri2
+a is "fdggd"
+
+print a

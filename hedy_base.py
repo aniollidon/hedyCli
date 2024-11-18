@@ -62,6 +62,19 @@ def hedy_error_to_response(ex, keyword_lang='en'):
         "Location": ex.error_location
     }
 
+def _parse_sting_import_functions(input_string):
+    # Expressió regular per analitzar funcions i arguments
+    regex = r"(\w+)\s*(?:\(([^)]*)\))?"
+    result = []
+    
+    matches = re.finditer(regex, input_string)
+    for match in matches:
+        function_name = match.group(1)  # Nom de la funció
+        args = match.group(2).split(",") if match.group(2) else []  # Arguments, si n'hi ha
+        args = [arg.strip() for arg in args]  # Elimina espais als arguments
+        result.append({"name": function_name, "args": args})
+    
+    return result
 
 def interaction_available():
     try:
@@ -132,7 +145,7 @@ def replace_second_occurrence(pattern, replacement, text):
 
 def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False,
                  debug=False):
-    with ((app.app_context())):
+    with ((((app.app_context())))):
         # SETUP LANG
         g.lang = 'ca'
         g.keyword_lang = 'en'
@@ -143,22 +156,48 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
         # Un cop trobat modifica la linia afegint # al principi i importa l'extensio
         extensions = []
         mapa_funcions_extensio = {}
+        mapa_arguments_funcio = {}
         extra_hedy_code = ""
+        sep_identacio = ""
+
+        if level >= 17:
+            sep_identacio = ":"
 
         for line in hedy_code.split('\n'):
             match = re.match(r'^#[ \t]*![ \t]*import\s+(.*)\s+from\s+(\w+)', line)
             if match:
-                functions = match.group(1).replace(" ","").split(',')
+                if level < 12: # No hi ha funcions
+                    raise ValueError("No es pot importar extensions en nivells inferiors al 12.")
+                ext_functions = _parse_sting_import_functions(match.group(1))
+
+                if level < 13: # Si una funció té arguments, no es pot importar
+                    for function in ext_functions:
+                        if len(function['args']) > 0:
+                            raise ValueError(f"En aquest nivell no es poden importar funcions amb arguments."
+                                             f" Funció: {function['name']}({", ".join(function['args'])})")
+
                 extencio = match.group(2)
                 extensions.append(extencio)
-                for function in functions:
-                    match_usage = r"call[ \t]+" + re.escape(function)
-                    if re.search(match_usage, hedy_code):
-                        if function in mapa_funcions_extensio:
-                            raise ValueError(f"La funció '{function}' ja ha estat definida per l'ús d'una extensió.")
 
-                        mapa_funcions_extensio[function] = extencio
-                        extra_hedy_code += "define " + function + "\n  print \"$ERROR: la funció " + function + " no existeix al módul " + extencio  +"\"\n"
+                for function in ext_functions:
+                    match_usage = r"call[ \t]+" + re.escape(function['name'])
+                    if re.search(match_usage, hedy_code):
+                        if function['name'] in mapa_funcions_extensio:
+                            raise ValueError(f"La funció '{function['name']}' ja ha estat definida per l'ús d'una extensió.")
+
+                        mapa_funcions_extensio[function['name']] = extencio
+                        mapa_arguments_funcio[function['name']] = function['args']
+                        if len(function['args'])>0:
+
+                            args_hedy_code = " with " + ", ".join(function['args'])
+                            args_message = "(\"" + "\",\" ".join(function['args']) + "\")"
+                        else:
+                            args_hedy_code = ""
+                            args_message = ""
+
+                        extra_hedy_code += ("define " + function['name'] + args_hedy_code + sep_identacio
+                                            + "\n  print \"$ERROR: la funció " + function['name'] +  args_message +
+                                            " no existeix al módul " + extencio  +"\"\n")
 
         if debug and extensions:
             print("Extensions actives:", extensions)

@@ -4,6 +4,22 @@ const tokenTypes = ['function', 'variable', 'parameter'];
 const tokenModifiers = ['declaration', 'use'];
 const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers);
 
+function parseImportFunctions(input) {
+  input = input.replace(/[^a-zA-Z0-9,_()]/g, ''); // Elimina tots els caràcters que no siguin lletres, números, comes i parèntesis
+  const regex = /(\w+)\s*(?:\(([^)]*)\))?/g;
+  const result = [];
+  let match;
+
+  while ((match = regex.exec(input)) !== null) {
+      const name = match[1]; // Nom de la funció
+      const args = match[2] ? match[2].split(",").map(arg => arg.trim()) : []; // Arguments, si n'hi ha
+      result.push({ name, args });
+  }
+
+  return result;
+}
+
+
 
 class Provider{
   constructor(hasQuotes = false, hasScopes = false, define_var_operator = "is", define_var_inline_bucle = false, define_var_by_for = false, 
@@ -148,10 +164,17 @@ class Provider{
             const importFunDeclRegex = new RegExp("^#[ \\t]*![ \\t]*import\\s+(.*)\\s+from\\s+\\w+", 'g'); // Regex per trobar `define funcio`
             let match2;
             while ((match2 = importFunDeclRegex.exec(text)) !== null) {
-              const functionlist = match2[1];
-              for (const functionName of functionlist.split(',')) {
-                if (!functionName) continue;
-                const startChar = match2.index + match2[0].indexOf(functionName);
+              let functionsToimportText = match2[1];
+
+              if(!functionsToimportText) continue;
+
+              const defFunctions = parseImportFunctions(functionsToimportText.replace(/[^\w(),]/g, ''));
+
+              for (const funct of defFunctions) {
+                const functionName = funct.name;
+                const startChar = text.indexOf(functionName);
+
+                if (!functionName || startChar < 0) continue;
     
                 // Afegeix el nom de la variable al conjunt
                 if(!names[functionName])
