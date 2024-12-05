@@ -15,7 +15,7 @@
 		},
 		{
 			"name": "inline.quoted.conditional.element.hedy5",
-			"match": "(?<=\\bif)[ \\t]+(\\w+)[ \\t]+(is|in)[ \\t]+(\\w+)",
+			"match": "(?<=\\bif)[ \\t]+(\\w+)([ \\t]+is[ \\t]+|[ \\t]+in[ \\t]+)(\\w+)",
 			"captures": {
 				"1": {
 					"name": "string.regexp.hedy5",
@@ -54,7 +54,7 @@
 		
 		{
 			"name": "array.hedy5",
-			"begin": "(?<=\\b\\w+[ \\t]+is[ \\t].*)(?=.*,)",
+			"begin": "(?<=\\b\\w+([ \\t]+is[ \\t]))(?=.*,)",
 			"end": "(?=#|$)",
 			"patterns": [
 				{
@@ -108,12 +108,12 @@
 			]
 		},
 		{
-			"begin": "(?<=\\b(?:is)[ \\t])",
+			"begin": "(?<=\\w+(?:[ \\t]+is[ \\t]+))(?![ \\t]+ask)",
 			"end": "(?=#|$)",
 			"patterns": [
 				
 				{
-					"match": "(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"match": "[ \\t]*(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
 					"captures": {
 						"2": {
 							"name": "keyword.command.hedy5"

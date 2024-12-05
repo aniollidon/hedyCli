@@ -113,24 +113,27 @@ class Provider{
 
           // Si define_fun_with és cert, busca declaracions de funcions amb with
           if(this._define_fun_with){
-            const withRegex = /\bwith\s+(\w+)\b/g;
+            const withRegex = /define[ \t]+\w+[ \t]\bwith[ \t]+(.+)\b/g;
             let withMatch;
             while ((withMatch = withRegex.exec(text)) !== null) {
         
-              const param_name = withMatch[1];
-              const startChar = withMatch.index + withMatch[0].indexOf(param_name);
+              const params = withMatch[1].split(',');
+              for (const param of params) {
+                const param_name = param.trim();
+                const startChar = withMatch.index + withMatch[0].indexOf(param_name);
 
-              
-              // Afegeix el nom de la variable al conjunt
-              if(!names[param_name])
-                names[param_name] = {scope: undefined, type: 'parameter'}; // undefined per indicar que s'ha de setejar a la següent posició
+                
+                // Afegeix el nom de la variable al conjunt
+                if(!names[param_name])
+                  names[param_name] = {scope: undefined, type: 'parameter'}; // undefined per indicar que s'ha de setejar a la següent posició
 
-              // Afegeix el token semàntic per a la declaració
-              tokensBuilder.push(
-              new vscode.Range(new vscode.Position(lineNumber, startChar), new vscode.Position(lineNumber, startChar + param_name.length)),
-              'parameter',
-              ['declaration']
-              );
+                // Afegeix el token semàntic per a la declaració
+                tokensBuilder.push(
+                new vscode.Range(new vscode.Position(lineNumber, startChar), new vscode.Position(lineNumber, startChar + param_name.length)),
+                'parameter',
+                ['declaration']
+                );
+              }
             }
           }
 

@@ -145,7 +145,8 @@ def replace_second_occurrence(pattern, replacement, text):
 
 def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False,
                  debug=False):
-    with ((((app.app_context())))):
+
+    with ((app.app_context())):
         # SETUP LANG
         g.lang = 'ca'
         g.keyword_lang = 'en'

@@ -1,6 +1,5 @@
 from hedy_base import *
 
-
 def print_error(res):
     avis = "Error inesperat"
     missatge = "Error desconegut"
@@ -57,6 +56,10 @@ def console_hedy():
 
     if args.microbit:
         args.code = True
+
+    #TODO
+    print ("Executing", a
+    rgs.file, "with level", args.level, "and interact", args.interact)
 
     # check if the file exists
     if not os.path.exists(args.file):

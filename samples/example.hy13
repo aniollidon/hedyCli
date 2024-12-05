@@ -7,3 +7,12 @@ if usuari is 'Hedy'
         print 'Accés denegat'
 else
     print 'Accés denegat!'
+
+print "hola with hola"
+define song with place, place2
+    print place2
+    print 'My Bonnie is over the ' place
+
+call song with 'ocean'
+call song with 'sea'
+call song with 'ocean'
