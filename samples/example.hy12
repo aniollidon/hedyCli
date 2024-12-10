@@ -1,17 +1,12 @@
-superheroes = 'Spiderman', 'Batman', 'Black Widow'
-print superheroes at random
+ampolles = 99
+print "Hi ha " ampolles " ampolles a dalt de la paret,"
+print "Hi ha " ampolles " ampolles a dalt de la paret,"
+print "Pero si una ampolla caiguès per mala sort,"
+ampolles = ampolles - 1
+print "Queden " ampolles " ampolles a dalt de la paret."
+sleep
 
 
-print "Hola"
-a is ask "Hola"
-a=2
-a="Hola"
 
 
-if "s" is pressed
-    print "Hola"
-
-# Errors
-print Hola
-a is ask Hola
-a=Hola
+```

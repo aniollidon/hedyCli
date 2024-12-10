@@ -7,3 +7,4 @@ for comptador in range 1 to 10
 print 'Llest o no. Ves que vinc!'
 
 				
+ampolles = ampolles - 1

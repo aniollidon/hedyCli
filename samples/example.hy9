@@ -9,3 +9,4 @@ print answer
 repeat 3 times
 
 a =3222
+ampolles = ampolles - 1

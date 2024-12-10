@@ -79,6 +79,17 @@ print then he ask you
 from remove ffdfs from
 to 
 
+llista2 = 1,2,3,4,5,hol
+
+ampolles = 99
+print "Hi ha " ampolles " ampolles a dalt de la paret,"
+print "Hi ha " ampolles " ampolles a dalt de la paret,"
+print "Pero si una ampolla caiguès per mala sort,"
+ampolles = ampolles - 1
+hola = 3+5*2*hlllll
+print "Queden " ampolles " ampolles a dalt de la paret."
+sleep
+
 # Encara no va 
 repeat 2 times answer = ask 'Did you know you could ask a question multiple times?'
 if answer is yes repeat 2 times print 'You knew that already!'

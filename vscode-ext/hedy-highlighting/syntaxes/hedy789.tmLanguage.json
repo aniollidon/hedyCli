@@ -126,10 +126,15 @@
 							"patterns": [
 								
 								{
-									"include": "#maths"
+									"name": "constant.numeric.hedy789",
+									"match": "[ \\t]*[0-9]+"
 								},
 								{
-									"include": "#unquoted_phrase"
+									"name": "string.regexp.hedy789",
+									"match": "\\b(\\w+)\\b"
+								},
+								{
+									"include": "#maths"
 								}
 							]
 						}

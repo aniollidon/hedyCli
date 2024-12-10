@@ -124,12 +124,16 @@
 						"4": {
 							"name": "string.regexp.hedy11",
 							"patterns": [
-								
 								{
-									"include": "#maths"
+									"name": "constant.numeric.hedy11",
+									"match": "[ \\t]*[0-9]+"
 								},
 								{
-									"include": "#unquoted_phrase"
+									"name": "string.regexp.hedy11",
+									"match": "\\b(\\w+)\\b"
+								},
+								{
+									"include": "#maths"
 								}
 							]
 						}
