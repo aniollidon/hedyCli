@@ -24,6 +24,6 @@ sudo chmod +x /usr/local/bin/hedy
 
  sudo chmod -R 777 /usr/share/hedyCli/hedy_web/grammars-Total/
 
-code --install-extension /usr/share/hedyCli/vscode-ext/hedy-highlighting/hedy-0.0.1.vsix
+code --install-extension /usr/share/hedyCli/vscode-ext/hedy-highlighting/hedy-0.0.3.vsix
 
 ```
