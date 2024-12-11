@@ -175,7 +175,7 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                     for function in ext_functions:
                         if len(function['args']) > 0:
                             raise ValueError(f"En aquest nivell no es poden importar funcions amb arguments."
-                                             f" Funció: {function['name']}({", ".join(function['args'])})")
+                                             f" Funció: {function['name']}({', '.join(function['args'])})")
 
                 extencio = match.group(2)
                 extensions.append(extencio)

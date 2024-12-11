@@ -57,10 +57,6 @@ def console_hedy():
     if args.microbit:
         args.code = True
 
-    #TODO
-    print ("Executing", a
-    rgs.file, "with level", args.level, "and interact", args.interact)
-
     # check if the file exists
     if not os.path.exists(args.file):
         print("ERROR: El fitxer", args.file, "no existeix", file=sys.stderr)
