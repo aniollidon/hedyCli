@@ -16,3 +16,26 @@ define song with place, place2
 call song with 'ocean'
 call song with 'sea'
 call song with 'ocean'
+
+
+print 'Un ianqui baixa a la ciutat'
+define linia_1 with nota_1, nota_2, nota_3
+    play C4
+    play C4
+    play D4
+    play E4
+    play _
+    play _
+    play _
+
+call linia_1 with 29, 31, 30
+call linia_1 with 29, 28, 0
+call linia_1 with 32, 31, 30
+
+play C4
+play B3
+play G3
+play A3
+play B3
+play C4
+play C4

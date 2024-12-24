@@ -12,6 +12,10 @@ from flask import g, Flask
 from flask_babel import Babel
 from website.flask_helpers import render_template, proper_tojson, JinjaCompatibleJsonProvider
 import jinja_partials
+import collections
+import hedy_content
+from hedy_content import (ADVENTURE_ORDER_PER_LEVEL, KEYWORDS_ADVENTURES, ALL_KEYWORD_LANGUAGES,
+                          ALL_LANGUAGES, COUNTRIES, HOUR_OF_CODE_ADVENTURES)
 
 
 def get_locale():
@@ -24,6 +28,35 @@ app.url_map.strict_slashes = False  # Ignore trailing slashes in URLs
 app.json = JinjaCompatibleJsonProvider(app)
 jinja_partials.register_extensions(app)
 app.template_filter('tojson')(proper_tojson)
+
+
+COMMANDS = collections.defaultdict(hedy_content.NoSuchCommand)
+for lang in ALL_LANGUAGES.keys():
+    COMMANDS[lang] = hedy_content.Commands(lang)
+
+ADVENTURES = collections.defaultdict(hedy_content.NoSuchAdventure)
+for lang in ALL_LANGUAGES.keys():
+    ADVENTURES[lang] = hedy_content.Adventures(lang)
+
+PARSONS = collections.defaultdict()
+for lang in ALL_LANGUAGES.keys():
+    PARSONS[lang] = hedy_content.ParsonsProblem(lang)
+
+QUIZZES = collections.defaultdict(hedy_content.NoSuchQuiz)
+for lang in ALL_LANGUAGES.keys():
+    QUIZZES[lang] = hedy_content.Quizzes(lang)
+
+TUTORIALS = collections.defaultdict(hedy_content.NoSuchTutorial)
+for lang in ALL_LANGUAGES.keys():
+    TUTORIALS[lang] = hedy_content.Tutorials(lang)
+
+SLIDES = collections.defaultdict(hedy_content.NoSuchSlides)
+for lang in ALL_LANGUAGES.keys():
+    SLIDES[lang] = hedy_content.Slides(lang)
+
+TAGS = collections.defaultdict(hedy_content.NoSuchAdventure)
+for lang in ALL_LANGUAGES.keys():
+    TAGS[lang] = hedy_content.Tags(lang)
 
 class Testing:
     def __init__(self):
