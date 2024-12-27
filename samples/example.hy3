@@ -15,9 +15,10 @@ monster_4 is ask What do you do? #comentari
 
 # Errors
 llista is _ 
-llista is hola, adeu, hola_4
+llista is hola, adeu, hola_4, words fff
 a is hola #comentari
 
+print bb is a 2
 is hhh, 222
 at random
 print _

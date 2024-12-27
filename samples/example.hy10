@@ -26,11 +26,9 @@ remove plat from plats # Sí
 remove plat bla from plats # no
 add plat bla to plats # No
 
-if plat is 3
-
-repeat plat times
-print plat # Sí
-if plat is 3
-    print plat # Sí
-else
-    print plat # Sí
+plats = primer plat, segon plat, postre
+noms = Pere, Miquel
+for nom in noms
+    for plat in plats
+        menjar is ask nom ", què voldries de  " plat "?"
+        print nom " demana " menjar " com a " plat

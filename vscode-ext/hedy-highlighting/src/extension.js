@@ -20,6 +20,59 @@ function parseImportFunctions(input) {
 }
 
 
+function entreCometes(text, pos) {
+  let contasimple = 0;
+  let contaDoble = 0;
+
+  for (let i = 0; i < pos; i++) {
+    if (contasimple %2 === 0 && text[i] === '"') 
+      contaDoble++;
+
+    if (contaDoble %2 === 0 &&  text[i] === "'")
+      contasimple++;
+  }
+
+  if (contasimple % 2 === 1 || contaDoble % 2 === 1)
+    return true;
+
+  return false;
+}
+
+function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
+  // NOMLLISTA = a, CERCA, c <-llista
+  // NOMLLISTA = CERCA <- no llista
+  // NOMLLISTA = a, b, c # CERCA <- no llista
+  // CERCA ... NOMLLISTA = a, b, c <- no llista
+  // ... "a, b," CERCA <- no llista
+  // ... CERCA ... "a, b," <- no llista
+
+
+  const abans = text.substring(0, pos);
+  const despres = text.substring(pos);
+
+  let abansComa = abans.lastIndexOf(',');
+  let abansIgual = define_var_operator.includes("=") ? abans.lastIndexOf('='): -1;
+  let abansIs = define_var_operator.includes("is") ? abans.lastIndexOf(' is '): -1;
+
+  let despresComa = despres.indexOf(',');
+
+  if (hasQuotes) {
+    if(abansComa !== -1 && entreCometes(abans, abansComa))
+      abansComa = -1;
+
+    if(abansIgual !== -1 && entreCometes(abans, abansIgual))
+      abansIgual = -1;
+
+    if(abansIs !== -1 && entreCometes(abans, abansIs))
+      abansIs = -1;
+
+    if(despresComa !== -1 && entreCometes(despres, despresComa))
+      despresComa = -1;
+  }
+
+  return (abansComa > 0 || despresComa > 0) && (abansIgual > 0 || abansIs > 0);
+}
+
 
 class Provider{
   constructor(hasQuotes = false, hasScopes = false, define_var_operator = "is", define_var_inline_bucle = false, define_var_by_for = false, 
@@ -197,35 +250,19 @@ class Provider{
           for (const variableName in names) {
               const referenceRegex = new RegExp(`\\b${variableName}\\b`, 'g');
 
-              // Detectar fins a comentari o final de línia
-              const validText = 
-                text.substring(0, text.indexOf('#') === -1 ? text.length : text.indexOf('#'));
-              
-              // Si hi ha una coma
-              if(validText.includes(','))
-                continue;
-
               let refMatch;
               while ((refMatch = referenceRegex.exec(text)) !== null) {
+                const startChar = refMatch.index;
+
+                // Si la referència està en una llista
+                if(enUnaLlista(text, startChar, this._hasQuotes, this._define_var_operator))
+                  continue;
 
                 if(this._hasQuotes){ // Evita si la referència està dins de cometes
-                  const startChar = refMatch.index;
-
-                  let contasimple = 0;
-                  let contaDoble = 0;
-                  for (let i = 0; i < startChar; i++) {
-                    if (contasimple %2 === 0 && text[i] === '"') 
-                      contaDoble++;
-
-                    if (contaDoble %2 === 0 &&  text[i] === "'")
-                      contasimple++;
-                  }
-
-                  if (contasimple % 2 === 1 || contaDoble % 2 === 1)
+                  if(entreCometes(text, startChar))
                     continue;
                 }
 
-                const startChar = refMatch.index;
                 // Afegeix el token semàntic per a la referència
                 tokensBuilder.push(
                   new vscode.Range(new vscode.Position(lineNumber, startChar), new vscode.Position(lineNumber, startChar + variableName.length)),

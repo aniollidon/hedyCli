@@ -54,7 +54,7 @@
 		
 		{
 			"name": "array.hedy10",
-			"begin": "(?<=\\b\\w+([ \\t]+is[ \\t]|[ \\t]*=[ \\t]*))(?=.*,)",
+			"begin": "(?<=\\b\\w+([ \\t]+is[ \\t]|[ \\t]*=[ \\t]*))(?=.*,)(?!.*ask)",
 			"end": "(?=#|$)",
 			"patterns": [
 				{
@@ -107,40 +107,7 @@
 				}
 			]
 		},
-		{
-			"begin": "(?<=\\w+(?:[ \\t]+is[ \\t]+|[ \\t]*=))(?![ \\t]+ask)",
-			"end": "(?=#|$)",
-			"patterns": [
-				
-				{
-					"match": "[ \\t]*(\\w+)[ \\t]+(at)[ \\t]+(random)|(\\w+)",
-					"captures": {
-						"2": {
-							"name": "keyword.command.hedy10"
-						},
-						"3": {
-							"name": "support.function.hedy10"
-						},
-						"4": {
-							"name": "string.regexp.hedy10",
-							"patterns": [
-								{
-									"name": "constant.numeric.hedy10",
-									"match": "[ \\t]*[0-9]+"
-								},
-								{
-									"name": "string.regexp.hedy10",
-									"match": "\\b(\\w+)\\b"
-								},
-								{
-									"include": "#maths"
-								}
-							]
-						}
-					}
-				}
-			]
-		},
+
 		{
 			"begin": "(?<=\\bplay\\b)",
 			"end": "(?=#|$)",
