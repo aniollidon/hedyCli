@@ -30,6 +30,8 @@ print 'Do you want a good (g) or bad (b) ending?'
 if g is pressed print 'They lived happily ever after ❤'
 else print 'The prince was eaten by a hippopotamus 😭'
 
+a is hola #comentari
+
 remove ddd from ddd
 add ppp to dsdsd
 

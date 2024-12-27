@@ -10,3 +10,27 @@ for distance in distances
     forward distance
 
 ampolles = ampolles - 1
+
+plat = hola
+plats = entrant, primer plat, postres, 2+2
+a = plat #Sí
+a = plat at random #Sí
+a is plat at random #Sí 
+a = plat + 3 # Sí
+a = plat - 3 # Sí
+a is plat * 3 # Sí
+a = plat - 3 # Sí
+b = plat, ss # No
+c is ask 'bla' # ddd
+remove plat from plats # Sí
+remove plat bla from plats # no
+add plat bla to plats # No
+
+if plat is 3
+
+repeat plat times
+print plat # Sí
+if plat is 3
+    print plat # Sí
+else
+    print plat # Sí

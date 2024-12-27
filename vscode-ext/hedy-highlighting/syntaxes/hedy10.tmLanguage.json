@@ -113,7 +113,7 @@
 			"patterns": [
 				
 				{
-					"match": "[ \\t]*(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"match": "[ \\t]*(\\w+)[ \\t]+(at)[ \\t]+(random)|(\\w+)",
 					"captures": {
 						"2": {
 							"name": "keyword.command.hedy10"

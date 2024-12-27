@@ -197,8 +197,17 @@ class Provider{
           for (const variableName in names) {
               const referenceRegex = new RegExp(`\\b${variableName}\\b`, 'g');
 
+              // Detectar fins a comentari o final de línia
+              const validText = 
+                text.substring(0, text.indexOf('#') === -1 ? text.length : text.indexOf('#'));
+              
+              // Si hi ha una coma
+              if(validText.includes(','))
+                continue;
+
               let refMatch;
               while ((refMatch = referenceRegex.exec(text)) !== null) {
+
                 if(this._hasQuotes){ // Evita si la referència està dins de cometes
                   const startChar = refMatch.index;
 
@@ -216,14 +225,14 @@ class Provider{
                     continue;
                 }
 
-                  const startChar = refMatch.index;
-                  // Afegeix el token semàntic per a la referència
-                  tokensBuilder.push(
-                    new vscode.Range(new vscode.Position(lineNumber, startChar), new vscode.Position(lineNumber, startChar + variableName.length)),
-                    names[variableName].type,
-                    ['use']
-                  );
-                }
+                const startChar = refMatch.index;
+                // Afegeix el token semàntic per a la referència
+                tokensBuilder.push(
+                  new vscode.Range(new vscode.Position(lineNumber, startChar), new vscode.Position(lineNumber, startChar + variableName.length)),
+                  names[variableName].type,
+                  ['use']
+                );
+              }
           }
       }
 
