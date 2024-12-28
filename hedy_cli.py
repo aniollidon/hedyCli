@@ -9,7 +9,7 @@ def cleanhtml(raw_html):
     return re.sub(CLEANR, '', raw_html)
 
 
-def _print_colored_error(*msg, tipus="Error", ident=0):
+def print_error(*msg, tipus="Error", ident=0):
     if tipus == "Warning":
         msg = (Fore.LIGHTYELLOW_EX,) + msg + (Fore.RESET,)
     else:
@@ -19,7 +19,7 @@ def _print_colored_error(*msg, tipus="Error", ident=0):
     print(*msg, file=sys.stderr)
 
 
-def _print_colored_error_line(file, line, tipus="Error", ident=0):
+def print_error_line(file, line, tipus="Error", ident=0):
     print(" " * ident, end="", file=sys.stderr)
     if tipus == "Warning":
         print(Fore.LIGHTYELLOW_EX + "File:", "\"" + Fore.LIGHTBLUE_EX + file + Fore.LIGHTYELLOW_EX + "\", line",
@@ -33,7 +33,7 @@ def _print_colored_error_line(file, line, tipus="Error", ident=0):
     # print("\tFile:", "\"" + file + "\", line", line, file=sys.stderr)
 
 
-def print_error(res):
+def print_error_from_response(res):
     avis = "Error inesperat"
     missatge = "Error desconegut"
     if 'Error' in res:
@@ -46,18 +46,18 @@ def print_error(res):
     missatge = cleanhtml(missatge)
     linia = res['Location'][0]
 
-    _print_colored_error("Informació de", avis, tipus=avis, ident=2)
-    _print_colored_error_line(res['File'], str(linia), tipus=avis, ident=4)
+    print_error("Informació de", avis, tipus=avis, ident=2)
+    print_error_line(res['File'], str(linia), tipus=avis, ident=4)
 
     with open(res['File'], encoding='utf-8') as f:
         lines = f.readlines()
-        _print_colored_error(lines[linia - 1].strip(), tipus=avis, ident=6)
+        print_error(lines[linia - 1].strip(), tipus=avis, ident=6)
 
     if 'Location' in res:
-        _print_colored_error(avis, "a la", location_to_line_column(res['Location']) + ":", missatge, tipus=avis,
-                             ident=2)
+        print_error(avis, "a la", location_to_line_column(res['Location']) + ":", missatge, tipus=avis,
+                    ident=2)
     else:
-        _print_colored_error(avis + ":", missatge, tipus=avis, ident=2)
+        print_error(avis + ":", missatge, tipus=avis, ident=2)
 
 
 def get_level_from_file(file):
@@ -107,18 +107,19 @@ def console_hedy():
 
     # check if the file exists
     if not os.path.exists(args.file):
-        _print_colored_error("ERROR: El fitxer", args.file, "no existeix")
+        print_error("ERROR: El fitxer", args.file, "no existeix")
         return
 
     # Get level from file extension (.hy1, .hy2...) or flag --level
     detected_level = get_level_from_file(args.file)
     if args.level != 0 and detected_level != 0 and args.level != detected_level:
-        _print_colored_error("ERROR: El nivell especificat amb el flag -l no coincideix amb el nivell detectat pel fitxer. utilitza "
-              "--force-level per forçar el nivell")
+        print_error(
+            "ERROR: El nivell especificat amb el flag -l no coincideix amb el nivell detectat pel fitxer. utilitza "
+            "--force-level per forçar el nivell")
         return
 
     if args.level != 0 and args.force_level != 0 and args.level != args.force_level:
-        _print_colored_error("ERROR: El nivell especificat amb el flag -l no coincideix amb el nivell forçat amb -L")
+        print_error("ERROR: El nivell especificat amb el flag -l no coincideix amb el nivell forçat amb -L")
         return
 
     if detected_level != 0:
@@ -128,8 +129,8 @@ def console_hedy():
         args.level = args.force_level
 
     if detected_level == 0 and args.level == 0 and args.force_level == 0:
-        _print_colored_error("ERROR: No s'ha pogut nivell de hedy, fes-ho manualment amb el flag --level o -l, "
-                             "també pots especificar-lo a l'extensió del fitxer (.hy1, .hy2, .hy3...)")
+        print_error("ERROR: No s'ha pogut nivell de hedy, fes-ho manualment amb el flag --level o -l, "
+                    "també pots especificar-lo a l'extensió del fitxer (.hy1, .hy2, .hy3...)")
         return
 
     file_abs_path = os.path.abspath(args.file)
@@ -141,9 +142,9 @@ def console_hedy():
 
             if 'Error' in res or 'Warning' in res:
                 res['File'] = file_abs_path
-                print_error(res)
+                print_error_from_response(res)
         except KeyboardInterrupt:
-            _print_colored_error("\nFinal: Procés interromput per l'usuari")
+            print_error("\nFinal: Procés interromput per l'usuari")
         except Exception as e:
             if args.debug:
                 raise e
