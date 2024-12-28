@@ -17,12 +17,14 @@ sudo apt-get install python3.12-dev -y
 python3.12 -m venv env
 source env/bin/activate
 pip install -r hedy_web/requirements.txt  --no-cache-dir
+cd hedy_web/
+pybabel compile -f -d translations
 deactivate
 
 sudo cp support/hedy /usr/local/bin/hedy
 sudo chmod +x /usr/local/bin/hedy
 
- sudo chmod -R 777 /usr/share/hedyCli/hedy_web/grammars-Total/
+sudo chmod -R 777 /usr/share/hedyCli/hedy_web/grammars-Total/
 
 code --install-extension /usr/share/hedyCli/vscode-ext/hedy-highlighting/hedy-0.0.3.vsix
 

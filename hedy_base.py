@@ -1,6 +1,4 @@
 import sys
-import time
-import json
 import re
 import os
 
@@ -8,106 +6,52 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'hedy_
 import hedy
 from prefixes.normal import *
 from hedy_error import get_error_text
-from flask import g, Flask
+from flask import g, Blueprint, Flask
 from flask_babel import Babel
-from website.flask_helpers import render_template, proper_tojson, JinjaCompatibleJsonProvider
-import jinja_partials
-import collections
-import hedy_content
-from hedy_content import (ADVENTURE_ORDER_PER_LEVEL, KEYWORDS_ADVENTURES, ALL_KEYWORD_LANGUAGES,
-                          ALL_LANGUAGES, COUNTRIES, HOUR_OF_CODE_ADVENTURES)
 
 
-def get_locale():
-    return 'ca'
+def _setup_web_app(lang):
+    """
+    Prepara l'entorn d'app-web per poder transpilar i gestionar les traduccions
+    """
+
+    def get_locale():
+        return lang
+
+    app_obj = Flask('app', static_url_path='')
+    Babel(app_obj, locale_selector=get_locale, configure_jinja=False)
+    return app_obj
 
 
-app = Flask(__name__, static_url_path='')
-babel = Babel(app, locale_selector=get_locale)
-app.url_map.strict_slashes = False  # Ignore trailing slashes in URLs
-app.json = JinjaCompatibleJsonProvider(app)
-jinja_partials.register_extensions(app)
-app.template_filter('tojson')(proper_tojson)
-
-
-COMMANDS = collections.defaultdict(hedy_content.NoSuchCommand)
-for lang in ALL_LANGUAGES.keys():
-    COMMANDS[lang] = hedy_content.Commands(lang)
-
-ADVENTURES = collections.defaultdict(hedy_content.NoSuchAdventure)
-for lang in ALL_LANGUAGES.keys():
-    ADVENTURES[lang] = hedy_content.Adventures(lang)
-
-PARSONS = collections.defaultdict()
-for lang in ALL_LANGUAGES.keys():
-    PARSONS[lang] = hedy_content.ParsonsProblem(lang)
-
-QUIZZES = collections.defaultdict(hedy_content.NoSuchQuiz)
-for lang in ALL_LANGUAGES.keys():
-    QUIZZES[lang] = hedy_content.Quizzes(lang)
-
-TUTORIALS = collections.defaultdict(hedy_content.NoSuchTutorial)
-for lang in ALL_LANGUAGES.keys():
-    TUTORIALS[lang] = hedy_content.Tutorials(lang)
-
-SLIDES = collections.defaultdict(hedy_content.NoSuchSlides)
-for lang in ALL_LANGUAGES.keys():
-    SLIDES[lang] = hedy_content.Slides(lang)
-
-TAGS = collections.defaultdict(hedy_content.NoSuchAdventure)
-for lang in ALL_LANGUAGES.keys():
-    TAGS[lang] = hedy_content.Tags(lang)
-
-class Testing:
-    def __init__(self):
-        self.inputs = []
-        self.index = 0
-        self.outputs = []
-
-    def init_input(self, inputs):
-        self.inputs = inputs
-        self.index = 0
-
-    def c_input(self, question):
-        self.c_print(question)
-
-        if self.index >= len(self.inputs):
-            response = "blablabla"
-        else:
-            response = self.inputs[self.index]
-            self.index += 1
-
-        return response
-
-    def c_print(self, output):
-        self.outputs.append(output)
-
-    def output_string(self, separator=None):
-        if separator:
-            return str(separator).join(self.outputs)
-        else:
-            return "\n".join(self.outputs)
-
-
-def hedy_error_to_response(ex, keyword_lang='en'):
+def _hedy_error_to_response(ex, keyword_lang='en'):
     return {
-        "Error": ex.error_code,
+        "Error": get_error_text(ex, keyword_lang),
         "Location": ex.error_location
     }
+
+
+def location_to_line_column(location):
+    # Si és una llista és una posició de línes
+    if isinstance(location, list):
+        return "línia " + str(location[0])
+    else:
+        return "línia " + str(location[0]) + ", columna " + str(location[1])
+
 
 def _parse_sting_import_functions(input_string):
     # Expressió regular per analitzar funcions i arguments
     regex = r"(\w+)\s*(?:\(([^)]*)\))?"
     result = []
-    
+
     matches = re.finditer(regex, input_string)
     for match in matches:
         function_name = match.group(1)  # Nom de la funció
         args = match.group(2).split(",") if match.group(2) else []  # Arguments, si n'hi ha
         args = [arg.strip() for arg in args]  # Elimina espais als arguments
         result.append({"name": function_name, "args": args})
-    
+
     return result
+
 
 def interaction_available():
     try:
@@ -120,7 +64,7 @@ def interaction_available():
         return False
 
 
-def parse(code, level, lang='en', keyword_lang='en', microbit=False):
+def parse(code, level, keyword_lang='en', microbit=False):
     response = {}
     transpile_result = {}
     username = None
@@ -128,9 +72,9 @@ def parse(code, level, lang='en', keyword_lang='en', microbit=False):
 
     try:
         try:
-            transpile_result = hedy.transpile(code, level, lang, is_debug=False, microbit=microbit)
+            transpile_result = hedy.transpile(code, level, keyword_lang, is_debug=False, microbit=microbit)
         except hedy.exceptions.WarningException as ex:
-            translated_error = ex.error_code
+            translated_error = get_error_text(ex, 'en')
             if isinstance(ex, hedy.exceptions.InvalidSpaceException):
                 response['Warning'] = translated_error
             elif isinstance(ex, hedy.exceptions.UnusedVariableException):
@@ -141,12 +85,12 @@ def parse(code, level, lang='en', keyword_lang='en', microbit=False):
             transpile_result = ex.fixed_result
             exception = ex
         except hedy.exceptions.UnquotedEqualityCheckException as ex:
-            response['Error'] = ex.error_code
+            response['Error'] = get_error_text(ex, 'en')
             response['Location'] = ex.error_location
             exception = ex
 
     except hedy.exceptions.HedyException as ex:
-        response = hedy_error_to_response(ex)
+        response = _hedy_error_to_response(ex)
         exception = ex
 
     except Exception as E:
@@ -167,6 +111,7 @@ def _clear():
 def _foo(*args):
     pass
 
+
 def replace_second_occurrence(pattern, replacement, text):
     matches = list(re.finditer(pattern, text))
     if len(matches) >= 2:
@@ -176,15 +121,13 @@ def replace_second_occurrence(pattern, replacement, text):
     return text
 
 
-def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False, donot_execute=False,
-                 debug=False):
+def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, interact="auto", microbit=False,
+                 donot_execute=False, debug=False):
+    # Set the current directory to the root Hedy folder
+    os.chdir(os.path.join(os.path.dirname(__file__), "hedy_web"))
+    app_obj = _setup_web_app(lang)
 
-    with ((app.app_context())):
-        # SETUP LANG
-        g.lang = 'ca'
-        g.keyword_lang = 'en'
-        g.dir = 'ltr'
-        g.latin = True
+    with (app_obj.test_request_context()):
 
         # Busca extencions al codi amb regex: !import <extensio>
         # Un cop trobat modifica la linia afegint # al principi i importa l'extensio
@@ -200,11 +143,11 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
         for line in hedy_code.split('\n'):
             match = re.match(r'^#[ \t]*![ \t]*import\s+(.*)\s+from\s+(\w+)', line)
             if match:
-                if level < 12: # No hi ha funcions
+                if level < 12:  # No hi ha funcions
                     raise ValueError("No es pot importar extensions en nivells inferiors al 12.")
                 ext_functions = _parse_sting_import_functions(match.group(1))
 
-                if level < 13: # Si una funció té arguments, no es pot importar
+                if level < 13:  # Si una funció té arguments, no es pot importar
                     for function in ext_functions:
                         if len(function['args']) > 0:
                             raise ValueError(f"En aquest nivell no es poden importar funcions amb arguments."
@@ -217,11 +160,12 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                     match_usage = r"call[ \t]+" + re.escape(function['name'])
                     if re.search(match_usage, hedy_code):
                         if function['name'] in mapa_funcions_extensio:
-                            raise ValueError(f"La funció '{function['name']}' ja ha estat definida per l'ús d'una extensió.")
+                            raise ValueError(
+                                f"La funció '{function['name']}' ja ha estat definida per l'ús d'una extensió.")
 
                         mapa_funcions_extensio[function['name']] = extencio
                         mapa_arguments_funcio[function['name']] = function['args']
-                        if len(function['args'])>0:
+                        if len(function['args']) > 0:
 
                             args_hedy_code = " with " + ", ".join(function['args'])
                             args_message = "(\"" + "\",\" ".join(function['args']) + "\")"
@@ -230,15 +174,15 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                             args_message = ""
 
                         extra_hedy_code += ("define " + function['name'] + args_hedy_code + sep_identacio
-                                            + "\n  print \"$ERROR: la funció " + function['name'] +  args_message +
-                                            " no existeix al módul " + extencio  +"\"\n")
+                                            + "\n  print \"$ERROR: la funció " + function['name'] + args_message +
+                                            " no existeix al módul " + extencio + "\"\n")
 
         if debug and extensions:
             print("Extensions actives:", extensions)
             print("Mapa de funcions a extensions:", mapa_funcions_extensio)
             print("Extra hedy code: \n" + extra_hedy_code)
 
-        response, transpile_result = parse(extra_hedy_code + hedy_code, level, 'ca', 'en', microbit=microbit)
+        response, transpile_result = parse(extra_hedy_code + hedy_code, level, keyword_lang, microbit=microbit)
         pause_after_turtle = False
         foo_usage = False
 
@@ -306,7 +250,8 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
             # Elimina les definicions de funcions per falsejar hedy
             for function in mapa_funcions_extensio:
                 # Reemplaça la segona definició amb el patró: def $function per def _$function
-                python_code = replace_second_occurrence(r'def[ \t]+' + re.escape(function) + r'[ \t]*\(', r'def _' + function + '(', python_code)
+                python_code = replace_second_occurrence(r'def[ \t]+' + re.escape(function) + r'[ \t]*\(',
+                                                        r'def _' + function + '(', python_code)
 
             if testing:
                 python_code = python_code.replace("input", "testing.c_input")
@@ -344,162 +289,6 @@ def execute_hedy(hedy_code, level, testing=None, interact="auto", microbit=False
                 if isinstance(response["Location"], list):
                     response["Location"] = [int(response["Location"][0]) - extra_hedy_code.count('\n')]
                 else:
-                    response["Location"] = (int(response["Location"][0]) - extra_hedy_code.count('\n'), response["Location"][1])
+                    response["Location"] = (
+                        int(response["Location"][0]) - extra_hedy_code.count('\n'), response["Location"][1])
         return response
-
-
-def location_to_line_column(location):
-    # Si és una llista és una posició de línes
-    if isinstance(location, list):
-        return "línia " + str(location[0])
-    else:
-        return "línia " + str(location[0]) + ", columna " + str(location[1])
-
-
-def testing_execute_hedy_str(hedy_code, level, inputs=None):
-    testing = Testing()
-    if inputs:
-        testing.init_input(inputs)
-    response = execute_hedy(hedy_code, level, testing)
-
-    if 'Error' in response:
-        return "!!Error en l'execució de l'Hedy, error de \"" + response["Error"] + "\" a la " + \
-            location_to_line_column(response["Location"]) + "!!"
-    elif 'Warning' in response:
-        return testing.output_string() + "\n!!" + "Warning d'Hedy: \"" + response["Warning"] + "\" a la " + \
-            location_to_line_column(response["Location"]) + "!!"
-
-    return testing.output_string()
-
-
-def validar_random(input_text, estructura):
-    regex_pattern = estructura["output"]
-    variables = re.findall(r'@(\w+)', regex_pattern)
-
-    for variable in variables:
-        if "@" + variable not in estructura:
-            raise ValueError(f"No s'ha trobat la definició per a la variable '{variable}' en l'estructura.")
-
-    for variable, valors in estructura.items():
-        if variable.startswith("@"):
-            regex_pattern = regex_pattern.replace("@" + variable[1:], "(" + "|".join(valors) + ")")
-
-    regex_pattern = "^" + regex_pattern + "$"
-    regex = re.compile(regex_pattern)
-
-    if regex.match(input_text):
-        return True
-    else:
-        return False
-
-
-def hedy_testing(hedy_code, test_object):
-    level = int(test_object['level'])
-    tests_passed = 0
-    total_tests = 0
-    test_results = []
-    tests_failed = []
-
-    # Esborra els comentaris de hedy_code en cas que n'hi hagi
-    hedy_code = re.sub(r'#.*', '', hedy_code)
-
-    if 'tests' in test_object:
-        total_tests += len(test_object['tests'])
-        for t in test_object['tests']:
-            testing = Testing()
-            input_test = None
-            test_description = "Execució del programa"
-            test_results.append({"description": test_description, "inputs": None,
-                                 "result": "success"})
-            if 'inputs' in t:
-                testing.init_input(t['inputs'])
-                test_description = "Comparació amb entrada determinada"
-                test_results[-1]["inputs"] = t['inputs']
-                test_results[-1]["description"] = test_description
-
-            response = execute_hedy(hedy_code, level, testing)
-
-            if 'Error' in response:
-                tests_failed.append({
-                    "description": test_description,
-                    "inputs": t['inputs'] if 'inputs' in t else None,
-                    "type": "execution_error",
-                    "error": "Error en l'execució de l'Hedy",
-                    "details": "Error de \"" + response["Error"] + "\" a la " +
-                               location_to_line_column(response["Location"])
-                })
-                test_results[-1]["result"] = "execution_error"
-                break
-            elif 'Warning' in response:
-                tests_failed.append({
-                    "description": test_description,
-                    "inputs": t['inputs'] if 'inputs' in t else None,
-                    "type": "execution_warning",
-                    "error": "Warning en l'execució de l'Hedy",
-                    "details": "Warning de \"" + response["Warning"] + "\" a la " +
-                               location_to_line_column(response["Location"])
-                })
-                test_results[-1]["result"] = "execution_warning"
-
-            if 'output' in t:
-                test_results[-1]["output"] = t['output']
-
-                regularcheck = False
-
-                # si hi ha alguna clau a test_results[-1] que començi amb @
-                # vol dir que és una expressió regular
-                for key in t:
-                    if key[0] == "@":
-                        regularcheck = True
-                        break
-
-                if regularcheck:
-                    check = validar_random(testing.output_string(), t)
-                else:
-                    check = testing.output_string() == t['output']
-
-                if check:
-                    tests_passed += 1
-                else:
-                    tests_failed.append({
-                        "description": test_description,
-                        "type": "output_error",
-                        "inputs": t['inputs'] if 'inputs' in t else None,
-                        "error": "La sortida no és la que s'esperava",
-                        "desired": t['output'],
-                        "received": testing.output_string()
-                    })
-                    test_results[-1]["result"] = "failed"
-
-    if 'expected' in test_object:
-        total_tests += len(test_object['expected'])
-        for expected in test_object['expected']:
-            test_description = "Cerca &quot;" + expected['word'] + "&quot;"
-            test_results.append({"description": test_description, "result": "success"})
-            if 'count' in expected:
-                if hedy_code.count(expected['word']) == expected['count']:
-                    tests_passed += 1
-                else:
-                    tests_failed.append({
-                        "description": test_description,
-                        "type": "count_error",
-                        "error": "S'esperava trobar &quot;" + expected['word'] + "&quot; " + str(expected['count']) +
-                                 " vegades però s'ha trobat " + str(hedy_code.count(expected['word'])) + " vegades",
-                        "expected": expected['count'],
-                        "found": hedy_code.count(expected['word'])
-                    })
-                    test_results[-1]["result"] = "failed"
-            else:
-                if hedy_code.find(expected['word']) != -1:
-                    tests_passed += 1
-                else:
-                    tests_failed.append({
-                        "description": test_description,
-                        "type": "count_error",
-                        "error": "S'esperava trobar &quot;" + expected['word'] + "&quot; i no s'ha trobat",
-                        "expected": "*",
-                        "found": "0"
-                    })
-                    test_results[-1]["result"] = "failed"
-
-    return tests_passed, total_tests, test_results, tests_failed

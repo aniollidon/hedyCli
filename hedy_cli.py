@@ -80,8 +80,8 @@ def console_hedy():
     with open(args.file, encoding='utf-8') as f:
         hedy_code = f.read()
         try:
-            res = execute_hedy(hedy_code, args.level, interact=args.interact, microbit=args.microbit,
-                               donot_execute=args.code, debug=args.debug)
+            res = execute_hedy(hedy_code, args.level, lang='ca', keyword_lang='en', interact=args.interact,
+                               microbit=args.microbit, donot_execute=args.code, debug=args.debug)
 
             if 'Error' in res or 'Warning' in res:
                 print_error(res)
