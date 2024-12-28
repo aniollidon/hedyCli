@@ -3,6 +3,7 @@ import re
 import os
 from flask import g, Blueprint, Flask
 from flask_babel import Babel
+from colorama import Fore
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'hedy_web/'))
 import hedy
@@ -111,6 +112,12 @@ def _clear():
 def _foo(*args):
     pass
 
+# Funció que mapeja input
+def _input(arg):
+    msg = arg + " " + Fore.GREEN
+    val = input(msg)
+    print(Fore.RESET, end="")
+    return val
 
 def replace_second_occurrence(pattern, replacement, text):
     matches = list(re.finditer(pattern, text))
@@ -236,6 +243,9 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
             if not donot_execute and transpile_result.has_pressed:
                 # TODO
                 pass
+
+            if not donot_execute:
+                python_code = python_code.replace("input", "_input")
 
             # Afegeix les extencions al codi
             for ext in extensions:
