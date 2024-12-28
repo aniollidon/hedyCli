@@ -1,4 +1,37 @@
 from hedy_base import *
+from colorama import Fore, Back, Style
+
+# Expressió regular per netejar HTML
+CLEANR = re.compile('<.*?>')
+
+
+def cleanhtml(raw_html):
+    return re.sub(CLEANR, '', raw_html)
+
+
+def _print_colored_error(*msg, tipus="Error", ident=0):
+    if tipus == "Warning":
+        msg = (Fore.LIGHTYELLOW_EX,) + msg + (Fore.RESET,)
+    else:
+        msg = (Fore.RED,) + msg + (Fore.RESET,)
+
+    print(" " * ident, end="", file=sys.stderr)
+    print(*msg, file=sys.stderr)
+
+
+def _print_colored_error_line(file, line, tipus="Error", ident=0):
+    print(" " * ident, end="", file=sys.stderr)
+    if tipus == "Warning":
+        print(Fore.LIGHTYELLOW_EX + "File:", "\"" + Fore.LIGHTBLUE_EX + file + Fore.LIGHTYELLOW_EX + "\", line",
+              line + Fore.RESET,
+              file=sys.stderr)
+    else:
+        print(Fore.RED + "File:", "\"" + Fore.LIGHTBLUE_EX + file + Fore.RED + "\", line", line + Fore.RESET,
+              file=sys.stderr)
+
+    # sense color
+    # print("\tFile:", "\"" + file + "\", line", line, file=sys.stderr)
+
 
 def print_error(res):
     avis = "Error inesperat"
@@ -10,10 +43,21 @@ def print_error(res):
         avis = "Warning"
         missatge = res['Warning']
 
+    missatge = cleanhtml(missatge)
+    linia = res['Location'][0]
+
+    _print_colored_error("Informació de", avis, tipus=avis, ident=2)
+    _print_colored_error_line(res['File'], str(linia), tipus=avis, ident=4)
+
+    with open(res['File'], encoding='utf-8') as f:
+        lines = f.readlines()
+        _print_colored_error(lines[linia - 1].strip(), tipus=avis, ident=6)
+
     if 'Location' in res:
-        print(avis, "a la", location_to_line_column(res['Location']) + ":", missatge, file=sys.stderr)
+        _print_colored_error(avis, "a la", location_to_line_column(res['Location']) + ":", missatge, tipus=avis,
+                             ident=2)
     else:
-        print(avis + ":", missatge, file=sys.stderr)
+        _print_colored_error(avis + ":", missatge, tipus=avis, ident=2)
 
 
 def get_level_from_file(file):
@@ -31,6 +75,10 @@ def console_hedy():
                                      description="Executa un codi HEDY amb un nivell determinat")
 
     parser.add_argument('-l', "--level", help="Especifica el nivell amb que vols que funcioni HEDY",
+                        type=int,
+                        default=0)
+
+    parser.add_argument('-L', "--force-level", help="Força el nivell amb que vols que funcioni HEDY",
                         type=int,
                         default=0)
 
@@ -59,24 +107,32 @@ def console_hedy():
 
     # check if the file exists
     if not os.path.exists(args.file):
-        print("ERROR: El fitxer", args.file, "no existeix", file=sys.stderr)
+        _print_colored_error("ERROR: El fitxer", args.file, "no existeix")
         return
 
     # Get level from file extension (.hy1, .hy2...) or flag --level
     detected_level = get_level_from_file(args.file)
     if args.level != 0 and detected_level != 0 and args.level != detected_level:
-        print("ERROR: El nivell especificat amb el flag -l no coincideix amb el nivell detectat pel fitxer",
-              file=sys.stderr)
+        _print_colored_error("ERROR: El nivell especificat amb el flag -l no coincideix amb el nivell detectat pel fitxer. utilitza "
+              "--force-level per forçar el nivell")
+        return
+
+    if args.level != 0 and args.force_level != 0 and args.level != args.force_level:
+        _print_colored_error("ERROR: El nivell especificat amb el flag -l no coincideix amb el nivell forçat amb -L")
         return
 
     if detected_level != 0:
         args.level = detected_level
 
-    if detected_level == 0 and args.level == 0:
-        print("ERROR: No s'ha pogut nivell de hedy, fes-ho manualment amb el flag --level o -l, també pots "
-              "especificar-lo a l'extensió del fitxer (.hy1, .hy2, .hy3...)", file=sys.stderr)
+    if args.force_level != 0:
+        args.level = args.force_level
+
+    if detected_level == 0 and args.level == 0 and args.force_level == 0:
+        _print_colored_error("ERROR: No s'ha pogut nivell de hedy, fes-ho manualment amb el flag --level o -l, "
+                             "també pots especificar-lo a l'extensió del fitxer (.hy1, .hy2, .hy3...)")
         return
 
+    file_abs_path = os.path.abspath(args.file)
     with open(args.file, encoding='utf-8') as f:
         hedy_code = f.read()
         try:
@@ -84,9 +140,10 @@ def console_hedy():
                                microbit=args.microbit, donot_execute=args.code, debug=args.debug)
 
             if 'Error' in res or 'Warning' in res:
+                res['File'] = file_abs_path
                 print_error(res)
         except KeyboardInterrupt:
-            print("\nFinal: Procés interromput per l'usuari", file=sys.stderr)
+            _print_colored_error("\nFinal: Procés interromput per l'usuari")
         except Exception as e:
             if args.debug:
                 raise e

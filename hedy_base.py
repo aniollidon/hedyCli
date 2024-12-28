@@ -1,13 +1,13 @@
 import sys
 import re
 import os
+from flask import g, Blueprint, Flask
+from flask_babel import Babel
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'hedy_web/'))
 import hedy
 from prefixes.normal import *
 from hedy_error import get_error_text
-from flask import g, Blueprint, Flask
-from flask_babel import Babel
 
 
 def _setup_web_app(lang):
@@ -134,7 +134,7 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
         extensions = []
         mapa_funcions_extensio = {}
         mapa_arguments_funcio = {}
-        extra_hedy_code = ""
+        extra_prev_hedy_code = ""
         sep_identacio = ""
 
         if level >= 17:
@@ -173,37 +173,42 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
                             args_hedy_code = ""
                             args_message = ""
 
-                        extra_hedy_code += ("define " + function['name'] + args_hedy_code + sep_identacio
-                                            + "\n  print \"$ERROR: la funció " + function['name'] + args_message +
-                                            " no existeix al módul " + extencio + "\"\n")
+                        extra_prev_hedy_code += ("define " + function['name'] + args_hedy_code + sep_identacio
+                                                 + "\n  print \"$ERROR: la funció " + function['name'] + args_message +
+                                                 " no existeix al módul " + extencio + "\"\n")
 
         if debug and extensions:
             print("Extensions actives:", extensions)
             print("Mapa de funcions a extensions:", mapa_funcions_extensio)
-            print("Extra hedy code: \n" + extra_hedy_code)
+            print("Extra hedy code: \n" + extra_prev_hedy_code)
 
-        response, transpile_result = parse(extra_hedy_code + hedy_code, level, keyword_lang, microbit=microbit)
+        response, transpile_result = parse(extra_prev_hedy_code + hedy_code, level, keyword_lang, microbit=microbit)
         pause_after_turtle = False
         foo_usage = False
 
         if 'Error' not in response:
+            python_code = transpile_result.code
 
             if not donot_execute and transpile_result.has_turtle:
-                if interact in ["none", "cmd"]:
+                if interact == "none":
+                    python_code = python_code.replace("t.pencolor", "_foo")
+                    python_code = python_code.replace("t.forward", "_foo")
+                    python_code = python_code.replace("t.right", "_foo")
+                    python_code = python_code.replace("t.left", "_foo")
+                    foo_usage = True
+                elif interact == "cmd":
                     response["Error"] = "No es pot utilitzar la tortuga. Assegura't d'utilitzar un mode interactiu."
                     return response
-                else:
-                    if interact in ["auto", "full"]:
-                        available = interaction_available()
+                elif interact in ["auto", "full"]:
+                    available = interaction_available()
 
-                        if not available:
-                            response["Error"] = "No es pot utilitzar la tortuga en aquest sistema."
-                            return response
-                        else:
-                            import turtle as t
-                            pause_after_turtle = True
-
-            python_code = transpile_result.code
+                    if not available:
+                        response["Error"] = "No es pot utilitzar la tortuga en aquest sistema."
+                        return response
+                    else:
+                        import turtle as t
+                        t.left(90) # Orienta la tortuga cap a dalt igual que a hedy.com
+                        pause_after_turtle = True
 
             if not donot_execute and interact == "none" and transpile_result.has_sleep:
                 python_code = python_code.replace("time.sleep", "foo")
@@ -211,10 +216,10 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
 
             if not donot_execute and transpile_result.has_clear:
                 if interact == "none":
-                    python_code = python_code.replace("extensions.clear", "_clear")
-                else:
                     python_code = python_code.replace("extensions.clear", "_foo")
                     foo_usage = True
+                else:
+                    python_code = python_code.replace("extensions.clear", "_clear")
 
             if not donot_execute and transpile_result.has_music:
                 if interact == "none":
@@ -222,16 +227,11 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
                     python_code = python_code.replace("note_with_error", "_foo")
                     python_code = python_code.replace("localize", "_foo")
                     foo_usage = True
+                elif interact in ["cmd"]:
+                    response["Error"] = "No es pot utilitzar la música. Assegura't d'utilitzar un mode interactiu."
+                    return response
                 elif interact in ["auto", "full"]:
                     from hedy_music import play, localize, note_with_error
-                elif interact in ["cmd"]:
-                    python_code = python_code.replace("play", "_foo")
-                    python_code = python_code.replace("note_with_error", "_foo")
-                    python_code = python_code.replace("localize", "_foo")
-                    foo_usage = True
-                    print("PLAY🎵 ... (no implementat)")
-                pass
-                # TODO MILLORAR
 
             if not donot_execute and transpile_result.has_pressed:
                 # TODO
@@ -260,9 +260,9 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
             try:
                 if not donot_execute:
                     if debug:
-                        print(">>>>>> EXECUTANT PYTHON <<<<<<")
+                        print("######## CODI PYTHON EQUIVALENT ########")
                         print(python_code)
-                        print(">>>>>> FI <<<<<<")
+                        print("########## RESULTAT CODI HEDY ##########")
 
                     exec(python_code)
 
@@ -284,11 +284,11 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
                 response["Error"] = "Unexpected error"
                 response["details"] = str(e)
         else:
-            # Resta les linies de extra_hedy_code
+            # Resta les linies de extra_prev_hedy_code
             if 'Location' in response:
                 if isinstance(response["Location"], list):
-                    response["Location"] = [int(response["Location"][0]) - extra_hedy_code.count('\n')]
+                    response["Location"] = [int(response["Location"][0]) - extra_prev_hedy_code.count('\n')]
                 else:
                     response["Location"] = (
-                        int(response["Location"][0]) - extra_hedy_code.count('\n'), response["Location"][1])
+                        int(response["Location"][0]) - extra_prev_hedy_code.count('\n'), response["Location"][1])
         return response
