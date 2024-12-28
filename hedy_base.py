@@ -112,9 +112,11 @@ def _clear():
 def _foo(*args):
     pass
 
+
 # Funció que mapeja input
-def _input(arg):
-    msg = arg + " " + Fore.GREEN
+def _input(input_message):
+    input_message = input_message.strip()  # elimina espais al final del missatge
+    msg = input_message + " " + Fore.GREEN
     val = input(msg)
     print(Fore.RESET, end="")
     return val
