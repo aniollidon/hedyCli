@@ -44,7 +44,9 @@ def print_error_from_response(res):
         missatge = res['Warning']
 
     missatge = cleanhtml(missatge)
-    linia = res['Location'][0]
+    linia = 0
+    if 'Location' in res:
+        linia = res['Location'][0]
 
     print_error("Informació de", avis, tipus=avis, ident=2)
     print_error_line(res['File'], str(linia), tipus=avis, ident=4)
