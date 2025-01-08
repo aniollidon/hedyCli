@@ -16,6 +16,7 @@ sudo apt install python3.12-venv -y
 sudo apt-get install python3.12-dev -y
 python3.12 -m venv env
 source env/bin/activate
+pip install -r requirements.txt  --no-cache-dir
 pip install -r hedy_web/requirements.txt  --no-cache-dir
 cd hedy_web/
 pybabel compile -f -d translations
