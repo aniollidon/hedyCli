@@ -4,12 +4,12 @@ import os
 from flask import g, Blueprint, Flask
 from flask_babel import Babel
 from colorama import Fore
+import inspect
 
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'hedy_web/'))
 import hedy
 from prefixes.normal import *
 from hedy_error import get_error_text
-
 
 def _setup_web_app(lang):
     """
@@ -121,6 +121,45 @@ def _input(input_message):
     print(Fore.RESET, end="")
     return val
 
+
+def _get_from_higher_scope(name):
+    frame = inspect.stack()[1][0]
+    while name not in frame.f_locals:
+        frame = frame.f_back
+        if frame is None:
+            return None
+    return frame.f_locals[name]
+
+
+def _exec_from_higher_scope(name):
+    frame = inspect.stack()[1][0]
+    while name not in frame.f_locals:
+        frame = frame.f_back
+        if frame is None:
+            return None
+    exec(name+"()", frame.f_globals, frame.f_locals)
+
+
+def _if_pressed_mapping(mapping: list):
+    import keyboard
+
+    mapping_key = None
+    mapping_fun = dict()
+    for i, key in enumerate(mapping):
+        mapping_fun[key] = _get_from_higher_scope(mapping[key])
+        if key != "else":
+            mapping_key = key
+
+    tecla_premuda = keyboard.read_event()
+    if tecla_premuda.name == mapping_key:
+        _exec_from_higher_scope(mapping[mapping_key])
+    else:
+        if mapping["else"] == "if_pressed_default_else":
+            pass
+        else:
+            mapping_fun["else"]()
+
+
 def replace_second_occurrence(pattern, replacement, text):
     matches = list(re.finditer(pattern, text))
     if len(matches) >= 2:
@@ -216,7 +255,8 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
                         return response
                     else:
                         import turtle as t
-                        t.left(90) # Orienta la tortuga cap a dalt igual que a hedy.com
+                        t.left(90)  # Orienta la tortuga cap a dalt igual que a hedy.com
+                        python_code = "import turtle as t\n" + python_code
                         pause_after_turtle = True
 
             if not donot_execute and interact == "none" and transpile_result.has_sleep:
@@ -243,8 +283,11 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
                     from hedy_music import play, localize, note_with_error
 
             if not donot_execute and transpile_result.has_pressed:
-                # TODO
-                pass
+                if interact == "none":
+                    # TODO: Implementar la funció _if_pressed_mapping
+                    pass
+                else:
+                    python_code = python_code.replace("extensions.if_pressed", "_if_pressed_mapping")
 
             if not donot_execute:
                 python_code = python_code.replace("input", "_input")
@@ -276,7 +319,7 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
                         print(python_code)
                         print("########## RESULTAT CODI HEDY ##########")
 
-                    exec(python_code)
+                    exec(python_code, globals())
 
                     if pause_after_turtle:
                         t.mainloop()

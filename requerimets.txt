@@ -1,2 +1,5 @@
 simpleaudio
 numpy
+keyboard
+colorama
+turtle
