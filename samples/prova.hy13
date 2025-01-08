@@ -1,7 +1,0 @@
-#!import encanteri1(a,ss), encanteri2 from magia
-
-call encanteri1 with 1,1
-
-a is "fdggd"
-
-print b

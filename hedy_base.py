@@ -336,7 +336,7 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
             except Exception as e:
                 if debug:
                     raise e
-                response["Error"] = "Unexpected error"
+                response["Error"] = "Unexpected error - " + str(e)
                 response["details"] = str(e)
         else:
             # Resta les linies de extra_prev_hedy_code
