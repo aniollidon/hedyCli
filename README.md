@@ -21,6 +21,7 @@ pip install -r hedy_web/requirements.txt  --no-cache-dir
 cd hedy_web/
 pybabel compile -f -d translations
 deactivate
+cd ..
 
 sudo cp support/hedy /usr/local/bin/hedy
 sudo chmod +x /usr/local/bin/hedy
