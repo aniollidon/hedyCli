@@ -11,8 +11,18 @@ turn right
 clear
 sleep 2
 
+lliata is  hola, ss, patata #ok
+lliata is  hola, ask, patata #ok
+llista   is   variable #ok
+nom is ask "Bon dia com, es diu vosté?" #ok
+nom is  ask    "Bon dia com, es diu vosté?" #nok
+nom is  ask  "Bon dia com, es diu vosté?" #nok
+
+
 print You enter the haunted house.
 print options at random ' ' options at random ' ' options at random
+
+nom is ask "Bon dia com, es diu vosté?"
 
 nom is ask 'Qui camina pel bosc?'
 print nom ' camina pel bosc'

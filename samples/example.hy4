@@ -9,6 +9,12 @@ color red
 clear # Comentari
 sleep 2
 
+lliata is  hola, ss, patata
+lliata is  hola, ask, patata
+llista   is   variable
+nom is ask "Bon dia com, es diu vosté?"
+nom    is    ask    "Bon dia com, es diu vosté?"
+nom   is    ask  "Bon dia com, es diu vosté?"
 
 add hola to options
 remove hola from options  # Comentari
@@ -39,4 +45,3 @@ ask blabal
 a ask knjkdnkj
 print then he ask you
 
-"llll"

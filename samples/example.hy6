@@ -21,6 +21,12 @@ if choice = hola print 'you chose choice'
 if hola=choice print 'you chose choice'
 if choice=hola print 'you chose choice'
 
+lliata is  hola, ss, patata #ok
+lliata is  hola, ask, patata #color cometes
+llista   is   variable #ok
+nom    is    ask    "Bon dia com, es diu vosté?" #ok
+nom   is    ask  "Bon dia com, es diu vosté?" #ok
+
 print 'you chose choice'
 print 'computer chose ' computer_choice 
 

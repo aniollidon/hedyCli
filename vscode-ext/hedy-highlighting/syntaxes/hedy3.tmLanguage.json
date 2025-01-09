@@ -8,7 +8,7 @@
 		},
 		{
 			"name": "array.hedy3",
-			"begin": "(?<=\\b\\w+[ \\t]+is[ \\t].*)(?=.*,)",
+			"begin": "(?<=[ \\t]+is[ \\t]+)(?=.*,)(?!ask[ \\t])",
 			"end": "(?=#|$)",
 			"patterns": [
 				{
@@ -92,10 +92,9 @@
 
 		},
 		{
-			"begin": "(?<=\\b(?:is)[ \\t])(?!ask[ \\t])",
+			"begin": "(?<=\\b(?:is)[ \\t]+)(?![ \\t]*ask[ \\t])",
 			"end": "(?<=#|$)",
 			"patterns": [
-				
 				{
 					"match": "(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
 					"captures": {
