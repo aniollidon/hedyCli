@@ -15,6 +15,7 @@ sudo apt install python3.12 -y
 sudo apt install python3.12-venv -y
 sudo apt-get install python3.12-dev -y
 sudo apt-get install libasound2-dev -y
+sudo apt-get install python3.12-tk -y
 
 python3.12 -m venv env
 source env/bin/activate
