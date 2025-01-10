@@ -31,6 +31,8 @@ sudo chmod +x /usr/local/bin/hedy
 
 sudo chmod -R 777 /usr/share/hedyCli/hedy_web/grammars-Total/
 
+echo "alumne ALL=(ALL) NOPASSWD: /usr/local/bin/hedy" | sudo tee /etc/sudoers.d/hedy > /dev/null
+
 code --install-extension /usr/share/hedyCli/vscode-ext/hedy-highlighting/hedy-0.0.4.vsix
 
 ```
