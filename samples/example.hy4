@@ -2,7 +2,7 @@ options is pedra, paper, tisora  # Comentari
 computer_choice is options at random
 choice is ask 'What do you choose?'
 print 'you chose choice'
-print 'computer chose ' computer_choice 
+print 'computer chose ' computer_choice  
 add pedra to options
 remove pedra from options  # Comentari
 color red
@@ -13,8 +13,8 @@ lliata is  hola, ss, patata
 lliata is  hola, ask, patata
 llista   is   variable
 nom is ask "Bon dia com, es diu vosté?"
-nom    is    ask    "Bon dia com, es diu vosté?"
-nom   is    ask  "Bon dia com, es diu vosté?"
+nom is ask    "Bon dia com, es diu vosté?"
+nom is ask  "Bon dia com, es diu vosté?"
 
 add hola to options
 remove hola from options  # Comentari
@@ -26,8 +26,8 @@ llsita is ann, b, c # Comentari
 print options at random ' ' options at random ' ' options at random
 
 # Comentari
-
-print red green
+ 
+print red green 
 turn 90
 turn right
 
@@ -38,10 +38,12 @@ print You enter the haunted house.
 a is hola #comentari
 
 is hhh, 222
-at random
+at random 
 print _
 echo hola
 ask blabal
 a ask knjkdnkj
 print then he ask you
 
+var_1 is hola 
+var ho is hola

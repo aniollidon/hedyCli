@@ -1,23 +1,23 @@
-options is rock, paper, scissors
-computer_choice is options at random
+options is rock, paper, scissors  
+computer_choice is options at random 
 choice is ask 'What do you choose?'
-print 'you chose choice'
+print 'you chose choice' 
 print 'computer chose ' computer_choice 
-add pedra to options
-remove pedra from options
+add pedra to options 
+remove pedra from options 
 color red
-turn 90
+turn 90 
 turn right
-clear
-sleep 2
+clear  
+sleep 2 
 
-lliata is  hola, ss, patata #ok
+lliata is  hola, ss, patata #ok  
 lliata is  hola, ask, patata #ok
-llista   is   variable #ok
-nom is ask "Bon dia com, es diu vosté?" #ok
-nom is  ask    "Bon dia com, es diu vosté?" #nok
-nom is  ask  "Bon dia com, es diu vosté?" #nok
-
+llista    is   variable #ok
+nom is ask "Bon dia com, es diu vosté?" #ok 
+nomç is ask "Bon dia com, es diu vosté?" #nok 
+nomç is ask "Bon dia com, es diu vosté?" #nok
+ 
 
 print You enter the haunted house.
 print options at random ' ' options at random ' ' options at random
@@ -31,39 +31,52 @@ final is ask 'Vols un final bo o dolent?'
 if final is bo print nom " agafa l'espasa i el monstre fuig ràpidament"
 else print 'El monstre menja ' nom ' per sopar'
 
-pretty_colors is green, yellow
+pretty_colors is green, yellow 
 favorite_color is ask 'What is your favorite color?'
 if favorite_color not in pretty_colors print 'pretty!'
 else print 'meh'
 
 print 'Do you want a good (g) or bad (b) ending?'
-if g is pressed print 'They lived happily ever after ❤'
+if ç is pressed print 'They lived happily ever after ❤'
 else print 'The prince was eaten by a hippopotamus 😭'
-
+ 
 a is hola #comentari
 
 remove ddd from ddd
 add ppp to dsdsd
-
+ 
 aa is 2 + 2 #comentari
 a is bla
 llista is ss, ggg, gg #comentari
 
 llista is A, B, C, D, E
-if A in llista print "hi és" else print "no"
+if A in llista print "hi és" else print "no" 
 
 #Errors
 llista is _ 
 llista is hola, adeu, hola_4,
 print You enter the haunted house.
 hola is 3+5*2*hlllll
-llista is 5,5,5,5
+llista f is 5,5,5,5
 
 is hhh, 222
 at random
-print _
-echo hola
-ask blabal
-a ask knjkdnkj
-print then he ask you
+print _ 
+echo hola      
+ask blabal 
+a ask knjkdnkj  
+Print fdfs 
+  
 
+if bla is bbbbb print 'pretty!' 
+else print 'meh'
+  
+print then he ask you
+ 
+
+a is ask "hola"
+
+if a is "hola" b is hola  
+else b is adeu 
+
+print b
