@@ -1,10 +1,10 @@
 options=rock, paper, scissors
-options= rock, paper, scissors
+options= rock, paper, scissors 
 
 
 computer_choice is options at random
 computer_choice = options at random
-computer_choice=options at random 
+computer_choice2 = options at random 
  
 choice is ask 'What do you choose?'
 choice = ask 'What do you choose?'
@@ -32,7 +32,7 @@ remove pedra from options
 
 print "Bla" #comentari
 aa is 2+2  #comentari
-aa = 2+2 #comentari 
+aa = 2+2 #comentari  
 aaa  = 5
 aaa is 5
 a is bla #comentari
@@ -79,7 +79,7 @@ print _
 echo hola
 ask blabal 
 a ask knjkdnkj
-print then he ask you
+Print then he ask you
 from remove ffdfs from
 to 
 
@@ -99,3 +99,8 @@ repeat 2 times answer = ask 'Did you know you could ask a question multiple time
 if answer is yes repeat 2 times print 'You knew that already!'
 else repeat 3 times print 'You have learned something new!'
 print hola times
+
+a = a + 1
+
+a = hola hola
+

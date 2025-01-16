@@ -1,0 +1,5 @@
+var = hola
+
+if var is hola print "hellou" else print 
+
+    

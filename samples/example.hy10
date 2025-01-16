@@ -32,3 +32,4 @@ for nom in noms
     for plat in plats
         menjar is ask nom ", què voldries de  " plat "?"
         print nom " demana " menjar " com a " plat
+

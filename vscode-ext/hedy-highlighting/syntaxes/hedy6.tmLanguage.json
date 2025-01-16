@@ -64,8 +64,7 @@
 				{
 					"name": "string.regexp.hedy6",
 					"match": "\\b(\\w+)\\b"
-				},
-				
+				},				
 				{
 					"name": "invalid.illegal.hedy6",
 					"match": ",$"
@@ -113,7 +112,7 @@
 			"patterns": [
 				
 				{
-					"match": "[ \\t]*(\\w+)[ \\t]+(at)[ \\t]+(random)|(\\w+)",
+					"match": "[ \\t]*(\\w+)[ \\t]+(at)[ \\t]+(random)|(.*)",
 					"captures": {
 						"2": {
 							"name": "keyword.command.hedy6"
