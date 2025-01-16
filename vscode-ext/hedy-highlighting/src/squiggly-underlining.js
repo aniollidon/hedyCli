@@ -87,8 +87,16 @@ class History{
     /*
     * El passat 2 és dos sintagmes enrere
     */
-    past2(){
+    past2_has(token){
 
+      console.log("past2_has", token, this._linecount, this._partialcount)
+
+      if(this._partialcount >=2)
+        return this.past[this._linecount].partials[this._partialcount-2].tokens.includes(token);
+      if(this._partialcount === 1&& this._linecount > 1){
+        const partials1= this.past[this._linecount-1].partials;
+        return partials1[partials1.length-1].tokens.includes(token);
+        }
     }
 }
 
@@ -390,7 +398,7 @@ class ComandesHedy{
           let customError = false;
 
           for (let error of comand.commonErrors){
-            if (! error.search
+            if (error.search === "past2" && this.history.past2_has(error.token)
                 || error.search === "before" && beforeComand.match(error.match)
                 || error.search === "line" && lineTrim.match(error.match)
                 || error.search === "after" && lineTrim.substring(pos).match(error.match)
