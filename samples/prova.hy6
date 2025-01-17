@@ -1,5 +1,5 @@
-var = hola
+print "ho" 
 
-if var is hola print "hellou" else print 
-
-    
+if a is b 
+print "ciao"
+else print "ciao"

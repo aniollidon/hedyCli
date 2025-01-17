@@ -6,9 +6,9 @@ print 'computer chose ' computer_choice
 add pedra to options 
 remove pedra from options 
 color red
-turn 90 
+turn 90
 turn right
-clear  
+clear
 sleep 2 
 
 lliata is  hola, ss, patata #ok  
@@ -26,7 +26,7 @@ nom is ask "Bon dia com, es diu vosté?"
 
 nom is ask 'Qui camina pel bosc?'
 print nom ' camina pel bosc'
-print nom ' troba un monstre'
+print nom ' troba un monstre' 
 final is ask 'Vols un final bo o dolent?'
 if final is bo print nom " agafa l'espasa i el monstre fuig ràpidament"
 else print 'El monstre menja ' nom ' per sopar'
@@ -59,7 +59,7 @@ print You enter the haunted house.
 hola is 3+5*2*hlllll
 llista f is 5,5,5,5
 
-is hhh, 222
+is hhh, 222 
 at random
 print _ 
 echo hola      

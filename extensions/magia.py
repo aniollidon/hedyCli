@@ -1,4 +1,4 @@
-def encanteri1(arg, arg2):
+def encanteri1():
     print("Abra cadabra pota de cabra ")
 
 def encanteri2():

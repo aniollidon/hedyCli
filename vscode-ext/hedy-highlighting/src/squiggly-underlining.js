@@ -19,7 +19,7 @@ const bucleInlineRegex = /^(repeat[ \\t]+([\p{L}_\d]+)[ \\t]+times[ \\t]+)(.*)$/
   //     - remove ___ from <llista>
   //     - <llista> at random
   //     - ____ in <llista>
-  // - detectar usos cometes (quan són necessaries)
+  // - detectar usos cometes (quan són necessaries) i quan no
 
 
 class Comand{
@@ -49,7 +49,8 @@ class History{
       this._partialcount = -1;
 
         this.past[this._linecount] = {
-          line: line, 
+          code: line, 
+          line: this._linecount,
           identation: identation,
           partials: []
         };
@@ -66,9 +67,9 @@ class History{
       console.log("add partial", line, this._linecount, this._partialcount)
 
       this.past[this._linecount].partials.push({
-          counter: this._linecount, 
+          line: this._linecount, 
           partial: this._partialcount,
-          line: line, 
+          code: line, 
           identation: identation,
           tag: tag,
           tokens: []});
@@ -88,15 +89,32 @@ class History{
     * El passat 2 és dos sintagmes enrere
     */
     past2_has(token){
-
       console.log("past2_has", token, this._linecount, this._partialcount)
+      const partial = this.get_partial(2);
+      if(partial === null) return false;
+      else return partial.tokens.includes(token);
+    }
 
-      if(this._partialcount >=2)
-        return this.past[this._linecount].partials[this._partialcount-2].tokens.includes(token);
-      if(this._partialcount === 1&& this._linecount > 1){
-        const partials1= this.past[this._linecount-1].partials;
-        return partials1[partials1.length-1].tokens.includes(token);
-        }
+    /* 
+    * Navega #steps enrere per trobar parcial 
+    */
+    get_partial(steps){
+      let partial = -1;
+      let line = this._linecount;
+      let steps_left = steps +1;
+      
+      while(partial < 0){
+        if(line < 0) break;
+        const line_partials = this.past[line].partials.length;
+        partial = line_partials - steps_left;
+        if(partial >= 0) break;
+        steps_left -= line_partials;
+        line--;
+      }
+
+      if(partial < 0 || line < 0) return null;
+      return this.past[line].partials[partial];
+      
     }
 }
 
@@ -117,6 +135,7 @@ class ComandesHedy{
       
       const vardef_commonErrors = [{
         search: "before",
+        when: "invalid",
         match: /[\p{L}_\d][\t ]+[\p{L}_\d]/gu,
         highlight: "before",
         message: "Per definir una variable només pots fer servir una paraula"
@@ -155,6 +174,7 @@ class ComandesHedy{
         this.comandes.push(new Comand("if"));
         this.comandes.push(new Comand("else", [], [{
           search: "past2",
+          when: "valid",
           token: "if",
           message: "La comanda 'else' espera que s'hagi usat 'if' anteriorment"
         }])); // TODO ajustar funcionament regex
@@ -257,7 +277,6 @@ class ComandesHedy{
 
       // Mira si és un else inline
       const else_inline = this._condicional_inline? condicionalElseInlineRegex.exec(lineTrim) : null;
-
 
       console.log("_errorsOnPhrase line", lineTrim)
       console.log("_errorsOnPhrase bucle", bucle, "condicional", condicional, "else", else_inline)
@@ -366,8 +385,10 @@ class ComandesHedy{
           lineTrim.search(comand.rnom) 
           : lineTrim.search(new RegExp(`\\b${comand.rnom}\\b`));
         
-
+        // Si no hi ha la comanda
         if (pos === -1) continue;
+
+        // O si aquesta està entre cometes
         if(this.cometes && entreCometes(lineTrim, pos)) continue;
 
         const beforeComand = lineTrim.substring(0, pos + comand.nom.length);
@@ -375,7 +396,6 @@ class ComandesHedy{
         // Quan print o ask funcionen sense cometes tot és string i no cal comprovar les comandaes
         if(!this.cometes && beforeComand.match(/\b(print|ask)\b/gu)) continue; 
        
-
         let contextValid = false;
         let errormessage = `La comanda '${comand.nom}' no es pot fer servir en aquest context`;
         
@@ -394,46 +414,47 @@ class ComandesHedy{
           }
       }
 
-        if(!contextValid && !comand.deprecated){
-          let customError = false;
+      let customError = false;
 
-          for (let error of comand.commonErrors){
-            if (error.search === "past2" && this.history.past2_has(error.token)
-                || error.search === "before" && beforeComand.match(error.match)
-                || error.search === "line" && lineTrim.match(error.match)
-                || error.search === "after" && lineTrim.substring(pos).match(error.match)
-              ){
-              let start =  pos 
-              let end = pos + comand.nom.length;
+      for (let error of comand.commonErrors){
+        console.log("busca error", error)
+        if ((error.when === "invalid" && !contextValid && !comand.deprecated 
+            || error.when === "valid" && contextValid && !comand.deprecated) 
+            && (error.search === "before" && beforeComand.match(error.match)
+            || error.search === "line" && lineTrim.match(error.match)
+            || error.search === "after" && lineTrim.substring(pos).match(error.match)
+            || error.search === "past2" && !this.history.past2_has(error.token))
+          ){
+          let start = pos 
+          let end = pos + comand.nom.length;
 
-              if(error.highlight === "before"){
-                  start = 0;
-                  end = beforeComand.length - comand.nom.length;
-              }
-              else if(error.highlight === "after"){
-                  start = pos + comand.nom.length;
-                  end = lineTrim.length;
-              }
-
-              errors_found.push({
-                comand: comand.nom,
-                message: error.message,
-                start: start + identationLength,
-                end: end + identationLength
-              });
-
-              customError = true;
-            }
+          if(error.highlight === "before"){
+              start = 0;
+              end = beforeComand.length - comand.nom.length;
+          }
+          else if(error.highlight === "after"){
+              start = pos + comand.nom.length;
+              end = lineTrim.length;
           }
 
-          if(!customError)
-            errors_found.push({
-              comand: comand.nom,
-              message: errormessage,
-              start: pos + identationLength,
-              end: pos + identationLength + comand.nom.length
-            });
+          errors_found.push({
+            comand: comand.nom,
+            message: error.message,
+            start: start + identationLength,
+            end: end + identationLength
+          });
+
+          customError = true;
         }
+      }
+
+      if(!customError && !contextValid)
+        errors_found.push({
+          comand: comand.nom,
+          message: errormessage,
+          start: pos + identationLength,
+          end: pos + identationLength + comand.nom.length
+        });
 
         if(contextValid && comand.deprecated){
           errors_found.push({
