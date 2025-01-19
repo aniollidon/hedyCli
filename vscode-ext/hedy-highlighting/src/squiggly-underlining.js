@@ -554,7 +554,7 @@ function onChangeHedyCode(lines, hedyLevel, diagnosticCollection, document){
       const errors = hedy.checkErrors(line, i);
       if (errors !== null){
         for (let error of errors){
-          const severity = error.severity === "warning" ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Hint;
+          const severity = error.severity === "warning" ? vscode.DiagnosticSeverity.Warning : vscode.DiagnosticSeverity.Error;
           diagnostics.push(new vscode.Diagnostic(new vscode.Range(i, error.start, i, error.end), error.message, severity));
         }
       }
