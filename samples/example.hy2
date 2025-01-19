@@ -24,6 +24,7 @@ play C1
 # Errors
 print "hola"
 monster is _ 
+print monster
 print _
 echo hola  
 ask blabal 

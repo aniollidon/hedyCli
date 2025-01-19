@@ -2,6 +2,27 @@
 
 call encanteri1
 
-a is "fdggd"
+aniol = "fdggd"
 
-print a
+print aniol
+
+print aniol aniol
+
+if 1 is 1 
+    print """" aniol
+
+if aniol is shhhh
+    paper = "hola"
+    
+if aniol is shhhh
+    paper = "hola"
+    paper = "hola"
+
+print aniol
+
+
+options=rock, paper, scissors
+options= rock, paper, scissors 
+
+
+computer_choice is options at random

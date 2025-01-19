@@ -1,6 +1,9 @@
 const vscode = require('vscode');
 const { entreCometes, enUnaLlista } = require('./utils');
 
+// TODO: Alguna cosa no funciona amb les funcions...
+// TODO: NO s'ha de borrar el nom de la variable si el scope és més petit que el de la variable
+
 /* HEDY NIVELLS:
 N1: (no provider)
   + print | ask | echo | play | turn | forward
@@ -95,13 +98,14 @@ const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers);
 
 function parseImportFunctions(input) {
   input = input.replace(/[^a-zA-Z0-9,_()]/g, ''); // Elimina tots els caràcters que no siguin lletres, números, comes i parèntesis
-  const regex = /([\p{L}_\d]+)\s*(?:\(([^)]*)\))?/gu;
+  const regex = /([\p{L}_\d]+) *(?:\(([^)]*)\))?/gu;
   const result = [];
   let match;
 
   while ((match = regex.exec(input)) !== null) {
       const name = match[1]; // Nom de la funció
       const args = match[2] ? match[2].split(",").map(arg => arg.trim()) : []; // Arguments, si n'hi ha
+      console.log(name, args);
       result.push({ name, args });
   }
 
@@ -134,13 +138,14 @@ class Provider{
           const text = line.text;
 
           // troba la posició del primer caràcter no espaiat de la línia
-          const firstNoSpaceChar = text.search(/\S/);
+          const firstNoSpaceChar = text.search(/[^ ]/);
           const specialComment = text.search("#!");
           const textEmptyOrComment = firstNoSpaceChar === -1 || text[firstNoSpaceChar] === '#' && specialComment === -1;
           
           if(textEmptyOrComment) continue; // Si la línia està buida o és un comentari, no cal fer res
           const scope  = firstNoSpaceChar;
 
+          console.log("LINE: ", text, "SCOPE: ", scope);
           // Posa a lloc les variables que s'han de setejar a la següent posició i esborra aquelles fora de l'abast
           for (const variableName in names) {
             if (names[variableName].scope === undefined) {
@@ -149,6 +154,7 @@ class Provider{
             }
 
             if (this._hasScopes && scope < names[variableName].scope) {
+              console.log("DELETE: ", variableName);
               delete names[variableName];
             }
           }
@@ -159,8 +165,7 @@ class Provider{
           if (this._define_var_inline_bucle)
             before_def = "(?:^|\\btimes\\b)";
 
-          const declarationRegex = new RegExp(`${before_def} *\\b([\\p{L}_\\d]+)\\s*( ${this._define_var_operator})`, 'gu'); // Regex per trobar `var is|=`
-          // TODO millorar cas de = sense espais
+          const declarationRegex = new RegExp(`${before_def} *\\b([\\p{L}_\\d]+) *( ${this._define_var_operator})`, 'gu'); // Regex per trobar `var is|=`
 
           let match;
           while ((match = declarationRegex.exec(text)) !== null) {
@@ -181,7 +186,7 @@ class Provider{
 
           // Si define_var_by_for és cert, busca declaracions entre for i in
           if (this._define_var_by_for) {
-            const forInRegex = /\bfor\s+([\p{L}_\d]+)\s+in\b/gu;
+            const forInRegex = /\bfor +([\p{L}_\d]+) +in\b/gu;
             let forMatch;
             while ((forMatch = forInRegex.exec(text)) !== null) {
               const variableName = forMatch[1];
@@ -202,7 +207,7 @@ class Provider{
 
           // Si define_fun_with és cert, busca declaracions de funcions amb with
           if(this._define_fun_with){
-            const withRegex = /define +[\p{L}_\d]+ \bwith +(.+)\b/gu;
+            const withRegex = /define +[\p{L}_\d]+ with +(.+)/gu;
             let withMatch;
             while ((withMatch = withRegex.exec(text)) !== null) {
         
@@ -238,7 +243,7 @@ class Provider{
   
               // Afegeix el nom de la variable al conjunt
               if(!names[functionName])
-                names[functionName] = {scope: scope, type: 'function'};
+                names[functionName] = {scope: undefined, type: 'function'};
 
               // Afegeix el token semàntic per a la declaració
               tokensBuilder.push(
@@ -253,14 +258,14 @@ class Provider{
           // si _define_fun_imports és cert, busca usos de funcions
           if (this._define_fun_imports) {
 
-            const importFunDeclRegex = new RegExp("^# *! *import\\s+(.*)\\s+from\\s+[\\p{L}_\\d]+", 'g'); // Regex per trobar `define funcio`
+            const importFunDeclRegex = new RegExp("^# *! *import +(.*) +from +[\\p{L}_\\d]+", 'gu'); // Regex per trobar `define funcio`
             let match2;
             while ((match2 = importFunDeclRegex.exec(text)) !== null) {
               let functionsToimportText = match2[1];
 
               if(!functionsToimportText) continue;
 
-              const defFunctions = parseImportFunctions(functionsToimportText.replace(/[^[\p{L}_\d](),]/g, ''));
+              const defFunctions = parseImportFunctions(functionsToimportText);
 
               for (const funct of defFunctions) {
                 const functionName = funct.name;
@@ -270,7 +275,7 @@ class Provider{
     
                 // Afegeix el nom de la variable al conjunt
                 if(!names[functionName])
-                  names[functionName] = {scope: scope, type: 'function'};
+                  names[functionName] = {scope: 0, type: 'function'};
 
                 // Afegeix el token semàntic per a la declaració
                 tokensBuilder.push(
@@ -309,6 +314,7 @@ class Provider{
           }
       }
 
+      console.log("NAmes: ", names);
     return tokensBuilder.build();
   }
 };
