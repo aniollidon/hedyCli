@@ -59,10 +59,6 @@
 			"match": "\\becho\\b"
 		},
 		{
-			"name": "invalid.illegal.errorinvalid.hedy1",
-			"match": "\\bErrorInvalid\\b"
-		},
-		{
 			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 			"captures": {
 				"1": {

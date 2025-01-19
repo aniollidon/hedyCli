@@ -7,9 +7,6 @@
 			"match": "\\b_\\b"
 		},
 		{
-			"include": "#errors"
-		},
-		{
 			"name": "comment.line.hedy10",
 			"match": "#.*"
 		},
@@ -174,10 +171,6 @@
 				"match": "\\bremove\\b"
 			},
 			{
-				"name": "invalid.illegal.errorinvalid.hedy10",
-				"match": "\\bErrorInvalid\\b"
-			},
-			{
 				"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 				"captures": {
 					"1": {
@@ -197,30 +190,6 @@
 				"name": "support.class.pressed.hedy10",
 				"match": "\\b(pressed)\\b"
 			}
-			]
-		},
-		"errors": {
-			"patterns": [
-				{
-					"name": "invalid.deprecated.echo.hedy10",
-					"match": "\\becho\\b"
-				},
-				{
-					"name": "invalid.illegal.errorinvalid.hedy10",
-					"match": "\\bErrorInvalid\\b"
-				},
-				{
-					"name": "invalid.illegal.ask.hedy10",
-					"match": "^[ \\t]*(?:[ \\t]*\\w+[ \\t]+)?ask\\b(?![ \\t]*[:]).*"
-				},
-				{
-					"name": "invalid.illegal.command.hedy10",
-					"match": "^[ \\t]*(is|=|at|to|from|random|in)"
-				},
-				{
-					"name": "invalid.illegal.errorinvalid.hedy10",
-					"match": "(?<!\\brepeat\\b.*)\\btimes\\b"
-				}	
 			]
 		},
 		"inside_comp":{

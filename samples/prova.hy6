@@ -1,5 +1,2 @@
-print "ho" 
-
-if a is b 
-print "ciao"
-else print "ciao"
+if a is a repeat 5 times print "uu"
+else print "no" 

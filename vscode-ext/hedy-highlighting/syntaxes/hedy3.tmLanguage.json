@@ -130,9 +130,6 @@
 			"match": "[0-9]+"
 		},
 		{
-			"include": "#errors"
-		},
-		{
 			"include": "#commands"
 		},
 		{
@@ -195,26 +192,6 @@
 			"name": "support.function.turtle.hedy3",
 			"match": "\\b(forward|turn)\\b"
 		}
-		]
-	},
-	"errors": {
-		"patterns": [
-			{
-				"name": "invalid.deprecated.echo.hedy3",
-				"match": "\\becho\\b"
-			},
-			{
-				"name": "invalid.illegal.errorinvalid.hedy3",
-				"match": "\\bErrorInvalid\\b"
-			},
-			{
-				"name": "invalid.illegal.ask.hedy3",
-				"match": "^[ \\t]*(?:[ \\t]*\\w+[ \\t]+)?ask\\b(?![ \\t]*[:]).*"
-			},
-			{
-				"name": "invalid.illegal.command.hedy3",
-				"match": "^[ \\t]*(is|at|to|from|random)"
-			}
 		]
 	},
 	"unquoted_phrase":{

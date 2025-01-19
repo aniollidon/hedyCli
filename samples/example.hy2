@@ -6,11 +6,11 @@ print Suddenly you see a monster_1
 print You run into the other room, but a monster_2 is waiting there for you!
 print Oh no! Quickly get to the kitchen.
 print But as you enter monster_3 attacks you!
-monster_4 is ask What do you do?
+monster_4 is ask What do you do? 
  
 print text #comentari
 monster_4 is ask What do you do? #comentari 
-   
+ 
 a is hola #comentari
 
 turn right  
@@ -19,9 +19,10 @@ forward 10
 
 right is hola
 
-play C1  
-
+play C1 
+ 
 # Errors
+print "hola"
 monster is _ 
 print _
 echo hola  

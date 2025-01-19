@@ -58,8 +58,28 @@ function identation(line) {
   return identationLength;
 }
 
+/* Donat un text i una posció desplaça la posició fins que troba un caràcter que no sigui un espai o tabulador */
+function trimPosStart(text, start){
+  let pos = start;
+  while (text[pos] === ' ' || text[pos] === '\t') {
+    pos++;
+  }
+  return pos;
+}
+
+/* Donat un text i una posició desplaça la posició fins que troba un caràcter que no sigui un espai o tabulador */
+function trimPosEnd(text, end){
+  let pos = end;
+  while (text[pos-1] === ' ' || text[pos-1] === '\t') {
+    pos--;
+  }
+  return pos;
+}
+
 module.exports = {
     entreCometes,
     enUnaLlista,
-    identation
+    identation,
+    trimPosStart,
+    trimPosEnd
 }

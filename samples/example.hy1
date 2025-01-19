@@ -10,16 +10,16 @@ print There are 3 doors in front of me..
 ask Which door should i pick?
 echo I choose door  
 print ...?
- 
- 
+
 turn right  
 turn left 
 forward 10 
 
-play C1
-play 70
+play C1 
+play 70 
 
-# Errors   
+# Errors
+print 'hola'
 print "hola"
 print 2
 print _ lglñ,lgd _   
