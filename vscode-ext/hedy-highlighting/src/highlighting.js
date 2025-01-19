@@ -159,7 +159,7 @@ class Provider{
           if (this._define_var_inline_bucle)
             before_def = "(?:^|\\btimes\\b)";
 
-          const declarationRegex = new RegExp(`${before_def}[\\t ]*\\b([\\p{L}_\\d]+)\\s*( ${this._define_var_operator})`, 'gu'); // Regex per trobar `var is|=`
+          const declarationRegex = new RegExp(`${before_def} *\\b([\\p{L}_\\d]+)\\s*( ${this._define_var_operator})`, 'gu'); // Regex per trobar `var is|=`
           // TODO millorar cas de = sense espais
 
           let match;
@@ -202,7 +202,7 @@ class Provider{
 
           // Si define_fun_with és cert, busca declaracions de funcions amb with
           if(this._define_fun_with){
-            const withRegex = /define[ \t]+[\p{L}_\d]+[ \t]\bwith[ \t]+(.+)\b/gu;
+            const withRegex = /define +[\p{L}_\d]+ \bwith +(.+)\b/gu;
             let withMatch;
             while ((withMatch = withRegex.exec(text)) !== null) {
         
@@ -229,7 +229,7 @@ class Provider{
           // Si _define_functions és cert, busca declaracions de funcions 
           if (this._define_functions) {
             
-            const funtionDeclRegex = new RegExp('[\\t ]*(define)[\\t ]*\\b([\\p{L}_\\d]+)', 'gu'); // Regex per trobar `define funcio`
+            const funtionDeclRegex = new RegExp(' *(define) *\\b([\\p{L}_\\d]+)', 'gu'); // Regex per trobar `define funcio`
             let match2;
             
             while ((match2 = funtionDeclRegex.exec(text)) !== null) {
@@ -253,7 +253,7 @@ class Provider{
           // si _define_fun_imports és cert, busca usos de funcions
           if (this._define_fun_imports) {
 
-            const importFunDeclRegex = new RegExp("^#[ \\t]*![ \\t]*import\\s+(.*)\\s+from\\s+[\\p{L}_\\d]+", 'g'); // Regex per trobar `define funcio`
+            const importFunDeclRegex = new RegExp("^# *! *import\\s+(.*)\\s+from\\s+[\\p{L}_\\d]+", 'g'); // Regex per trobar `define funcio`
             let match2;
             while ((match2 = importFunDeclRegex.exec(text)) !== null) {
               let functionsToimportText = match2[1];
@@ -284,7 +284,7 @@ class Provider{
 
           // Busca referències a variables
           for (const variableName in names) {
-              const referenceRegex = new RegExp(`(?<![\\p{L}_])${variableName}(?![\\p{L}_])`, 'gu');
+              const referenceRegex = new RegExp(`(?<![\\p{L}_\\d])${variableName}(?![\\p{L}_\\d])`, 'gu');
 
               let refMatch;
               while ((refMatch = referenceRegex.exec(text)) !== null) {

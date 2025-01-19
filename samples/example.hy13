@@ -10,7 +10,7 @@ else
 
 print "hola with hola"
 define song with place, place2
-    print place2
+    print place2 
     print 'My Bonnie is over the ' place 
 
 call song with 'ocean'
@@ -49,9 +49,9 @@ define movie_recommendation with name
     comedy_movies = 'Mr Bean' 'Barbie''Deadpool'
     kids_movies = 'Minions', 'Paddington', 'Encanto'
     if name is 'Camila' or name is 'Manuel'
-        recommended_movie = kids_movie at random
+        recommended_movie = kids_movies at random
     if name is 'Pedro' or 'Gabriella'
-            mood = ask 'What you in the mood for?'
+        mood = ask 'What you in the mood for?'
         if mood is 'action'
             recommended_movie = comedy_movies at random
         if mood is 'romance'
@@ -64,6 +64,6 @@ print 'I would recommend ' recommended_movie ' for ' name
 name = ask 'Who is watching?'
 recommendation = ask 'Would you like a recommendation?'
 if recommendaion is 'yes'
-call movie_recommendation with name
+    call movie_recommendation with name
 else
-print 'No problem!'
+    print 'No problem!'

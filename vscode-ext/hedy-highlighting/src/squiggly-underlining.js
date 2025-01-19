@@ -2,12 +2,11 @@ const vscode = require('vscode');
 const { entreCometes, enUnaLlista, identation, trimPosStart, trimPosEnd } = require('./utils');
 
 // No hi ha ni elif, ni and ni or (LEVS 5,6,7,8)
-const condicionalInlineRegex = /^(if[ \\t]+([\p{L}_\d]+)[ \\t]*( is| in|=| not[\t ]+in)[\t ](".*"|[\p{L}_\d]+)[ \t]|else[ \\t])+(.*)$/u;
-const condicionalElseInlineRegex = /(.*[ \t])(else)[ \t](.*)/;
-const bucleInlineRegex = /^(repeat[ \\t]+([\p{L}_\d]+)[ \\t]+times[ \\t]+)(.*)$/u;
+const condicionalInlineRegex = /^(if +([\p{L}_\d]+) *( is | in |=| not +in) *(".*"|[\p{L}_\d]+) |else )+(.*)$/u;
+const condicionalElseInlineRegex = /(.* )(else) (.*)/;
+const bucleInlineRegex = /^(repeat +([\p{L}_\d]+) +times +)(.*)$/u;
 
 //TODO:
-  // - random sense at
   // - detectar usos de llistes:
   //    - USOS NO PERMESOS
   //      - no es poden imprimir amb print/ask
@@ -125,7 +124,7 @@ class History{
 
       const identPast = this.last() !== undefined ? this.last().identation : 0;
       const tagPast = this.last() !== undefined ? this.last().tag : "action";
-      const pastIdentable = tagPast === "condition" || tagPast === "not_condition" || tagPast === "bucle"
+      const pastIdentable = tagPast === "condition" || tagPast === "not_condition" || tagPast === "bucle" || tagPast === "function_definition";
 
       // L'identació ha de se múltiple de la definida
       if(identation > 0  && this._definedScopeIdentation !== -1 && identation % this._definedScopeIdentation !== 0)
@@ -169,12 +168,12 @@ class ComandesHedy{
       if (this._bucleInline)
         beforeDef = "(?:^|\\btimes\\b)";
 
-      this._declarationRegex = new RegExp(`${beforeDef}[\\t ]*\\b([\\p{L}_\\d]+)\\s*( ${this._defineVarOp})`, 'u'); // Regex per trobar `var is|=`
+      this._declarationRegex = new RegExp(`${beforeDef} *\\b([\\p{L}_\\d]+)\\s*( ${this._defineVarOp})`, 'u'); // Regex per trobar `var is|=`
       
       const varDefCE = [{
         search: "before",
         when: "invalid",
-        match: /[\p{L}_\d][\t ]+[\p{L}_\d]/gu,
+        match: /[\p{L}_\d] +[\p{L}_\d]/gu,
         highlight: "before",
         message: "Per definir una variable només pots fer servir una paraula"
       }];
@@ -196,22 +195,22 @@ class ComandesHedy{
       }
 
       if (level >= 2){
-        if (level < 5) this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+[ \\t]+"], varDefCE));
-        if (level < 6) this.comandes.push(new Comand("ask", ["^[\\p{L}_\\d]+[ \\t]+is[ \\t]+"], level < 4 ? noCometesCE: []));
+        if (level < 5) this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+ +"], varDefCE));
+        if (level < 6) this.comandes.push(new Comand("ask", ["^[\\p{L}_\\d]+ +is +"], level < 4 ? noCometesCE: []));
 
         this.comandes.push(new Comand("sleep"));
         this.comandes.push(new Comand("echo", [], [], true));
-        this.comandes.push(new Comand("right", ["^turn[ \\t]+"], [], true));
-        this.comandes.push(new Comand("left", ["^turn[ \\t]+"], [], true));
+        this.comandes.push(new Comand("right", ["^turn +"], [], true));
+        this.comandes.push(new Comand("left", ["^turn +"], [], true));
       }
 
       if (level >= 3){
         this.comandes.push(new Comand("remove"));
-        this.comandes.push(new Comand("from", ["^remove[ \\t].*"]));
+        this.comandes.push(new Comand("from", ["^remove .*"]));
         this.comandes.push(new Comand("add"));
-        if(level < 11) this.comandes.push(new Comand("to", ["^add[ \\t].*"]));
+        if(level < 11) this.comandes.push(new Comand("to", ["^add .*"]));
         this.comandes.push(new Comand("at", [".+"])); // TODO deprecar quan toqui
-        this.comandes.push(new Comand("random", ["at[ \\t]+"])); // TODO deprecar quan toqui
+        this.comandes.push(new Comand("random", ["at +"])); // TODO deprecar quan toqui
       }
 
       if (level >= 4){
@@ -222,7 +221,7 @@ class ComandesHedy{
         this.comandes.push(new Comand("if", [], [{
           search: "after",
           when: "valid",
-          match: /([\p{L}_\d]+)([ \t]+is[ \t]+|[ \t]*=[ \t]*)\1/gu,
+          match: /([\p{L}_\d]+)( +is +| *= *)\1/gu,
           highlight: "after",
           message: "No té massa sentit comparar dos cops el mateix",
           severity: "warning"
@@ -232,15 +231,15 @@ class ComandesHedy{
           when: "valid",
           message: "La comanda 'else' espera que s'hagi usat 'if' anteriorment"
         }])); // TODO ajustar funcionament regex
-        if (level < 17) this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+[ \\t]+", "^if[ \\t].*"], varDefCE));
-        if (level < 17) this.comandes.push(new Comand("pressed", ["^if[ \\t].*is.*"])); // TODO deprecar quan toqui
-        if (level < 17) this.comandes.push(new Comand("not", ["^if[ \\t].*"]));
-        if (level < 10) this.comandes.push(new Comand("in", ["^if[ \\t].*"]));
+        if (level < 17) this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+ +", "^if .*"], varDefCE));
+        if (level < 17) this.comandes.push(new Comand("pressed", ["^if .*is.*"])); // TODO deprecar quan toqui
+        if (level < 17) this.comandes.push(new Comand("not", ["^if .*"]));
+        if (level < 10) this.comandes.push(new Comand("in", ["^if .*"]));
       }
 
       if (level >= 6){
-        if (level < 17) this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+[ \\t]*", "^if[ \\t].*"], varDefCE));
-        this.comandes.push(new Comand("ask", ["^[\\p{L}_\\d]+([ \\t]+is[ \\t]+|[ \\t]*=[ \\t]*)"]));
+        if (level < 17) this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+ *", "^if .*"], varDefCE));
+        this.comandes.push(new Comand("ask", ["^[\\p{L}_\\d]+( +is +| *= *)"]));
         this.comandes.push(new Comand("+", [".+"]));
         this.comandes.push(new Comand("-", [".+"]));
         this.comandes.push(new Comand("+", [".+"]));
@@ -254,13 +253,13 @@ class ComandesHedy{
 
       if (level >= 10){
         this.comandes.push(new Comand("for"));
-        if (level < 17) this.comandes.push(new Comand("in", ["^if[ \\t].*", "^for.*"]));
+        if (level < 17) this.comandes.push(new Comand("in", ["^if .*", "^for.*"]));
       }
 
       if (level >= 11){
         this.comandes.push(new Comand("for"));
-        this.comandes.push(new Comand("range", ["in[\\t ]+"]));
-        this.comandes.push(new Comand("to", ["^add[ \\t].*", "range.*"]));
+        this.comandes.push(new Comand("range", ["in +"]));
+        this.comandes.push(new Comand("to", ["^add .*", "range.*"]));
       }
 
       if (level >= 12){
@@ -270,8 +269,8 @@ class ComandesHedy{
 
       if (level >= 13){
         this.comandes.push(new Comand("with", ["^call.*", "^define.*"]));
-        if (level < 17) this.comandes.push(new Comand("and", ["^if[ \\t].*"]));
-        if (level < 17) this.comandes.push(new Comand("or", ["^if[ \\t].*"]));
+        if (level < 17) this.comandes.push(new Comand("and", ["^if .*"]));
+        if (level < 17) this.comandes.push(new Comand("or", ["^if .*"]));
       }
 
       if (level >= 14){
@@ -290,13 +289,13 @@ class ComandesHedy{
 
       if (level >= 17){
         this.comandes.push(new Comand("elif")); // TODO ajustar funcionament regex
-        this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+[ \\t]*", "^if[ \\t].*", "^elif[ \\t].*"]), varDefCE);
-        this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+[ \\t]+", "^if[ \\t].*", "^elif[ \\t].*"]), varDefCE);
-        this.comandes.push(new Comand("pressed", ["^if[ \\t].*is.*", "^elif[ \\t].*is.*"])); // TODO deprecar quan toqui
-        this.comandes.push(new Comand("not", ["^if[ \\t].*", "^elif[ \\t].*"]));
-        this.comandes.push(new Comand("in", ["^if[ \\t].*", "^elif[ \\t].*" ,"^for.*"]));
-        this.comandes.push(new Comand("and", ["^if[ \\t].*", "^elif[ \\t].*"]));
-        this.comandes.push(new Comand("or", ["^if[ \\t].*", "^elif[ \\t].*"]));
+        this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+ *", "^if .*", "^elif .*"]), varDefCE);
+        this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+ +", "^if .*", "^elif .*"]), varDefCE);
+        this.comandes.push(new Comand("pressed", ["^if .*is.*", "^elif .*is.*"])); // TODO deprecar quan toqui
+        this.comandes.push(new Comand("not", ["^if .*", "^elif .*"]));
+        this.comandes.push(new Comand("in", ["^if .*", "^elif .*" ,"^for.*"]));
+        this.comandes.push(new Comand("and", ["^if .*", "^elif .*"]));
+        this.comandes.push(new Comand("or", ["^if .*", "^elif .*"]));
       }
 
       this._comandesInicialsRegex = new RegExp("^(" + this._inicialsStr() + ")", 'gu');
@@ -465,7 +464,7 @@ class ComandesHedy{
         let contextValid = false;
         let errormessage = `La comanda '${comand.nom}' no es pot fer servir en aquest context`;
 
-        if(!this._usesCometes &&  beforeComand.match(/(print|ask|echo)[ \t]+/)) // Després de print, ask o echo tot és string i no comandes
+        if(!this._usesCometes &&  beforeComand.match(/(print|ask|echo) +/)) // Després de print, ask o echo tot és string i no comandes
           continue;
         
         if(comand.begining){

@@ -13,7 +13,7 @@ sleep 2
 
 lliata is  hola, ss, patata, at #ok  
 lliata is  hola, ask, patata #ok
-llista    is   print #ok
+llista    is   print #ok 
 nom is ask "Bon dia com, es diu vosté?" #ok 
 nomç is ask "Bon dia com, es diu vosté?" #nok 
 nomç is ask "Bon dia com, es diu vosté?" #nok

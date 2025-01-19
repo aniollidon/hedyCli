@@ -21,7 +21,7 @@
 			"patterns": [
 				
 				{
-					"match": "(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"match": "(\\w+) +(at) +(random)|(.+)",
 					"captures": {
 						"2": {
 							"name": "keyword.command.hedy2"
@@ -62,7 +62,7 @@
 			"match": "#.*"
 		},
 		{
-			"match": "\\b(\\w+)[ \\t]+(is)\\b",
+			"match": "\\b(\\w+) +(is)\\b",
 			"captures": {
 			  "1": {
 				"name": "variable.declaration.other.hedy2"
@@ -97,7 +97,7 @@
 			"match": "\\bplay\\b"
 		},
 		{
-			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 			"captures": {
 				"1": {
 					"name": "support.function.turtle.hedy2"

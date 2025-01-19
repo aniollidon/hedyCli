@@ -7,7 +7,7 @@
 			"match": "\\b_\\b"
 		},
 		{
-			"match": "^(#[ \\t]*![ \\t]*import)\\s+(.*)\\s+(from)\\s+(\\w+)",
+			"match": "^(# *! *import)\\s+(.*)\\s+(from)\\s+(\\w+)",
 			"captures": {
 				"1": {
 					"name": "keyword.control.import.hedy15"
@@ -127,7 +127,7 @@
 				"match": "\\bremove\\b"
 			},
 			{
-				"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+				"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 				"captures": {
 					"1": {
 						"name": "support.function.turtle.hedy15"
@@ -152,11 +152,11 @@
 			"patterns": [
 				{
 					"name": "keyword.command.hedy15",
-					"match": "[ \\t]*[+\\-*\\/><!][ \\t]*"
+					"match": " *[+\\-*\\/><!] *"
 				},
 				{
 					"name": "invalid.illegal.math.hedy15",
-					"match": "(?<=\\d)[ \\t]*[+\\-*\\/<>!][ \\t]*(?=[\\w\"'])"
+					"match": "(?<=\\d) *[+\\-*\\/<>!] *(?=[\\w\"'])"
 				}
 			]
 		}

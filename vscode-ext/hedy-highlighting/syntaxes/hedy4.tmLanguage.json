@@ -25,12 +25,12 @@
 		},
 		{
 			"name": "array.hedy4",
-			"begin": "(?<=\\b\\w+([ \\t]+is[ \\t]))(?=.*,)",
+			"begin": "(?<=\\b\\w+( +is ))(?=.*,)",
 			"end": "(?=#|$)",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy4",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy4",
@@ -48,12 +48,12 @@
 		},
 		{ 
 			"name": "inline.unquoted.array.element.hedy4",
-			"begin": "(?<=\\b(remove)[ \\t])",
+			"begin": "(?<=\\b(remove) )",
 			"end": "(?=\\b(from))|$",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy4",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy4",
@@ -64,12 +64,12 @@
 		},
 		{ 
 			"name": "inline.unquoted.array.element.hedy4",
-			"begin": "(?<=\\b(add)[ \\t])",
+			"begin": "(?<=\\b(add) )",
 			"end": "(?=\\b(to))|$",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy4",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy4",
@@ -79,12 +79,12 @@
 
 		},
 		{
-			"begin": "(?<=\\b(?:is)[ \\t])",
+			"begin": "(?<=\\b(?:is) )",
 			"end": "(?<=#|$)",
 			"patterns": [
 				
 				{
-					"match": "(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"match": "(\\w+) +(at) +(random)|(.+)",
 					"captures": {
 						"2": {
 							"name": "keyword.command.hedy4"
@@ -158,7 +158,7 @@
 			"match": "\\bremove\\b"
 		},
 		{
-			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 			"captures": {
 				"1": {
 					"name": "support.function.turtle.hedy4"
