@@ -32,9 +32,9 @@ function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
 
   const conteWith = text.indexOf('with'); 
   const conteCall = text.indexOf('call');
-  const abansComa = abans.lastIndexOf(',');
-  const abansIgual = define_var_operator.includes("=") ? abans.lastIndexOf('='): -1;
-  const abansIs = define_var_operator.includes("is") ? abans.lastIndexOf(' is '): -1;
+  let abansComa = abans.lastIndexOf(',');
+  let abansIgual = define_var_operator.includes("=") ? abans.lastIndexOf('='): -1;
+  let abansIs = define_var_operator.includes("is") ? abans.lastIndexOf(' is '): -1;
 
   let despresComa = despres.indexOf(',');
 
