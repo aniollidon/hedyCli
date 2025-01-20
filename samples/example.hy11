@@ -4,7 +4,10 @@ for animal in animals
 
 for comptador in range 1 to 10
     print comptador
+    a = 2222
+
+    print a
 print 'Llest o no. Ves que vinc!'
 
-				
+			
 ampolles = ampolles - 1 

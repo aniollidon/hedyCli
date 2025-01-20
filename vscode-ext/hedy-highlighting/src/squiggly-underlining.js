@@ -19,6 +19,7 @@ const bucleInlineRegex = /^(repeat +([\p{L}_\d]+) +times +)(.*)$/u;
   //     - <llista> at random
   //     - ____ in <llista>
   // - detectar usos cometes (quan són necessaries) i quan no
+// TODO: A partir nivell 14, es pot fer una crida des d'una funció a una altra funció que retorni un valor
 
 
 class Comand{

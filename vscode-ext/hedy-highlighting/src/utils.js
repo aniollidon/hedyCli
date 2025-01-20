@@ -24,14 +24,17 @@ function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
   // CERCA ... NOMLLISTA = a, b, c <- no llista
   // ... "a, b," CERCA <- no llista
   // ... CERCA ... "a, b," <- no llista
+  // .... with a, b, c < no llista
 
 
   const abans = text.substring(0, pos);
   const despres = text.substring(pos);
 
-  let abansComa = abans.lastIndexOf(',');
-  let abansIgual = define_var_operator.includes("=") ? abans.lastIndexOf('='): -1;
-  let abansIs = define_var_operator.includes("is") ? abans.lastIndexOf(' is '): -1;
+  const conteWith = text.indexOf('with'); 
+  const conteCall = text.indexOf('call');
+  const abansComa = abans.lastIndexOf(',');
+  const abansIgual = define_var_operator.includes("=") ? abans.lastIndexOf('='): -1;
+  const abansIs = define_var_operator.includes("is") ? abans.lastIndexOf(' is '): -1;
 
   let despresComa = despres.indexOf(',');
 
@@ -47,6 +50,9 @@ function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
 
     if(despresComa !== -1 && entreCometes(despres, despresComa))
       despresComa = -1;
+
+    if(conteWith !== -1 && !entreCometes(text, conteWith)
+      && conteCall !== -1 && !entreCometes(text, conteCall)) return false;
   }
 
   return (abansComa > 0 || despresComa > 0) && (abansIgual > 0 || abansIs > 0);

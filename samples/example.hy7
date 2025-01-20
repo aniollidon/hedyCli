@@ -66,6 +66,7 @@ if answer is yes if answer is no repeat 3 times print 'You have learned somethin
 else repeat 3 times print 'You have learned something new!' 
 print hola times 
 
+
 a = 0
 b = b+1 kkmk
  
