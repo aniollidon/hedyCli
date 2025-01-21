@@ -58,6 +58,16 @@ function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
   return (abansComa > 0 || despresComa > 0) && (abansIgual > 0 || abansIs > 0);
 }
 
+function getLastWord(text){
+  const words = text.split(' ');
+  return words[words.length-1];
+}
+
+function getFirstWord(text){
+  const words = text.split(' ');
+  return words[0];
+}
+
 function identation(line) {
   const identation = line.match(/^[\t ]+/g);
   const identationLength = identation !== null ? identation[0].length : 0;
@@ -87,5 +97,7 @@ module.exports = {
     enUnaLlista,
     identation,
     trimPosStart,
-    trimPosEnd
+    trimPosEnd,
+    getLastWord,
+    getFirstWord
 }

@@ -1,5 +1,7 @@
 const vscode = require('vscode');
-const { entreCometes, enUnaLlista, identation, trimPosStart, trimPosEnd } = require('./utils');
+const { entreCometes, identation, trimPosStart, trimPosEnd, getFirstWord, getLastWord } = require('./utils');
+const {EntityDefinitions} = require('./definitions');
+
 
 // No hi ha ni elif, ni and ni or (LEVS 5,6,7,8)
 const condicionalInlineRegex = /^(if +([\p{L}_\d]+) *( is | in |=| not +in) *(".*"|[\p{L}_\d]+) |else )+(.*)$/u;
@@ -157,6 +159,7 @@ class History{
 class ComandesHedy{
     constructor(level){
       this.history = new History();
+      this.entities = new EntityDefinitions(level);
       this.level = level;
       this.comandes = [new Comand("play"), new Comand("turn"), new Comand("forward"), new Comand("color")];
       this._usesCometes = level > 3;
@@ -188,6 +191,37 @@ class ComandesHedy{
         severity: "warning"
       }];
 
+      const fromtoCE = [{
+        search: "list_after",
+        when: "valid",
+        message: "Després de 'from' o 'to' cal una llista",
+        highlight: "after_word",
+        severity: "warning",
+      }];
+
+      const atRandomCE = [{
+        search: "list_before",
+        when: "valid",
+        message: "Abans de 'at random' cal una llista",
+        highlight: "before_word",
+        severity: "warning",
+      }];
+
+      const inCE = [{
+        search: "list_after",
+        when: "valid",
+        message: "Després de 'in' cal una llista",
+        highlight: "after_word",
+        severity: "warning",
+      },
+      {
+        search: "notlist_before",
+        when: "valid",
+        message: "Abans de 'in' no pot haver-hi una llista",
+        highlight: "before_word",
+        severity: "warning",
+      }];
+      
       this.comandes.push(new Comand("print", [], level < 4 ? noCometesCE: []));
 
       if (level == 1){
@@ -207,11 +241,11 @@ class ComandesHedy{
 
       if (level >= 3){
         this.comandes.push(new Comand("remove"));
-        this.comandes.push(new Comand("from", ["^remove .*"]));
+        this.comandes.push(new Comand("from", ["^remove .*"], fromtoCE));
         this.comandes.push(new Comand("add"));
-        if(level < 11) this.comandes.push(new Comand("to", ["^add .*"]));
+        if(level < 11) this.comandes.push(new Comand("to", ["^add .*"], fromtoCE));
         this.comandes.push(new Comand("at", [".+"])); // TODO deprecar quan toqui
-        this.comandes.push(new Comand("random", ["at +"])); // TODO deprecar quan toqui
+        this.comandes.push(new Comand("random", ["at +"], atRandomCE)); // TODO deprecar quan toqui
       }
 
       if (level >= 4){
@@ -254,7 +288,7 @@ class ComandesHedy{
 
       if (level >= 10){
         this.comandes.push(new Comand("for"));
-        if (level < 17) this.comandes.push(new Comand("in", ["^if .*", "^for.*"]));
+        if (level < 17) this.comandes.push(new Comand("in", ["^if .*", "^for.*"], inCE));
       }
 
       if (level >= 11){
@@ -314,6 +348,7 @@ class ComandesHedy{
       const identationLength = identation(line);
       const lineTrim = line.trim();
       if(lineTrim === "") return [];
+      this.entities.analizeLine(line, lineNumber);
       return this._errorsOnPhrase(lineTrim, identationLength, lineNumber);
     }
 
@@ -491,12 +526,24 @@ class ComandesHedy{
             && (error.search === "before" && beforeComand.match(error.match)
             || error.search === "line" && lineTrim.match(error.match)
             || error.search === "after" && afterComand.match(error.match)
-            || error.search === "special_else" && !this.history.cercaIf(this._usesScope, identationLength))
+            || error.search === "special_else" && !this.history.cercaIf(this._usesScope, identationLength)
+            || error.search === "list_before" && this.entities.isList(getLastWord(beforeComand))
+            || error.search === "list_after" && this.entities.isList(getFirstWord(afterComand)))
           ){
           let start = pos 
           let end = pos + comand.nom.length;
 
-          if(error.highlight === "before"){
+          if(error.highlight === "after_word"){
+              const word = getLastWord(beforeComand);
+              start = beforeComand.lastIndexOf(word);
+              end = start + word.length;
+          }
+          else if(error.highlight === "before_word"){
+            const word = getFirstWord(afterComand);
+            start = pos + comand.nom.length + afterComand.indexOf(word);
+            end = start + word.length;
+          }
+          else if(error.highlight === "before"){
               start = 0;
               end = beforeComand.length;
           }

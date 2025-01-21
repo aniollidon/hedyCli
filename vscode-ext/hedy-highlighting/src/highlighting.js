@@ -12,10 +12,11 @@ class Provider {
   }
 
   provideDocumentSemanticTokens(document, token) {
+    this._finder.clean();
     for (let lineNumber = 0; lineNumber < document.lineCount; lineNumber++) {
       const line = document.lineAt(lineNumber);
       const text = line.text;
-      this._finder.analitza_linia(text, lineNumber);
+      this._finder.analizeLine(text, lineNumber);
     }
 
     const tokensBuilder = new vscode.SemanticTokensBuilder(legend);
