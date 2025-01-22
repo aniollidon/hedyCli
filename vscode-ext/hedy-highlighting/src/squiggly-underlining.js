@@ -11,17 +11,19 @@ const bucleInlineRegex = /^(repeat +([\p{L}_\d]+) +times +)(.*)$/u;
 //TODO:
   // - detectar usos de llistes:
   //    - USOS NO PERMESOS
-  //      - no es poden imprimir amb print/ask
-  //      - no es poden sumar/restar/multiplicar
-  //      - no es poden comparar amb ==, !=, >, <, >=, <=
+  //      - no es poden imprimir amb print/ask                    
+  //      - no es poden sumar/restar/multiplicar                  FET
+  //      - no es poden comparar amb ==, !=, >, <, >=, <=         FET
   //      - no es poden comparar amb is
   //    - USOS EXCLUSIUS:
-  //     - add ___ to <llista>
-  //     - remove ___ from <llista>
-  //     - <llista> at random
-  //     - ____ in <llista>
+  //     - add ___ to <llista>                       FET
+  //     - remove ___ from <llista>                  FET
+  //     - <llista> at random                        FET
+  //     - ____ in <llista>                          FET
   // - detectar usos cometes (quan són necessaries) i quan no
 // TODO: A partir nivell 14, es pot fer una crida des d'una funció a una altra funció que retorni un valor
+// TODO: Detectar : al final de la línia quan calgui (L17)
+// TODO: A nivell 14 == enlloc de = (WARN)
 
 
 class Comand{
@@ -112,6 +114,7 @@ class History{
         let countActions = 0;
         for(let i = this.past.length - 2; i >= 0; i--){ // A tenir en compte que es comprova un cop ja hi ha la línia actual (per xo el -2)
           const sintagma = this.past[i];
+
           if(searchScoped && sintagma.identation !== onScope) continue;
           if(sintagma.tag === "condition") return true;
           if(sintagma.tag === "not_condition") return false;
@@ -175,32 +178,48 @@ class ComandesHedy{
       this._declarationRegex = new RegExp(`${beforeDef} *\\b([\\p{L}_\\d]+)\\s*( ${this._defineVarOp})`, 'u'); // Regex per trobar `var is|=`
       
       const varDefCE = [{
-        search: "before",
         when: "invalid",
-        match: /[\p{L}_\d] +[\p{L}_\d]/gu,
+        before: /[\p{L}_\d] +[\p{L}_\d]/gu,
         highlight: "before",
-        message: "Per definir una variable només pots fer servir una paraula"
+        message: "Per definir una variable només pots fer servir una paraula",
+        severity: "error"
       }];
 
-      const noCometesCE = [{
-        search: "after",
+      const isCE6 = [ {
         when: "valid",
-        match: /^(["']).*\1/g,
+        highlight: "command",
+        after: /(?!pressed)/g,
+        message: "És més recomanable fer servir '=' enlloc de 'is'.",
+        severity: "warning"
+      }, ...varDefCE];
+
+      const noCometesCE = [{
+        when: "valid",
+        after: /^(["']).*\1/g,
         message: "En aquest nivell no calen cometes pels textos",
         highlight: "after",
         severity: "warning"
       }];
 
       const fromtoCE = [{
-        search: "list_after",
+        notlist: "after",
+        before: /(add|remove)\s/g,
         when: "valid",
-        message: "Després de 'from' o 'to' cal una llista",
+        message: "Després de 'add to' o 'remove from' cal una llista",
         highlight: "after_word",
+        severity: "warning",
+      },
+      {
+        list: "before",
+        before: /(add|remove)\s/g,
+        when: "valid",
+        message: "El format correcte és 'add <item> to <llista>' o 'remove <item> from <llista>'. No pot haver-hi una llista al lloc de l'item.",
+        highlight: "before_word",
         severity: "warning",
       }];
 
       const atRandomCE = [{
-        search: "list_before",
+        notlist: "before",
         when: "valid",
         message: "Abans de 'at random' cal una llista",
         highlight: "before_word",
@@ -208,19 +227,44 @@ class ComandesHedy{
       }];
 
       const inCE = [{
-        search: "list_after",
+        notlist: "after",
+        after: /^(?!range)/g,
         when: "valid",
         message: "Després de 'in' cal una llista",
         highlight: "after_word",
         severity: "warning",
       },
       {
-        search: "notlist_before",
+        list: "before",
         when: "valid",
         message: "Abans de 'in' no pot haver-hi una llista",
         highlight: "before_word",
         severity: "warning",
       }];
+
+      const operatorsCE = [{
+        list: "before",
+        when: "valid",
+        message: "Abans d'una operació només pot haver-hi un número o una variable",
+        highlight: "before_word",
+        severity: "warning"
+      },
+      {
+        list: "after",
+        when: "valid",
+        message: "Després d'una operació només pot haver-hi un número o una variable",
+        highlight: "after_word",
+        severity: "warning"
+      }];
+
+      const equalCE14 = [ {
+        before: /^(if|while|for|elif)/,
+        after: /^(?!=)/g,
+        when: "valid",
+        message: "En aquest nivell s'ha de fer servir '==' enlloc de '='",
+        highlight: "command",
+        severity: "warning"
+      }, ...varDefCE];
       
       this.comandes.push(new Comand("print", [], level < 4 ? noCometesCE: []));
 
@@ -244,8 +288,8 @@ class ComandesHedy{
         this.comandes.push(new Comand("from", ["^remove .*"], fromtoCE));
         this.comandes.push(new Comand("add"));
         if(level < 11) this.comandes.push(new Comand("to", ["^add .*"], fromtoCE));
-        this.comandes.push(new Comand("at", [".+"])); // TODO deprecar quan toqui
-        this.comandes.push(new Comand("random", ["at +"], atRandomCE)); // TODO deprecar quan toqui
+        if(level < 16) this.comandes.push(new Comand("at", ["[\\p{L}_\\d]+ +"], atRandomCE)); // TODO deprecar quan toqui
+        if(level < 16) this.comandes.push(new Comand("random", ["at +"])); // TODO deprecar quan toqui
       }
 
       if (level >= 4){
@@ -254,31 +298,31 @@ class ComandesHedy{
 
       if (level >= 5){
         this.comandes.push(new Comand("if", [], [{
-          search: "after",
           when: "valid",
-          match: /([\p{L}_\d]+)( +is +| *= *)\1/gu,
+          after: /([\p{L}_\d]+)( +is +| *= *)\1/gu,
           highlight: "after",
           message: "No té massa sentit comparar dos cops el mateix",
           severity: "warning"
         }]));
         this.comandes.push(new Comand("else", [], [{
-          search: "special_else",
+          special_else: true,
           when: "valid",
           message: "La comanda 'else' espera que s'hagi usat 'if' anteriorment"
         }])); // TODO ajustar funcionament regex
-        if (level < 17) this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+ +", "^if .*"], varDefCE));
+        if (level < 6) this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+ +", "^if .*"], varDefCE));
         if (level < 17) this.comandes.push(new Comand("pressed", ["^if .*is.*"])); // TODO deprecar quan toqui
         if (level < 17) this.comandes.push(new Comand("not", ["^if .*"]));
         if (level < 10) this.comandes.push(new Comand("in", ["^if .*"]));
       }
 
       if (level >= 6){
-        if (level < 17) this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+ *", "^if .*"], varDefCE));
+        if(level < 17) this.comandes.push(new Comand("is", ["^[\\p{L}_\\d]+ +", "^if .*"], isCE6));
+        if (level < 14) this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+ *", "^if .*"], varDefCE));
         this.comandes.push(new Comand("ask", ["^[\\p{L}_\\d]+( +is +| *= *)"]));
-        this.comandes.push(new Comand("+", [".+"]));
-        this.comandes.push(new Comand("-", [".+"]));
-        this.comandes.push(new Comand("+", [".+"]));
-        this.comandes.push(new Comand("*", [".+"]));
+        this.comandes.push(new Comand("+", [".+"], operatorsCE));
+        this.comandes.push(new Comand("-", [".+"], operatorsCE));
+        this.comandes.push(new Comand("*", [".+"], operatorsCE));
+        this.comandes.push(new Comand("/", [".+"], operatorsCE));
       }
 
       if (level >= 7){
@@ -294,7 +338,7 @@ class ComandesHedy{
       if (level >= 11){
         this.comandes.push(new Comand("for"));
         this.comandes.push(new Comand("range", ["in +"]));
-        this.comandes.push(new Comand("to", ["^add .*", "range.*"]));
+        this.comandes.push(new Comand("to", ["^add .*", "range.*"], fromtoCE));
       }
 
       if (level >= 12){
@@ -309,17 +353,22 @@ class ComandesHedy{
       }
 
       if (level >= 14){
+        if (level < 17) this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+ *", "^if .*"], equalCE14));
         this.comandes.push(new Comand("return"));
-        this.comandes.push(new Comand(">", [".+"]));
-        this.comandes.push(new Comand("<", [".+"]));
-        this.comandes.push(new Comand(">=", [".+"]));
-        this.comandes.push(new Comand("<=", [".+"]));
-        this.comandes.push(new Comand("==", [".+"]));
-        this.comandes.push(new Comand("!=", [".+"]));
+        this.comandes.push(new Comand(">", [".+"], operatorsCE));
+        this.comandes.push(new Comand("<", [".+"], operatorsCE));
+        this.comandes.push(new Comand(">=", [".+"], operatorsCE));
+        this.comandes.push(new Comand("<=", [".+"], operatorsCE));
+        this.comandes.push(new Comand("==", [".+"], operatorsCE));
+        this.comandes.push(new Comand("!=", [".+"], operatorsCE));
       }
 
       if (level >= 15){
         this.comandes.push(new Comand("while"));
+      }
+
+      if(level >= 16){
+        this.comandes.push(new Comand("random", ["\\[ *"], atRandomCE));
       }
 
       if (level >= 17){
@@ -521,26 +570,36 @@ class ComandesHedy{
       let customError = false;
 
       for (let error of comand.commonErrors){
-        if ((error.when === "invalid" && !contextValid && !comand.deprecated 
-            || error.when === "valid" && contextValid && !comand.deprecated) 
-            && (error.search === "before" && beforeComand.match(error.match)
-            || error.search === "line" && lineTrim.match(error.match)
-            || error.search === "after" && afterComand.match(error.match)
-            || error.search === "special_else" && !this.history.cercaIf(this._usesScope, identationLength)
-            || error.search === "list_before" && this.entities.isList(getLastWord(beforeComand))
-            || error.search === "list_after" && this.entities.isList(getFirstWord(afterComand)))
-          ){
+        if(comand.deprecated) continue;
+        if(error.when === "valid" && !contextValid || error.when === "invalid" && contextValid) continue;
+
+        let errorFound = true;
+
+        if(error.match) errorFound &&= lineTrim.match(error.match) !== null;
+        //console.log("match: ", errorFound)
+        if(error.before) errorFound &&= beforeComand.match(error.before) !== null
+        //console.log("before: ", errorFound)  
+        if(error.after) errorFound &&= afterComand.match(error.after) !== null
+        //console.log("after: ", errorFound)
+        if(error.list) errorFound &&= this.entities.isList(error.list === "before" ? getLastWord(beforeComand): getFirstWord(afterComand));
+        //console.log("list: ", errorFound)
+        if(error.notlist) errorFound &&= !this.entities.isList(error.notlist === "before" ? getLastWord(beforeComand): getFirstWord(afterComand));
+        //console.log("notlist: ", errorFound)
+        if(error.special_else) errorFound &&= !this.history.cercaIf(this._usesScope, identationLength);
+        //console.log("special_else: ", errorFound)
+
+        if (errorFound){
           let start = pos 
           let end = pos + comand.nom.length;
 
-          if(error.highlight === "after_word"){
+          if(error.highlight === "before_word"){
               const word = getLastWord(beforeComand);
               start = beforeComand.lastIndexOf(word);
               end = start + word.length;
           }
-          else if(error.highlight === "before_word"){
+          else if(error.highlight === "after_word"){
             const word = getFirstWord(afterComand);
-            start = pos + comand.nom.length + afterComand.indexOf(word);
+            start = pos + comand.nom.length + afterComand.indexOf(word) +1;
             end = start + word.length;
           }
           else if(error.highlight === "before"){
@@ -550,6 +609,10 @@ class ComandesHedy{
           else if(error.highlight === "after"){
               start = trimPosStart(lineTrim, pos + comand.nom.length);
               end = trimPosEnd(lineTrim, lineTrim.length);
+          }
+          else if(error.highlight === "command"){
+              start = pos;
+              end = pos + comand.nom.length;
           }
 
           errorsFound.push({
@@ -564,7 +627,7 @@ class ComandesHedy{
         }
       }
 
-      if(!customError && !contextValid)
+      if(!customError && !contextValid){
         errorsFound.push({
           comand: comand.nom,
           message: errormessage,
@@ -572,8 +635,9 @@ class ComandesHedy{
           end: pos + identationLength + comand.nom.length,
           severity: "error"
         });
+      }
 
-        if(contextValid && comand.deprecated){
+        if(!customError && contextValid && comand.deprecated){
           errorsFound.push({
             comand: comand.nom,
             message: `La comanda '${comand.nom}' ja no es pot fer servir en aquest nivell`,

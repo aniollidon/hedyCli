@@ -59,12 +59,12 @@ function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
 }
 
 function getLastWord(text){
-  const words = text.split(' ');
+  const words = text.replace(/\[/, '').trim().split(' ');
   return words[words.length-1];
 }
 
 function getFirstWord(text){
-  const words = text.split(' ');
+  const words = text.trim().split(' ');
   return words[0];
 }
 

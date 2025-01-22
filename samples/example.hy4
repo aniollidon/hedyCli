@@ -5,7 +5,7 @@ print 'you chose choice'
 print 'computer chose ' computer_choice  
 add pedra to options
 remove pedra from options  # Comentari
-color red
+color red 
 clear # Comentari
 sleep 2
  
@@ -47,3 +47,7 @@ print then he ask you
 
 var_1 is hola 
 var ho is hola
+
+nollista is hola
+
+remove adeu from nollista

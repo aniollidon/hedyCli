@@ -26,7 +26,7 @@ remove plat from plats # Sí
 remove plat bla from plats # no
 add plat bla to plats # No
 
-plats = primer plat, segon plat, postre
+plats = primer plat, segon plat, postre 
 noms = Pere, Miquel
 for nom in noms
     for plat in plats

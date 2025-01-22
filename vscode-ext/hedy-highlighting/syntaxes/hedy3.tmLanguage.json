@@ -19,6 +19,11 @@
 					"name": "string.regexp.hedy3",
 					"match": "\\b(\\w+)\\b"
 				},
+				
+				{
+					"name": "invalid.illegal.hedy3",
+					"match": ", *$"
+				},
 				{
 					"name": "keyword.command.comma.separator.hedy3",
 					"match": ","

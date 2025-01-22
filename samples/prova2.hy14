@@ -1,4 +1,0 @@
-define calcula_preu_nou with quantitat, percentatge
-    print "res"
-
-preu_nou = call calcula_preu_nou with 1, 2 

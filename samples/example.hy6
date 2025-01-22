@@ -61,7 +61,7 @@ else print 'No go'
 llista is A, B, C, D, E
 if A in llista print "hi és" else print "no"
 
-
+ 
 # Errors
 suma = is ask 2+2 #comentari
 turn right

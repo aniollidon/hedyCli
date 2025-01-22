@@ -42,6 +42,10 @@
 			"end": "'"
 		},
 		{
+			"name": "invalid.illegal.hedy12",
+			"match": ", *$"
+		},
+		{
 			"name": "keyword.command.comma.separator.hedy12",
 			"match": ","
 		},

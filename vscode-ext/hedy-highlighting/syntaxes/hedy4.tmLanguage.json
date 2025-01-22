@@ -38,7 +38,7 @@
 				},
 				{
 					"name": "invalid.illegal.hedy4",
-					"match": ",$"
+					"match": ", *$"
 				},
 				{
 					"name": "keyword.command.comma.separator.hedy4",

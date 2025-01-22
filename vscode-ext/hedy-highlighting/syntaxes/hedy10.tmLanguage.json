@@ -65,7 +65,7 @@
 				
 				{
 					"name": "invalid.illegal.hedy10",
-					"match": ",$"
+					"match": ", *$"
 				},
 				{
 					"name": "keyword.command.comma.separator.hedy10",

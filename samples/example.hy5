@@ -30,7 +30,7 @@ print nom ' troba un monstre'
 final is ask 'Vols un final bo o dolent?'
 if final is bo print nom " agafa l'espasa i el monstre fuig ràpidament"
 else print 'El monstre menja ' nom ' per sopar'
-
+ 
 pretty_colors is green, yellow 
 favorite_color is ask 'What is your favorite color?'
 if favorite_color not in pretty_colors print 'pretty!'
