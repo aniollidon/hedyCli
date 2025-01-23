@@ -9,3 +9,8 @@ define login with user, password
 call vincula_fitxer with '/hola', 'samples/prova_web/index.html'
 call vincula_funcio with '/login', login
 call init_servidor
+
+if "hola" == "adeu"
+    print "hola"
+else
+    print "adeu"
