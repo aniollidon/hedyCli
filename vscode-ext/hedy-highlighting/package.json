@@ -1,9 +1,9 @@
 {
   "name": "hedy",
   "displayName": "Hedy",
-  "icon": "https://www.hedy.org/images/hero-graphic/hero-graphic.png",
+  "icon": "img/logo.png",
   "description": "Hedy highlighting for Visual Studio Code, for all 17 levels of the language.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "main": "src/extension.js",
   "engines": {
     "vscode": "^1.94.0"
