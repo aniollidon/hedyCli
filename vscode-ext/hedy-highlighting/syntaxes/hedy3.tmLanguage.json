@@ -8,16 +8,21 @@
 		},
 		{
 			"name": "array.hedy3",
-			"begin": "(?<=[ \\t]+is[ \\t]+)(?=.*,)(?!ask[ \\t])",
+			"begin": "(?<= +is +)(?=.*,)(?!ask )",
 			"end": "(?=#|$)",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy3",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy3",
 					"match": "\\b(\\w+)\\b"
+				},
+				
+				{
+					"name": "invalid.illegal.hedy3",
+					"match": ", *$"
 				},
 				{
 					"name": "keyword.command.comma.separator.hedy3",
@@ -26,7 +31,7 @@
 			]
 		},
 		{	
-			"match": "\\b(print|ask)[ \\t]+(.+)[ \\t]+(at)[ \\t]+(random)[ \\t]*(.*)",
+			"match": "\\b(print|ask) +(.+) +(at) +(random) *(.*)",
 			"captures": {
 				
 				"1": {
@@ -51,7 +56,7 @@
 			}
 		},
 		{
-			"begin": "(?<=\\b(?:print|ask|echo)[ \\t])",
+			"begin": "(?<=\\b(?:print|ask|echo) )",
 			"end": "(?=#|$)",
 			"patterns": [
 				{
@@ -61,12 +66,12 @@
 		},
 		{ 
 			"name": "inline.unquoted.array.element.hedy3",
-			"begin": "(?<=\\b(remove)[ \\t])",
+			"begin": "(?<=\\b(remove) )",
 			"end": "(?=\\b(from))|$",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy3",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy3",
@@ -77,12 +82,12 @@
 		},
 		{ 
 			"name": "inline.unquoted.array.element.hedy3",
-			"begin": "(?<=\\b(add)[ \\t])",
+			"begin": "(?<=\\b(add) )",
 			"end": "(?=\\b(to))|$",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy3",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy3",
@@ -92,11 +97,11 @@
 
 		},
 		{
-			"begin": "(?<=\\b(?:is)[ \\t]+)(?![ \\t]*ask[ \\t])",
+			"begin": "(?<=\\b(?:is) +)(?! *ask )",
 			"end": "(?<=#|$)",
 			"patterns": [
 				{
-					"match": "(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"match": "(\\w+) +(at) +(random)|(.+)",
 					"captures": {
 						"2": {
 							"name": "keyword.command.hedy3"
@@ -128,9 +133,6 @@
 		{
 			"name": "constant.numeric.hedy3",
 			"match": "[0-9]+"
-		},
-		{
-			"include": "#errors"
 		},
 		{
 			"include": "#commands"
@@ -180,7 +182,7 @@
 			"match": "\\bremove\\b"
 		},
 		{
-			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 			"captures": {
 				"1": {
 					"name": "support.function.turtle.hedy3"
@@ -195,26 +197,6 @@
 			"name": "support.function.turtle.hedy3",
 			"match": "\\b(forward|turn)\\b"
 		}
-		]
-	},
-	"errors": {
-		"patterns": [
-			{
-				"name": "invalid.deprecated.echo.hedy3",
-				"match": "\\becho\\b"
-			},
-			{
-				"name": "invalid.illegal.errorinvalid.hedy3",
-				"match": "\\bErrorInvalid\\b"
-			},
-			{
-				"name": "invalid.illegal.ask.hedy3",
-				"match": "^[ \\t]*(?:[ \\t]*\\w+[ \\t]+)?ask\\b(?![ \\t]*[:]).*"
-			},
-			{
-				"name": "invalid.illegal.command.hedy3",
-				"match": "^[ \\t]*(is|at|to|from|random)"
-			}
 		]
 	},
 	"unquoted_phrase":{

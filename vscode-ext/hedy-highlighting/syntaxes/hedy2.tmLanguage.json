@@ -21,7 +21,7 @@
 			"patterns": [
 				
 				{
-					"match": "(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"match": "(\\w+) +(at) +(random)|(.+)",
 					"captures": {
 						"2": {
 							"name": "keyword.command.hedy2"
@@ -55,9 +55,6 @@
 			]
 		},
 		{
-			"include": "#errors"
-		},
-		{
 			"include": "#commands"
 		},
 		{
@@ -65,7 +62,7 @@
 			"match": "#.*"
 		},
 		{
-			"match": "\\b(\\w+)[ \\t]+(is)\\b",
+			"match": "\\b(\\w+) +(is)\\b",
 			"captures": {
 			  "1": {
 				"name": "variable.declaration.other.hedy2"
@@ -100,7 +97,7 @@
 			"match": "\\bplay\\b"
 		},
 		{
-			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 			"captures": {
 				"1": {
 					"name": "support.function.turtle.hedy2"
@@ -115,22 +112,6 @@
 			"name": "support.function.turtle.hedy2",
 			"match": "\\b(forward|turn)\\b"
 		}
-		]
-	},
-	"errors": {
-		"patterns": [
-			{
-				"name": "invalid.deprecated.echo.hedy2",
-				"match": "\\becho\\b"
-			},
-			{
-				"name": "invalid.illegal.errorinvalid.hedy2",
-				"match": "\\bErrorInvalid\\b"
-			},
-			{
-				"name": "invalid.illegal.ask.hedy2",
-				"match": "^[ \\t]*(?:\\s*\\w+\\s+)?ask\\b(?!\\s*[:]).*"
-			}
 		]
 	},
 	"unquoted_phrase":{

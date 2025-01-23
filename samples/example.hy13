@@ -9,9 +9,10 @@ else
     print 'Accés denegat!'
 
 print "hola with hola"
+
 define song with place, place2
-    print place2
-    print 'My Bonnie is over the ' place
+    print place2 
+    print 'My Bonnie is over the ' place 
 
 call song with 'ocean'
 call song with 'sea'
@@ -42,16 +43,16 @@ play C4
 play C4
 
 
-
+ 
 define movie_recommendation with name
     action_movies == 'Die Hard', 'Fast and Furious', 'Inglorious Bastards'
     romance_movies = 'Love Actually', 'The Notebook', 'Titanic'
     comedy_movies = 'Mr Bean' 'Barbie''Deadpool'
     kids_movies = 'Minions', 'Paddington', 'Encanto'
     if name is 'Camila' or name is 'Manuel'
-        recommended_movie = kids_movie at random
+        recommended_movie = kids_movies at random
     if name is 'Pedro' or 'Gabriella'
-            mood = ask 'What you in the mood for?'
+        mood = ask 'What you in the mood for?'
         if mood is 'action'
             recommended_movie = comedy_movies at random
         if mood is 'romance'
@@ -64,6 +65,6 @@ print 'I would recommend ' recommended_movie ' for ' name
 name = ask 'Who is watching?'
 recommendation = ask 'Would you like a recommendation?'
 if recommendaion is 'yes'
-print movie_recommendation with name
+    call movie_recommendation with name
 else
-print 'No problem!'
+    print 'No problem!'

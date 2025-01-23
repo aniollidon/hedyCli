@@ -35,7 +35,7 @@ a = bla #comentari
 a=bla #comentari
 a =bla #comentari
 a= bla #comentari
-
+    
 color red
 turn 90
 clear
@@ -62,6 +62,12 @@ add ssds to dsdsd
 # N7
 repeat 2 times a is ask 'What is your name?'
 answer = ask 'Did you know you could ask a question multiple times?'
-if answer is yes repeat 2 times print 'You knew that already!'
-else repeat 3 times print 'You have learned something new!'
-print hola times
+if answer is yes if answer is no repeat 3 times print 'You have learned something new!'
+else repeat 3 times print 'You have learned something new!' 
+print hola times 
+
+
+a = 0
+b = b+1 kkmk
+ 
+repeat 3 times a = a + 1 hbhjbh

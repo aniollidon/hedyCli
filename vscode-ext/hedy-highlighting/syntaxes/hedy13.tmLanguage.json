@@ -5,13 +5,9 @@
 		{
 			"name": "invalid.illegal.character.hedy13",
 			"match": "\\b_\\b"
-		},
+		},		
 		{
-			"include": "#errors"
-		},
-		
-		{
-			"match": "^(#[ \\t]*![ \\t]*import)\\s+(.*)\\s+(from)\\s+(\\w+)",
+			"match": "^(# *! *import)\\s+(.*)\\s+(from)\\s+(\\w+)",
 			"captures": {
 				"1": {
 					"name": "keyword.control.import.hedy13"
@@ -44,6 +40,10 @@
 			"name": "string.quoted.single.hedy13",
 			"begin": "'",
 			"end": "'"
+		},
+		{
+			"name": "invalid.illegal.hedy13",
+			"match": ", *$"
 		},
 		{
 			"name": "keyword.command.comma.separator.hedy13",
@@ -127,11 +127,7 @@
 				"match": "\\bremove\\b"
 			},
 			{
-				"name": "invalid.illegal.errorinvalid.hedy13",
-				"match": "\\bErrorInvalid\\b"
-			},
-			{
-				"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+				"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 				"captures": {
 					"1": {
 						"name": "support.function.turtle.hedy13"
@@ -152,44 +148,15 @@
 			}
 			]
 		},
-		"errors": {
-			"patterns": [
-				{
-					"name": "invalid.deprecated.echo.hedy13",
-					"match": "\\becho\\b"
-				},
-				{
-					"name": "invalid.illegal.errorinvalid.hedy13",
-					"match": "\\bErrorInvalid\\b"
-				},
-				{
-					"name": "invalid.illegal.ask.hedy13",
-					"match": "^[ \\t]*(?:[ \\t]*\\w+[ \\t]+)?ask\\b(?![ \\t]*[:]).*"
-				},
-				{
-					"name": "invalid.illegal.command.hedy13",
-					"match": "^[ \\t]*(is|=|at|to|from|random|in|with|and|or)"
-				},
-				{
-					"name": "invalid.illegal.errorinvalid.hedy13",
-					"match": "(?<!\\brepeat\\b.*)\\btimes\\b"
-				},
-				
-				{
-					"name": "invalid.illegal.hedy13",
-					"match": ",$"
-				}
-			]
-		},
 		"maths":{ 
 			"patterns": [
 				{
 					"name": "keyword.command.hedy13",
-					"match": "[ \\t]*[+\\-*\\/][ \\t]*"
+					"match": " *[+\\-*\\/] *"
 				},
 				{
 					"name": "invalid.illegal.math.hedy13",
-					"match": "(?<=\\d)[ \\t]*[+\\-*\\/][ \\t]*(?=[\\w\"'])"
+					"match": "(?<=\\d) *[+\\-*\\/] *(?=[\\w\"'])"
 				}
 			]
 		}

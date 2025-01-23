@@ -11,5 +11,8 @@ define calcula_preu_nou with quantitat, percentatge
 preu_vell = ask "Quant hi ha a l'etiqueta de preu?"
 descompte = ask "Amb quin percentatge de descompte?"
 
+
+print calcula_preu_nou with quantitat, percentatge
+
 preu_nou = call calcula_preu_nou with preu_vell, descompte
 print 'El nou preu és ' preu_nou ' euros'

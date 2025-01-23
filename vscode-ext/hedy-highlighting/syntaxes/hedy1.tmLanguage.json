@@ -59,11 +59,7 @@
 			"match": "\\becho\\b"
 		},
 		{
-			"name": "invalid.illegal.errorinvalid.hedy1",
-			"match": "\\bErrorInvalid\\b"
-		},
-		{
-			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 			"captures": {
 				"1": {
 					"name": "support.function.turtle.hedy1"
@@ -75,7 +71,7 @@
 
 		},
 		{
-			"match": "\\b(turn)[\\t ]+\\b(left|right)\\b",
+			"match": "\\b(turn) +\\b(left|right)\\b",
 			"captures": {
 				"1": {
 					"name": "support.function.turtle.hedy1"

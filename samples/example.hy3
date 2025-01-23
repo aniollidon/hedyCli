@@ -1,46 +1,47 @@
-words is squawk, Hedy 
+words is squawk, Hedy    
 print Train your parrot!
-new_word is ask Which word do you want to teach them?
+new_word is ask Which word do you want to teach them? 
 add new_word to words
 print 🧒 Say new_word, Hedy!
-print 🦜 words at random
+print 🦜 words at random 
 
-add hola to words
+add hola to words 
 remove hola from words  # Comentari
-
+ 
 words is squawk, Hedy  #comentari
 print text #comentari
-monster_4 is ask What do you do? #comentari
+monster_4 is ask What do you do? #comentari 
 nom is ask Bon dia com, es diu vosté?
 
 
 # Errors
 llista is _ 
-llista is hola, adeu, hola_4, words fff
-a is hola #comentari
-
-print bb is a 2
-is hhh, 222
+llista is hola, adeu, hola_4, words fff 
+a is hola #comentari 
+ 
+print bb is a 2 
+is hhh, 222 
 at random
-print _
-echo hola
-ask blabal
-a ask knjkdnkj
-print then he ask you
+print _  
+Print hhh    
+echo hola 
+ask blabal  
+a ask knjkdnkj  b 
+print then he ask you 
 
+
+var is ask 'bla'
+var is ask "bla,bla"
+var is ask "bla,bla"
+var is el1, el2, el3  
+var is ask, ask
+var is variable
+ 
 
 var is ask 'bla'
 var is ask "bla,bla"
 var is ask "bla,bla"
 var is el1, el2, el3
 var is ask, ask
-var is variable
-
-
-var is  ask 'bla'
-var is  ask "bla,bla"
-var is  ask "bla,bla"
-var is  el1, el2, el3
-var is  ask, ask
-var is  variable
+var is variable 
 var is "poma","poma"

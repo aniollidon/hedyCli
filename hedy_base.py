@@ -228,7 +228,9 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
         if debug and extensions:
             print("Extensions actives:", extensions)
             print("Mapa de funcions a extensions:", mapa_funcions_extensio)
-            print("Extra hedy code: \n" + extra_prev_hedy_code)
+            print("############## CODI HEDY ###############")
+            print(extra_prev_hedy_code + hedy_code)
+            print("############ FI CODI HEDY ##############")
 
         response, transpile_result = parse(extra_prev_hedy_code + hedy_code, level, keyword_lang, microbit=microbit)
         pause_after_turtle = False

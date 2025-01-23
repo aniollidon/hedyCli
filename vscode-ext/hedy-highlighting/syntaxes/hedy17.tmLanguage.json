@@ -7,11 +7,7 @@
 			"match": "\\b_\\b"
 		},
 		{
-			"include": "#errors"
-		},
-		
-		{
-			"match": "^(#[ \\t]*![ \\t]*import)\\s+(.*)\\s+(from)\\s+(\\w+)",
+			"match": "^(# *! *import)\\s+(.*)\\s+(from)\\s+(\\w+)",
 			"captures": {
 				"1": {
 					"name": "keyword.control.import.hedy17"
@@ -44,6 +40,10 @@
 			"name": "string.quoted.single.hedy17",
 			"begin": "'",
 			"end": "'"
+		},
+		{
+			"name": "invalid.illegal.hedy17",
+			"match": ", *$"
 		},
 		{
 			"name": "keyword.command.comma.separator.hedy17",
@@ -131,11 +131,7 @@
 				"match": "\\bremove\\b"
 			},
 			{
-				"name": "invalid.illegal.errorinvalid.hedy17",
-				"match": "\\bErrorInvalid\\b"
-			},
-			{
-				"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+				"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 				"captures": {
 					"1": {
 						"name": "support.function.turtle.hedy17"
@@ -156,57 +152,15 @@
 			}
 			]
 		},
-		"errors": {
-			"patterns": [
-				
-				{
-					"name": "invalid.deprecated.echo.hedy17",
-					"match": "\\bat\\b"
-				},
-				{
-					"name": "invalid.deprecated.echo.hedy17",
-					"match": "\\becho\\b"
-				},
-				{
-					"name": "invalid.illegal.errorinvalid.hedy17",
-					"match": "\\bErrorInvalid\\b"
-				},
-				{
-					"name": "invalid.illegal.ask.hedy17",
-					"match": "^[ \\t]*(?:[ \\t]*\\w+[ \\t]+)?ask\\b(?![ \\t]*[:]).*"
-				},
-				{
-					"name": "invalid.illegal.command.hedy17",
-					"match": "^[ \\t]*(is|=|to|from|random|in|with|and|or)"
-				},
-				{
-					"name": "invalid.illegal.errorinvalid.hedy17",
-					"match": "(?<!\\brepeat\\b.*)\\btimes\\b"
-				},
-				
-				{
-					"name": "invalid.illegal.hedy17",
-					"match": ",$"
-				},
-				{
-					"name": "invalid.illegal.elseif.hedy17",
-					"match": "else[ \\t]+if"
-				},
-				{
-					"name": "invalid.illegal.identation.hedy17",
-					"match": "(for|while|if|else|elif).*(!:)[^\\n][ \\t]+"
-				}
-			]
-		},
 		"maths":{ 
 			"patterns": [
 				{
 					"name": "keyword.command.hedy17",
-					"match": "[ \\t]*[+\\-*\\/><!][ \\t]*"
+					"match": " *[+\\-*\\/><!] *"
 				},
 				{
 					"name": "invalid.illegal.math.hedy17",
-					"match": "(?<=\\d)[ \\t]*[+\\-*\\/<>!][ \\t]*(?=[\\w\"'])"
+					"match": "(?<=\\d) *[+\\-*\\/<>!] *(?=[\\w\"'])"
 				}
 			]
 		}

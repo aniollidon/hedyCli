@@ -7,15 +7,12 @@
 			"match": "\\b_\\b"
 		},
 		{
-			"include": "#errors"
-		},
-		{
 			"name": "comment.line.hedy5",
 			"match": "#.*"
 		},
 		{
 			"name": "inline.quoted.conditional.element.hedy5",
-			"match": "(?<=\\bif)[ \\t]+(\\w+)([ \\t]+is[ \\t]+|[ \\t]+in[ \\t]+)(\\w+)",
+			"match": "(?<=\\bif) +(\\w+)( +is +| +in +)(\\w+)",
 			"captures": {
 				"1": {
 					"name": "string.regexp.hedy5",
@@ -54,21 +51,20 @@
 		
 		{
 			"name": "array.hedy5",
-			"begin": "(?<=\\b\\w+([ \\t]+is[ \\t]))(?=.*,)",
+			"begin": "(?<=\\b\\w+( +is ))(?=.*,)",
 			"end": "(?=#|$)",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy5",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy5",
 					"match": "\\b(\\w+)\\b"
 				},
-				
 				{
 					"name": "invalid.illegal.hedy5",
-					"match": ",$"
+					"match": ", *$"
 				},
 				{
 					"name": "keyword.command.comma.separator.hedy5",
@@ -78,12 +74,12 @@
 		},
 		{ 
 			"name": "inline.quoted.array.element.hedy5",
-			"begin": "(?<=\\b(remove)[ \\t])",
+			"begin": "(?<=\\b(remove) )",
 			"end": "(?=\\b(from))|$",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy5",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy5",
@@ -94,12 +90,12 @@
 		},
 		{ 
 			"name": "inline.quoted.array.element.hedy5",
-			"begin": "(?<=\\b(add)[ \\t])",
+			"begin": "(?<=\\b(add) )",
 			"end": "(?=\\b(to))|$",
 			"patterns": [
 				{
 					"name": "constant.numeric.hedy5",
-					"match": "[ \\t]*[0-9]+"
+					"match": " *[0-9]+"
 				},
 				{
 					"name": "string.regexp.hedy5",
@@ -108,12 +104,12 @@
 			]
 		},
 		{
-			"begin": "(?<=\\w+(?:[ \\t]+is[ \\t]+))(?![ \\t]+ask)",
+			"begin": "(?<=\\w+(?: +is +))(?! +ask)",
 			"end": "(?<=#|$)",
 			"patterns": [
 				
 				{
-					"match": "[ \\t]*(\\w+)[ \\t]+(at)[ \\t]+(random)|(.+)",
+					"match": " *(\\w+) +(at) +(random)|(.+)",
 					"captures": {
 						"2": {
 							"name": "keyword.command.hedy5"
@@ -191,11 +187,7 @@
 			"match": "\\bremove\\b"
 		},
 		{
-			"name": "invalid.illegal.errorinvalid.hedy5",
-			"match": "\\bErrorInvalid\\b"
-		},
-		{
-			"match": "\\b(color)[\\t ]+\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
 			"captures": {
 				"1": {
 					"name": "support.function.turtle.hedy5"
@@ -214,26 +206,6 @@
 			"name": "support.class.pressed.hedy5",
 			"match": "\\b(pressed)\\b"
 		}
-		]
-	},
-	"errors": {
-		"patterns": [
-			{
-				"name": "invalid.deprecated.echo.hedy5",
-				"match": "\\becho\\b"
-			},
-			{
-				"name": "invalid.illegal.errorinvalid.hedy5",
-				"match": "\\bErrorInvalid\\b"
-			},
-			{
-				"name": "invalid.illegal.ask.hedy5",
-				"match": "^[ \\t]*(?:[ \\t]*\\w+[ \\t]+)?ask\\b(?![ \\t]*[:]).*"
-			},
-			{
-				"name": "invalid.illegal.command.hedy5",
-				"match": "^[ \\t]*(is|at|to|from|random)"
-			}
 		]
 	},
 	"inside_comp":{

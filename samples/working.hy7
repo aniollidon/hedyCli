@@ -1,0 +1,9 @@
+casas = Gryffindor, Slytherin, Hufflepuff, Ravenclaw
+asignaturas = pociones, defensa frente a artes oscuras, encantos, transfiguración
+miedos = Voldemort, arañas, fallar tu examen de LECHUZA
+nombres = Harry, Ron, Hermione
+for nombre in nombres
+    print nombre ' pertenece a ' casas at random
+    print nombre ' es mejor en ' asignaturas at random
+    print nombre ' su gran miedo es ' miedos at random
+ 
