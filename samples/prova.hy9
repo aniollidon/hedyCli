@@ -1,10 +1,6 @@
+var is hola
 
-if password is 1234 
-    repeat 7 times 
-        print "yes"
-        if 1 seconds have passed 
-            print "no"
-        else 
-            print "yes"
-else 
-    print "no"  
+
+turn 90
+
+

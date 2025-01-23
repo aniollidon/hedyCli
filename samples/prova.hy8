@@ -7,4 +7,4 @@ if password is 1234
         else 
             print "yes"
 else 
-    print "no" 
+    print "no"

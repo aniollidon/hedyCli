@@ -11,19 +11,21 @@ ask Which door should i pick?
 echo I choose door  
 print ...?
 
-turn right  
+turn play  
 turn left 
-forward 10 
+forward 33
+forward 222
 
-play C1 
-play 70 
+play C1
+play 70  
 
 # Errors
-print 'hola'
+print 'hola'   
 print "hola"
-print 2
+print 2  
 print _ lglñ,lgd _   
 Print
-Echo 
-ASK
-hola
+Echo
+ASK 
+hola 
+ 

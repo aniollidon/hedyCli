@@ -23,7 +23,7 @@ a = plat - 3 # Sí
 b = plat, ss # No
 c is ask 'bla' # ddd 
 remove plat from plats # Sí
-remove plat bla from plats # no
+remove plat bla from plats # no 
 add plat bla to plats # No
 
 

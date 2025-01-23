@@ -18,7 +18,7 @@ call song with 'ocean'
 call song with 'sea'
 call song with 'ocean'
 
-
+ 
 print 'Un ianqui baixa a la ciutat'
 define linia_1 with nota_1, nota_2, nota_3
     play C4

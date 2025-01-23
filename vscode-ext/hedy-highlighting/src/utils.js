@@ -17,16 +17,62 @@ function entreCometes(text, pos) {
   return false;
 }
 
+function separarParaules(codi) {
+  const regex = /'([^']*)'|"([^"]*)"|([\p{L}_\d]+)|([^\p{L}\d\s"']+)/gu;
+  let paraules = [];
+  let match;
+
+  while ((match = regex.exec(codi)) !== null) {
+      const [_, cometesSimples, cometesDobles, paraula, simbols] = match;
+      const posicio = match.index; // Posició inicial de la coincidència
+
+      if (cometesSimples !== undefined) {
+          paraules.push({ name: `'${cometesSimples}'`, pos: posicio }); // Text entre cometes simples
+      } else if (cometesDobles !== undefined) {
+          paraules.push({ name: `"${cometesDobles}"`, pos: posicio }); // Text entre cometes dobles
+      } else if (paraula !== undefined) {
+          paraules.push({ name: paraula, pos: posicio }); // Paraules normals amb lletres, dígits o subratllat
+      } else if (simbols !== undefined) {
+          paraules.push({ name: simbols, pos: posicio }); // Seqüències de símbols consecutius
+      }
+  }
+
+  return paraules;
+}
+
+function detectTypeConstant(text, hasQuotes=true, hasNotes=false, hasColors=false) {
+  const word = text.trim();
+
+  // Si és un número
+  if (!isNaN(word)) return 'number';
+
+  // Pot ser una nota musical
+  if (hasNotes && word.match(/\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\b/)) return 'note';
+
+  // Pot ser un color
+  if(hasColors && word.match(/\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\b/)) return 'color';
+
+  // Si comença i acaba per cometes és un string
+  if(hasQuotes && (word.startsWith('"') && word.endsWith('"')) || (word.startsWith("'") && word.endsWith("'"))) return 'string';
+  else if (!hasQuotes) return 'string';
+
+  else return undefined;
+}
+
+
+function varDefinitionType(linetext, hasQuotes, define_var_operator) {
+  const isList = enUnaLlista(linetext, linetext.length-1, hasQuotes, define_var_operator);
+  if(isList) return 'list';
+  const despresIgual = define_var_operator.includes("=") ? linetext.indexOf('=')+1 : -1;
+  const despresIs = define_var_operator.includes("is") ? linetext.indexOf(' is ')+4 : -1;
+  const pos = despresIgual > despresIs ? despresIgual : despresIs;
+  const despres = linetext.substring(pos, linetext.length).trim();
+
+  if (!isNaN(despres)) return 'number';
+  else return 'string';
+}
+
 function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
-  // NOMLLISTA = a, CERCA, c <-llista
-  // NOMLLISTA = CERCA <- no llista
-  // NOMLLISTA = a, b, c # CERCA <- no llista
-  // CERCA ... NOMLLISTA = a, b, c <- no llista
-  // ... "a, b," CERCA <- no llista
-  // ... CERCA ... "a, b," <- no llista
-  // .... with a, b, c < no llista
-
-
   const abans = text.substring(0, pos);
   const despres = text.substring(pos);
 
@@ -99,5 +145,8 @@ module.exports = {
     trimPosStart,
     trimPosEnd,
     getLastWord,
-    getFirstWord
+    getFirstWord,
+    varDefinitionType,
+    separarParaules,
+    detectTypeConstant
 }

@@ -144,7 +144,7 @@
 			},
 			{
 				"name": "support.function.turtle.hedy16",
-				"match": "\\b(forward|turn)\\b"
+				"match": "\\b(forward|turn|color)\\b"
 			},
 			{
 				"name": "support.class.pressed.hedy16",

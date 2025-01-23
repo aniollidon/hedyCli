@@ -84,7 +84,7 @@
 		},
 		{
 			"name": "support.function.turtle.hedy1",
-			"match": "\\b(forward|turn)\\b"
+			"match": "\\b(forward|turn|color)\\b"
 		}
 		]
 	},

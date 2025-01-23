@@ -11,14 +11,14 @@ print aniol aniol
 if 1 is 1 
     print """" aniol
 
-if aniol is shhhh
+if aniol is shhhh 
     paper = "hola"
     
 if aniol is shhhh
     paper = "hola"
     paper = "hola"
 
-print aniol
+print aniol 
 
 
 options=rock, paper, scissors

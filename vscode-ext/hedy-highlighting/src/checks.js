@@ -1,4 +1,4 @@
-const { entreCometes, identation, trimPosStart, trimPosEnd, getFirstWord, getLastWord } = require('./utils');
+const { entreCometes, identation, trimPosStart, trimPosEnd, getFirstWord, getLastWord, separarParaules, detectTypeConstant } = require('./utils');
 const {EntityDefinitions} = require('./definitions');
 
 
@@ -18,11 +18,11 @@ const bucleInlineRegex = /^(repeat +([\p{L}_\d]+) +times +)(.*)$/u;
   //     - add ___ to <llista>                       FET
   //     - remove ___ from <llista>                  FET
   //     - <llista> at random                        FET
-  //     - ____ in <llista>                          FET
-  // - detectar usos cometes (quan són necessaries) i quan no
-// TODO: A partir nivell 14, es pot fer una crida des d'una funció a una altra funció que retorni un valor
+  //     - ____ in <llista>                          FET 
+  // - detectar usos cometes (quan són necessaries) i quan no           FET, FALTA >N12
+// TODO: A partir nivell 14, es pot fer una crida des d'una funció a una altra funció que retorni un valor  IMPORTANT!!!!
 // TODO: Detectar : al final de la línia quan calgui (L17)
-// TODO: A nivell 14 == enlloc de = (WARN)
+// TODO: Errors en el while (L15) i l'igual
 
 class Comand{
     constructor(nom, validAfter=[], commonErrors=[], deprecated=false){
@@ -46,8 +46,16 @@ class Sintagma{
         this.tokens = [];
     }
 
-    addToken(token){
-        this.tokens.push(token);
+    addToken(token, pos){
+        this.tokens[pos] = token;
+    }
+
+    get(token){
+        // Search for the token in the sintagma
+        for(let i = 0; i < this.tokens.length; i++){
+            if(this.tokens[i] === token) return {token: token, pos:i};
+        }
+        return undefined;
     }
 }
 
@@ -103,8 +111,8 @@ class History{
     * Es crida per afegir un token a la llista de tokens de l'últim sintagma
     * Un token és una paraula que s'ha reconegut com a comanda vàlida
     */
-    addToken(token){
-      this.last().addToken(token);
+    addToken(token, start){
+      this.last().addToken(token, start);
     }
 
     cercaIf(searchScoped=false, onScope=-1){
@@ -163,12 +171,13 @@ class CheckHedy{
       this.entities = new EntityDefinitions(level);
       this.level = level;
       this.comandes = [new Comand("play"), new Comand("turn"), new Comand("forward"), new Comand("color")];
-      this._usesCometes = level > 3;
+      this._usesCometesText = level > 3;
       this._defineVarOp = level >= 6 ? "is|=" : "is";
       this._conditionalInline = level >= 5 && level < 8;
       this._usesScope = level >= 8;
       this._scopeRecursive = level >= 9;
       this._bucleInline = level == 7;
+      this._usesCometesArreu = level >= 12;
       let beforeDef = "^";
       if (this._bucleInline)
         beforeDef = "(?:^|\\btimes\\b)";
@@ -188,7 +197,8 @@ class CheckHedy{
         highlight: "command",
         after: /(?!pressed)/g,
         message: "És més recomanable fer servir '=' enlloc de 'is'.",
-        severity: "info"
+        severity: "info",
+        codeerror: "hedy-equal-instead-of-is"
       }, ...varDefCE];
 
       const noCometesCE = [{
@@ -261,14 +271,19 @@ class CheckHedy{
         when: "valid",
         message: "En aquest nivell ja es pot fer servir '==' enlloc de '='",
         highlight: "command",
-        severity: "info"
+        severity: "info",
+        codeerror: "hedy-equalequal-instead-of-equal"
+
       }, ...varDefCE];
       
       this.comandes.push(new Comand("print", [], level < 4 ? noCometesCE: []));
 
       if (level == 1){
+        this.comandes.push(new Comand("magic", ['.*']));
         this.comandes.push(new Comand("ask", [], noCometesCE));
         this.comandes.push(new Comand("echo", [], noCometesCE));
+        this.comandes.push(new Comand("right", ["^turn +"]));
+        this.comandes.push(new Comand("left", ["^turn +"]));
       }
 
       if (level >= 2){
@@ -471,10 +486,14 @@ class CheckHedy{
   
       if (errorMalInici){
         let message = ""
+        let codeerror = undefined;
         const firstWord = lineTrim.split(" ")[0];
 
         if (this._inicials().includes(firstWord.toLowerCase()))
+        {
             message = "Recorda que les comandes s'escriuen en minúscules";
+            codeerror = "hedy-to-lowercase-command";
+        }
         else if (firstWord.toLowerCase() === "ask")
             message = "Abans d'una comanda ask cal declarar una variable";
         else {
@@ -491,7 +510,8 @@ class CheckHedy{
             message: message,
             start: identationLength,
             end: identationLength + firstWord.length,
-            severity: "error"
+            severity: "error",
+            codeerror: codeerror
         });
       }
 
@@ -518,8 +538,10 @@ class CheckHedy{
       }
 
       this.history.add(lineTrim, identationLength, lineNumber);
-      const comandError = this._searchCommandsErrors(lineTrim, identationLength);
+      let comandError = this._searchCommandsErrors(lineTrim, identationLength);
       if (comandError.length > 0) errorsFound.push(...comandError);
+      comandError = this._searchNotTaggedErrors(lineTrim, identationLength);
+        if (comandError.length > 0) errorsFound.push(...comandError);
       return errorsFound;
     }
 
@@ -538,7 +560,7 @@ class CheckHedy{
         if (pos === -1) continue;
 
         // O si aquesta està entre cometes
-        if(this._usesCometes && entreCometes(lineTrim, pos)) continue;
+        if(this._usesCometesText && entreCometes(lineTrim, pos)) continue;
 
         const beforeAndCommand = lineTrim.substring(0, pos + comand.nom.length);
         const beforeComand = lineTrim.substring(0, pos);
@@ -547,7 +569,7 @@ class CheckHedy{
         let contextValid = false;
         let errormessage = `La comanda '${comand.nom}' no es pot fer servir en aquest context`;
 
-        if(!this._usesCometes &&  beforeComand.match(/(print|ask|echo) +/)) // Després de print, ask o echo tot és string i no comandes
+        if(!this._usesCometesText &&  beforeComand.match(/(print|ask|echo) +/)) // Després de print, ask o echo tot és string i no comandes
           continue;
         
         if(comand.begining){
@@ -572,6 +594,18 @@ class CheckHedy{
         if(error.when === "valid" && !contextValid || error.when === "invalid" && contextValid) continue;
 
         let errorFound = true;
+        
+        /*console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2")
+        console.log("comand: ", comand.nom)
+        console.log("search error: ", error)
+        console.log("line: ", lineTrim)
+        console.log("before: ", beforeComand)
+        console.log("after: ", afterComand)
+        console.log("getLastWord(beforeComand): ", getLastWord(beforeComand))
+        console.log("getFirstWord(afterComand): ", getFirstWord(afterComand))
+        console.log("this.entities.subtype(getLastWord ", this.entities.subtype(getLastWord(beforeComand)))
+        console.log("this.entities.subtype(getFirstWord ", this.entities.subtype(getFirstWord(afterComand)))*/
+
 
         if(error.match) errorFound &&= lineTrim.match(error.match) !== null;
         //console.log("match: ", errorFound)
@@ -579,9 +613,9 @@ class CheckHedy{
         //console.log("before: ", errorFound)  
         if(error.after) errorFound &&= afterComand.match(error.after) !== null
         //console.log("after: ", errorFound)
-        if(error.list) errorFound &&= this.entities.isList(error.list === "before" ? getLastWord(beforeComand): getFirstWord(afterComand));
+        if(error.list) errorFound &&= this.entities.subtype(error.list === "before" ? getLastWord(beforeComand): getFirstWord(afterComand)) === 'list';
         //console.log("list: ", errorFound)
-        if(error.notlist) errorFound &&= !this.entities.isList(error.notlist === "before" ? getLastWord(beforeComand): getFirstWord(afterComand));
+        if(error.notlist) errorFound &&= this.entities.subtype(error.notlist === "before" ? getLastWord(beforeComand): getFirstWord(afterComand)) !== 'list';
         //console.log("notlist: ", errorFound)
         if(error.special_else) errorFound &&= !this.history.cercaIf(this._usesScope, identationLength);
         //console.log("special_else: ", errorFound)
@@ -618,7 +652,8 @@ class CheckHedy{
             message: error.message,
             start: start + identationLength,
             end: end + identationLength,
-            severity: error.severity || "error"
+            severity: error.severity || "error",
+            codeerror: error.codeerror
           });
 
           customError = true;
@@ -645,11 +680,101 @@ class CheckHedy{
           });
         }
 
-        if(contextValid && !comand.deprecated)
-          this.history.addToken(comand.nom); 
+        if(contextValid)
+          this.history.addToken(comand.nom, pos + identationLength); 
       }
 
       return errorsFound;
+    }
+
+    _searchNotTaggedErrors(lineTrim, identationLength){
+        const errorsFound = [];
+        const words = separarParaules(lineTrim);
+
+        if(words.length === 0) return [];
+
+        const iniciPAE = words[0].name === "print" || words[0].name === "ask" || words[0].name === "echo";
+        const notes = words[0].name === "play"
+        const colors = words[0].name === "color"
+        const cmdFound = this.history.last();
+
+        for(let i = 0; i < words.length; i++){
+            const word = words[i].name;
+            if(word === "") continue;
+            const entity = this.entities.get(word);
+            const command = cmdFound.get(word);
+            
+
+            const constant = detectTypeConstant(word, iniciPAE? this._usesCometesText: this._usesCometesArreu, notes, colors);
+
+            if(command !== undefined){
+                words[i].type = "command";
+                words[i].info = command
+            }
+            else if(entity !== undefined) {
+                words[i].type = "entity_" + entity.type;
+                if(words[i].type.subtype) words[i].type += "_" + entity.subtype;
+                words[i].info=entity;
+            }
+            else if(constant !== undefined){
+                words[i].type= "constant_" + constant;
+                words[i].info=constant;
+            }
+        }
+
+        if(iniciPAE){
+            for(let i = 1; i < words.length; i++){
+                if(!words[i].type || words[i].type === "constant_note" || words[i].type === "constant_color"){
+                    errorsFound.push({
+                        comand: words[i].name,
+                        message: "Si és un text hauria d'anar entre cometes",
+                        start: words[i].pos + identationLength,
+                        end: words[i].pos + words[i].name.length + identationLength,
+                        severity: "warning"
+                    });
+                }
+            }
+        }
+
+        // Deprés de play hi va una nota/número/variable/comada
+        else if(notes){
+            if(words.length < 2 || !words[1].type || words[1].type.includes("constant") && words[1].type.search(/note|number/) === -1){
+                errorsFound.push({
+                    comand: words[0].name,
+                    message: "La comanda 'play' espera una nota",
+                    start: words[1].pos + identationLength,
+                    end: words[1].pos + words[1].name.length + identationLength,
+                    severity: "error"
+                });
+            }
+        }
+        // Deprés de color hi va un color/variable/comada
+        else if(colors){
+            if(words.length < 2 || !words[1].type || words[1].type.includes("constant") && words[1].type.search("color") === -1){
+                errorsFound.push({
+                    comand: words[0].name,
+                    message: "La comanda 'color' espera un color",
+                    start: words[1].pos + identationLength,
+                    end: words[1].pos + words[1].name.length + identationLength,
+                    severity: "error"
+                });
+            }
+        }
+        // Deprés de turn o forward hi va número/variable/comada 
+        else if(words[0].name === "turn" || words[0].name === "forward"){
+            if(words.length < 2 || !words[1].type || words[1].type.includes("constant") && words[1].type.search("number") === -1){
+                errorsFound.push({
+                    comand: words[0].name,
+                    message: "La comanda '" + words[0].name + "' espera un número o left/right al primer nivell",
+                    start: words[1].pos + identationLength,
+                    end: words[1].pos + words[1].name.length + identationLength,
+                    severity: "error"
+                });
+            }
+        }
+
+
+        return errorsFound;
     }
 }
 

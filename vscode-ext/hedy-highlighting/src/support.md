@@ -49,6 +49,7 @@
 
 ## N12:
 - Mates amb decimals
+- Sumar strings
 - Funcions sense paràmetres:
     - `define`
     - `call`

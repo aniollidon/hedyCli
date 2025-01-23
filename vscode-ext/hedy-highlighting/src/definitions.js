@@ -1,4 +1,4 @@
-const { entreCometes, enUnaLlista } = require('./utils');
+const { entreCometes, enUnaLlista, varDefinitionType } = require('./utils');
 
 function parseImportFunctions(input) {
     input = input.replace(/[^a-zA-Z0-9,_()]/g, ''); // Elimina tots els caràcters que no siguin lletres, números, comes i parèntesis
@@ -71,9 +71,10 @@ class EntityDefinitions {
           const variableName = match[1];
           const startChar = match.index + match[0].indexOf(variableName);
   
-          const isList = enUnaLlista(text, text.length-1, this._hasQuotes, this._define_var_operator);
+          const subtype = varDefinitionType(text,this._hasQuotes, this._define_var_operator); 
+
           if (!this.names[variableName]) 
-            this.names[variableName] = { scope: scope, type: 'variable', def_line: lineNumber, defChar: startChar, isList: isList};
+            this.names[variableName] = { scope: scope, type: 'variable', def_line: lineNumber, defChar: startChar, subtype: subtype};
           
           this.tokens.push({
             line: lineNumber,
@@ -208,9 +209,13 @@ class EntityDefinitions {
         return this.names; 
     }
 
-    isList(varname){
-        if(!this.names[varname]) return false;
-        return this.names[varname].isList;
+    subtype(varname){
+        if(!this.names[varname]) return undefined;
+        return this.names[varname].subtype;
+    }
+
+    get(name) {
+        return this.names[name];
     }
   }
 

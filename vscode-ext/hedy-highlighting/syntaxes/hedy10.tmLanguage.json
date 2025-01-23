@@ -184,7 +184,7 @@
 			},
 			{
 				"name": "support.function.turtle.hedy10",
-				"match": "\\b(forward|turn)\\b"
+				"match": "\\b(forward|turn|color)\\b"
 			},
 			{
 				"name": "support.class.pressed.hedy10",
