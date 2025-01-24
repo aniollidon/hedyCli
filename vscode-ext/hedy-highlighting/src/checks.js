@@ -312,7 +312,7 @@ class CheckHedy{
       if (level >= 5){
         this.comandes.push(new Comand("if", [], [{
           when: "valid",
-          after: /([\p{L}_\d]+)( +is +| *= *)\1/gu,
+          after: /([\p{L}_\d]+)( +is +| *= *)\b\1\b/gu,
           highlight: "after",
           message: "No té massa sentit comparar dos cops el mateix",
           severity: "warning"
