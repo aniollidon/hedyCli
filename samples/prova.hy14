@@ -1,16 +1,1 @@
-#!import vincula_fitxer(ruta, fitxer), vincula_funcio(ruta, funct), init_servidor, redirigeix(url) from webserver
-
-define login with user, password
-  if user == 'admin' and password == 'admin'
-    return call redirigeix with '/hola'
-  else
-    return 'Usuari o contrasenya incorrectes'
-
-call vincula_fitxer with '/hola', 'samples/prova_web/index.html'
-call vincula_funcio with '/login', login
-call init_servidor
-
-if "hola" == "adeu"
-    print "hola"
-else
-    print "adeu"
+print "hola"

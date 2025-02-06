@@ -25,6 +25,7 @@ class EntityDefinitions {
       this._define_var_by_for = level >= 10;
       this._define_functions = level >= 12;
       this._define_fun_with = level >= 13;
+      this._return_fun = level >= 14;
   
       this.tokens = [];
       this.names = {};
@@ -104,29 +105,7 @@ class EntityDefinitions {
             });
           }
         }
-        // Busca declaracions de funcions amb with
-        if (this._define_fun_with) {
-          const withRegex = /define +[\p{L}_\d]+ with +(.+)/gu;
-          let withMatch;
-          while ((withMatch = withRegex.exec(text)) !== null) {
-            const params = withMatch[1].split(',');
-            for (const param of params) {
-              const param_name = param.trim();
-              const startChar = withMatch.index + withMatch[0].indexOf(param_name);
-  
-              if (!this.names[param_name]) this.names[param_name] = { scope: undefined, type: 'parameter', def_line: lineNumber, defChar: startChar};
-  
-              this.tokens.push({
-                line: lineNumber,
-                startChar: startChar,
-                length: param_name.length,
-                type: 'parameter',
-                modifiers: ['declaration']
-              });
-            }
-          }
-        }
-  
+
         // Busca declaracions de funcions 
         if (this._define_functions) {
           const funtionDeclRegex = new RegExp(' *(define) *\\b([\\p{L}_\\d]+)', 'gu'); // Regex per trobar `define funcio`
@@ -145,6 +124,52 @@ class EntityDefinitions {
               type: 'function',
               modifiers: ['declaration']
             });
+          }
+        }
+
+        // Busca declaracions de funcions amb with
+        if (this._define_fun_with) {
+          const withRegex = /define +([\p{L}_\d]+) with +(.+)/gu;
+          let withMatch;
+          while ((withMatch = withRegex.exec(text)) !== null) {
+            const functionName = withMatch[1];
+            const params = withMatch[2].split(',');
+            for (const param of params) {
+              const param_name = param.trim();
+              const startChar = withMatch.index + withMatch[0].indexOf(param_name);
+  
+              if (!this.names[param_name]) this.names[param_name] = { scope: undefined, type: 'parameter', def_line: lineNumber, defChar: startChar};
+  
+              this.tokens.push({
+                line: lineNumber,
+                startChar: startChar,
+                length: param_name.length,
+                type: 'parameter',
+                modifiers: ['declaration']
+              });
+            }
+
+          // Find previous function declaration on names
+          this.names[functionName].params = params;
+          }
+        }
+  
+        // Busca retorn de funcions
+        if(this._return_fun){
+          const returnRegex = new RegExp('^( *)return ', 'gu');
+          let match3;
+          while ((match3 = returnRegex.exec(text)) !== null) {
+            const identation = match3[1].length;
+            // Find previous function declaration on names
+            const variableNames = Object.keys(this.names);
+            for (let i = variableNames.length - 1; i >= 0; i--) {
+              const variableName = variableNames[i];
+              if (this.names[variableName].type === 'function' && this.names[variableName].def_line < lineNumber) {
+                this.names[variableName].subtype = 'return';
+              break;
+              }
+            }
+            
           }
         }
   
@@ -176,7 +201,11 @@ class EntityDefinitions {
               });
             }
           }
+
+          console.log(this.names);
         }
+
+
   
         // Busca referències a variables
         for (const variableName in this.names) {

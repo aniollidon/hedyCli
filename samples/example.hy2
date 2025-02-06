@@ -4,33 +4,35 @@ monster_3 is 👶
 print You enter the haunted house. 
 print Suddenly you see a monster_1 
 print You run into the other room, but a monster_2 is waiting there for you!
-print Oh no! Quickly get to the kitchen.
 print But as you enter monster_3 attacks you!
-monster_4 is ask What do you do? 
- 
+print bla monster_1 monster_2 monster_3
+monster_4 is ask monster 4? 
 print text #comentari
-monster_4 is ask What do you do? #comentari 
- 
-a is hola #comentari
 
+# Tortuga
+forward 10
+play C1 
+color red
+turn 90
+
+# Constants
+a is hola 
+b is 2
+b is red
+
+# Errors
 turn right  
 turn left  
-forward 10
 
 right is hola
 
-play C1 
- 
-# Errors
 print "hola"
-monster is _ 
-print monster
 print _
 echo hola  
 ask blabal 
 a ask knjkdnkj 
-print then he ask you
 Print kmkmk
-hola q tal is cd  
- 
+hola q tal is blabla  
+
+# No errors
 print hola is hola tre ro

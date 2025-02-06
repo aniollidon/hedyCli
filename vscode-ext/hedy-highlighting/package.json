@@ -12,7 +12,8 @@
     "Programming Languages"
   ],
   "contributes": {
-    "languages": [{
+    "languages": [
+      {
       "id": "hedy1",
       "aliases": ["hedy1", "Hedy1"],
       "extensions": [".hy1"],
@@ -200,6 +201,22 @@
         "scopeName": "source.hedy17",
         "path": "./syntaxes/hedy17.tmLanguage.json"
       }
-    ]
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Configuració de l'extensió",
+      "properties": {
+        "hedy.underlining": {
+          "type": "boolean",
+          "default": true,
+          "description": "Habilitar o deshabilitar el subratllat d'errors."
+        },
+        "hedy.followVariables": {
+          "type": "boolean",
+          "default": true,
+          "description": "Habilitar o deshabilitar el seguiment de variables."
+        }
+      }
+    }
   }
 }

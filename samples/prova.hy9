@@ -1,16 +1,6 @@
-print "Benvingut a la nostra botiga d'entrepans"
-quantitat is ask "Quants entrepans t'agradaria comprar?"
-repeat quantitat times
-    pa_elegit is ask "Quin tipus de pa t'agradaria per al teu entrepà?"
-    tipus_de_pa is blanc, blat, sègol, all, sense gluten
-    if pa_elegit in tipus_de_pa
-        print "Excel·lent!"
-    else
-        print "Ho sento, no venem això"
+var1 is 10
+var11 is 11
 
-    guarnicio is ask "Quin tipus de guarnició t'agradaria?"
-    salsa is ask "Quin tipus de salsa t'agradaria?"
-    print "Un " pa_elegit " amb " guarnicio "i " salsa "."
-    
-preu = quantitat * 6
-print "Seran " preu " euros, si us plau"
+
+if var1 is var11
+    print "hola"

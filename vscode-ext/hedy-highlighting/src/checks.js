@@ -279,7 +279,6 @@ class CheckHedy{
       this.comandes.push(new Comand("print", [], level < 4 ? noCometesCE: []));
 
       if (level == 1){
-        this.comandes.push(new Comand("magic", ['.*']));
         this.comandes.push(new Comand("ask", [], noCometesCE));
         this.comandes.push(new Comand("echo", [], noCometesCE));
         this.comandes.push(new Comand("right", ["^turn +"]));
@@ -312,7 +311,7 @@ class CheckHedy{
       if (level >= 5){
         this.comandes.push(new Comand("if", [], [{
           when: "valid",
-          after: /([\p{L}_\d]+)( +is +| *= *)\b\1\b/gu,
+          after: /([\p{L}_\d]+)( +is +| *= * | *== *)\b\1\b/gu,
           highlight: "after",
           message: "No té massa sentit comparar dos cops el mateix",
           severity: "warning"
@@ -356,17 +355,19 @@ class CheckHedy{
 
       if (level >= 12){
         this.comandes.push(new Comand("define"));
-        this.comandes.push(new Comand("call"));
+        this.comandes.push(new Comand("call", [".*"]));
       }
 
       if (level >= 13){
-        this.comandes.push(new Comand("with", ["^call.*", "^define.*"]));
+        this.comandes.push(new Comand("with", [".*", ".*"]));
         if (level < 17) this.comandes.push(new Comand("and", ["^if .*"]));
         if (level < 17) this.comandes.push(new Comand("or", ["^if .*"]));
       }
 
       if (level >= 14){
         if (level < 17) this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+ *", "^if .*"], equalCE14));
+        this.comandes.push(new Comand(",", ["with .*"]));
+
         this.comandes.push(new Comand("return"));
         this.comandes.push(new Comand(">", [".+"], operatorsCE));
         this.comandes.push(new Comand("<", [".+"], operatorsCE));
@@ -724,6 +725,7 @@ class CheckHedy{
 
         if(iniciPAE){
             for(let i = 1; i < words.length; i++){
+
                 if(!words[i].type || words[i].type === "constant_note" || words[i].type === "constant_color"){
                     errorsFound.push({
                         comand: words[i].name,
@@ -773,6 +775,22 @@ class CheckHedy{
             }
         }
 
+        // Comprovacions de l'ús de funcions
+        for(let i = 0; i < words.length; i++){
+          if(words[i].type === "command" && words[i].name === "call"){
+            if(words.length < i+2 || words[i+1].type !== "entity_function"){
+              errorsFound.push({
+                comand: words[i].name,
+                message: "La comanda 'call' espera una funció",
+                start: words[i].pos + identationLength,
+                end: words[i].pos + words[i].name.length + identationLength,
+                severity: "error"
+              });
+            }
+            // Si la següent paraula és una funció, mirem si necessita paràmetres i si hi son tots
+            //TODO
+          }
+        }
 
         return errorsFound;
     }
