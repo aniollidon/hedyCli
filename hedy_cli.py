@@ -123,8 +123,9 @@ def console_hedy():
     parser.add_argument('-d', "--debug", help="Activa el mode debug",
                         action='store_true')
 
-    parser.add_argument('-o', "--obfuscate", help="Crea un fitxer ofuscat per a ser executat més endevant",
-                        default="")
+    parser.add_argument('-o', "--obfuscate", help="Crea un fitxer ofuscat per a ser executat més endevant")
+
+    parser.add_argument( "--oprogram", help="El camp file és el codi d'un programa ofuscat", action='store_true')
 
     parser.add_argument("file", help="Fitxer amb el codi HEDY que vols executar")
 
@@ -132,14 +133,22 @@ def console_hedy():
 
     if args.microbit:
         args.code = True
+    
+    if args.oprogram:
+        detected_level = 0
+        hidden_hedy = True
+        file_abs_path = "inline program"
+    else:
+        # check if the file exists
+        if not os.path.exists(args.file):
+            print_error("ERROR: El fitxer", args.file, "no existeix")
+            return
 
-    # check if the file exists
-    if not os.path.exists(args.file):
-        print_error("ERROR: El fitxer", args.file, "no existeix")
-        return
+        # Get level from file extension (.hy1, .hy2...) or flag --level
+        detected_level = get_level_from_file(args.file)
+        hidden_hedy = detect_hidehedy(args.file)
+        file_abs_path = os.path.abspath(args.file)
 
-    # Get level from file extension (.hy1, .hy2...) or flag --level
-    detected_level = get_level_from_file(args.file)
     if args.level != 0 and detected_level != 0 and args.level != detected_level:
         print_error(
             "ERROR: El nivell especificat amb el flag -l no coincideix amb el nivell detectat pel fitxer. utilitza "
@@ -178,26 +187,29 @@ def console_hedy():
         print("No s'ha provat el codi, assegura't que el codi original funciona correctament")
         return
 
-    hiden_hedy = detect_hidehedy(args.file)
 
-    file_abs_path = os.path.abspath(args.file)
-    with open(args.file, encoding='utf-8') as f:
+    if args.oprogram:
+        hedy_code = args.file
+    else:
+        f = open(args.file, encoding='utf-8')
         hedy_code = f.read()
-        if hiden_hedy:
-            hedy_code = descodificar(hedy_code)
-        try:
-            res = execute_hedy(hedy_code, args.level, lang='ca', keyword_lang='en', interact=args.interact,
-                               microbit=args.microbit, donot_execute=args.code, debug=args.debug)
+        f.close()
 
-            if 'Error' in res or 'Warning' in res:
-                res['File'] = file_abs_path
-                print_error_from_response(res)
-        except KeyboardInterrupt:
-            print_error("\nFinal: Procés interromput per l'usuari")
-        except Exception as e:
-            if args.debug:
-                raise e
-            print("Error inesperat:", str(e), file=sys.stderr)
+    if hidden_hedy:
+        hedy_code = descodificar(hedy_code)
+    try:
+        res = execute_hedy(hedy_code, args.level, lang='ca', keyword_lang='en', interact=args.interact,
+                           microbit=args.microbit, donot_execute=args.code, debug=args.debug)
+
+        if 'Error' in res or 'Warning' in res:
+            res['File'] = file_abs_path
+            print_error_from_response(res)
+    except KeyboardInterrupt:
+        print_error("\nFinal: Procés interromput per l'usuari")
+    except Exception as e:
+        if args.debug:
+            raise e
+        print("Error inesperat:", str(e), file=sys.stderr)
 
 
 if __name__ == '__main__':
