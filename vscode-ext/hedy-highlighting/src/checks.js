@@ -10,7 +10,7 @@ const bucleInlineRegex = /^(repeat +([\p{L}_\d]+) +times +)(.*)$/u;
 //TODO:
   // - detectar usos de llistes:
   //    - USOS NO PERMESOS
-  //      - no es poden imprimir amb print/ask                    
+  //      - no es poden imprimir amb print/ask                    FET
   //      - no es poden sumar/restar/multiplicar                  FET
   //      - no es poden comparar amb ==, !=, >, <, >=, <=         FET
   //      - no es poden comparar amb is
@@ -734,6 +734,19 @@ class CheckHedy{
                         end: words[i].pos + words[i].name.length + identationLength,
                         severity: "warning"
                     });
+                }
+
+                // Si és una variable tipus llista
+                if(words[i].type === "entity_variable" && words[i].info.subtype === "list"){
+                    if(words.length < i+2 || words[i+1].name !== "to"){
+                        errorsFound.push({
+                            comand: words[i].name,
+                            message: "Les llistes no es poden imprimir.",
+                            start: words[i].pos + identationLength,
+                            end: words[i].pos + words[i].name.length + identationLength,
+                            severity: "error"
+                        });
+                    }
                 }
             }
         }

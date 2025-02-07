@@ -202,7 +202,6 @@ class EntityDefinitions {
             }
           }
 
-          console.log(this.names);
         }
 
 
