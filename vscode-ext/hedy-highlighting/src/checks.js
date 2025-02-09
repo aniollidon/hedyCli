@@ -3,7 +3,7 @@ const {EntityDefinitions} = require('./definitions');
 
 
 // No hi ha ni elif, ni and ni or (LEVS 5,6,7,8)
-const condicionalInlineRegex = /^(if +([\p{L}_\d]+) *( is | in |=| not +in) *(".*"|[\p{L}_\d]+) |else )+(.*)$/u;
+const condicionalInlineRegex = /^(if +([\p{L}_\d]+) *( is | in |=| not +in ) *(".*"|[\p{L}_\d]+) |else )+(.*)$/u;
 const condicionalElseInlineRegex = /(.* )(else) (.*)/;
 const bucleInlineRegex = /^(repeat +([\p{L}_\d]+) +times +)(.*)$/u;
 
@@ -266,7 +266,7 @@ class CheckHedy{
       }];
 
       const equalCE14 = [ {
-        before: /^(if|while|for|elif)/,
+        before: /^(if|while|elif)/,
         after: /^(?!=)/g,
         when: "valid",
         message: "En aquest nivell ja es pot fer servir '==' enlloc de '='",
@@ -359,14 +359,15 @@ class CheckHedy{
       }
 
       if (level >= 13){
-        this.comandes.push(new Comand("with", [".*", ".*"]));
+        this.comandes.push(new Comand("with", [".*"]));
+        this.comandes.push(new Comand(",", ["with .*"]));
+
         if (level < 17) this.comandes.push(new Comand("and", ["^if .*"]));
         if (level < 17) this.comandes.push(new Comand("or", ["^if .*"]));
       }
 
       if (level >= 14){
         if (level < 17) this.comandes.push(new Comand("=", ["^[\\p{L}_\\d]+ *", "^if .*"], equalCE14));
-        this.comandes.push(new Comand(",", ["with .*"]));
 
         this.comandes.push(new Comand("return"));
         this.comandes.push(new Comand(">", [".+"], operatorsCE));
@@ -805,6 +806,7 @@ class CheckHedy{
           }
         }
 
+        console.log("words: ", words)
         return errorsFound;
     }
 }
