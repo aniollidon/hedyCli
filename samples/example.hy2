@@ -3,18 +3,18 @@ monster_2 is 🤡
 monster_3 is 👶
 print You enter the haunted house. 
 print Suddenly you see a monster_1 
-print You run into the other room, but a monster_2 is waiting there for you!
+print You run into _ the other room, but a monster_2 is waiting there for you! #huuuu
 print But as you enter monster_3 attacks you!
 print bla monster_1 monster_2 monster_3
 monster_4 is ask monster 4? 
 print text #comentari
 
-# Tortuga
+# Tortuga 
 forward 10
 play C1 
 color red
 turn 90
-
+ 
 # Constants
 a is hola 
 b is 2
@@ -22,7 +22,7 @@ b is red
 
 # Errors
 turn right  
-turn left  
+turn left   
 
 right is hola
 

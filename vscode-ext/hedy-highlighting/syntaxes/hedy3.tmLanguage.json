@@ -3,10 +3,6 @@
 	"name": "hedy3",
 	"patterns": [
 		{
-			"name": "invalid.illegal.character.hedy3",
-			"match": "\\b_\\b"
-		},
-		{
 			"name": "array.hedy3",
 			"begin": "(?<= +is +)(?=.*,)(?!ask )",
 			"end": "(?=#|$)",
@@ -138,6 +134,10 @@
 			"include": "#commands"
 		},
 		{
+			"name": "invalid.illegal.character.hedy3",
+			"match": "\\b_\\b"
+		},
+		{
 			"name": "comment.line.hedy3",
 			"match": "#.*"
 		},
@@ -202,13 +202,17 @@
 	"unquoted_phrase":{
 		"patterns": [
 			{
-				"name": "comment.line.hedy3",
+				"name": "comment.line.hedy1",
 				"match": "#.*"
 			},
 			{
-				"name": "string.unquoted.hedy3",
-				"begin": ".+?(?=#|$)",
-				"end": "(?=#|$)"
+				"name": "invalid.illegal.character.hedy1",
+				"match": "\\b_\\b"
+			},
+			{
+				"name": "string.unquoted.hedy1",
+				"begin": "[^_]",
+				"end": "(?=\\b_\\b|#|$)"
 			}
 		]
 	},

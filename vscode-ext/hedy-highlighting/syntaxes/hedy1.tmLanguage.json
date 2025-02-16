@@ -1,12 +1,7 @@
 {
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"name": "hedy1",
-	"patterns": [
-		{
-			"name": "invalid.illegal.character.hedy1",
-			"match": "\\b_\\b"
-		},
-		
+	"patterns": [	
 		{
 			"name": "comment.line.hedy1",
 			"match": "#.*"
@@ -37,6 +32,10 @@
 		},
 		{
 			"include": "#commands"
+		},
+		{
+			"name": "invalid.illegal.character.hedy1",
+			"match": "\\b_\\b"
 		}
 	],
 	"repository": {
@@ -95,9 +94,13 @@
 				"match": "#.*"
 			},
 			{
+				"name": "invalid.illegal.character.hedy1",
+				"match": "\\b_\\b"
+			},
+			{
 				"name": "string.unquoted.hedy1",
-				"begin": ".+?(?=#|$)",
-				"end": "(?=#|$)"
+				"begin": "[^_]",
+				"end": "(?=\\b_\\b|#|$)"
 			}
 		]
 	}

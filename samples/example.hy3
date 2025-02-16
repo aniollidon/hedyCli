@@ -10,11 +10,11 @@ remove hola from words  # Comentari
  
 words is squawk, Hedy  #comentari
 monster_4 is ask What do you do? #comentari 
-nom is ask Bon dia com, es diu vosté?
+nom is ask Bon dia com, es diu vosté? _ 
 
 # Errors
 llista is hola, adeu, hola_4, words fff 
-nollista is hola #comentari 
+nollista is hola #comentari
 print bb is hola
 print novariable at random  # Hauria de tenir error
 

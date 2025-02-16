@@ -3,10 +3,6 @@
 	"name": "hedy2",
 	"patterns": [
 		{
-			"name": "invalid.illegal.character.hedy2",
-			"match": "\\b_\\b"
-		},
-		{
 			"begin": "(?<=\\b(?:print|ask|echo)\\s)",
 			"end": "$",
 			"patterns": [
@@ -56,6 +52,10 @@
 		},
 		{
 			"include": "#commands"
+		},
+		{
+			"name": "invalid.illegal.character.hedy2",
+			"match": "\\b_\\b"
 		},
 		{
 			"name": "comment.line.hedy2",
@@ -114,18 +114,22 @@
 		}
 		]
 	},
-	"unquoted_phrase":{
-		"patterns": [
-			{
-				"name": "comment.line.hedy2",
-				"match": "#.*"
-			},
-			{
-				"name": "string.unquoted.hedy2",
-				"begin": ".+?(?=#|$)",
-				"end": "(?=#|$)"
-			}
-		]
+		"unquoted_phrase":{
+			"patterns": [
+				{
+					"name": "comment.line.hedy1",
+					"match": "#.*"
+				},
+				{
+					"name": "invalid.illegal.character.hedy1",
+					"match": "\\b_\\b"
+				},
+				{
+					"name": "string.unquoted.hedy1",
+					"begin": "[^_]",
+					"end": "(?=\\b_\\b|#|$)"
+				}
+			]
 	},
 	"unquoted_definition":{
 		"patterns": [

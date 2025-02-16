@@ -5,8 +5,8 @@ ask Which door should i pick?
 echo I choose door  
 print ...?
 
-turn left 
-forward 33
+turn left
+forward 33 
 
 play C1
 play 70  
@@ -14,24 +14,24 @@ play 70
 color red
 color blue
 color green
-color yellow
+color yellow 
 color purple
 color orange
 color pink
-color black
+color black 
 color white
 
-# Errors
-print 'hola'   
-print "hola"
-print _ lglñ,lgd _  # ?? ÉS UN ERROR
+# Errors 
+print 'hola'
+print "hola" # kee
+print _ lglñ _ _ mkmk  # ?? ÉS UN ERROR
 
-Print hola
+Print hola  
 PRINT
 Echo
 ASK 
 hola 
-
+ 
 turn red
 turn 90 # Aixó no funciona a nivell 1
 turn 90º
@@ -43,7 +43,7 @@ color
 turn
 forward
 play
-
+ 
 color 20 # Això no és vàlid
 color nonono # Això no és vàlid
 

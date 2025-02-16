@@ -8,9 +8,10 @@ function onChangeHedyCode(lines, hedyLevel, diagnosticCollection, document){
     for(let i = 0; i < lines.length; i++){
       // Esborra qualsevol comentari a partir de #
       const line = lines[i].split("#")[0];
-      const errors = hedy.checkErrors(line, i);
+      const errors = hedy.analyse(line, i);
       if (errors !== null){
-        for (let error of errors){
+        for (let err of errors){
+          const error = err.get();
             const severity = error.severity === "warning" ? vscode.DiagnosticSeverity.Warning : 
                      error.severity === "info" ? vscode.DiagnosticSeverity.Information : 
                      vscode.DiagnosticSeverity.Error;
@@ -40,7 +41,7 @@ class QuickFixCodeActionProvider {
         const codeActions = [];
 
         context.diagnostics.forEach((diagnostic) => {
-            if (diagnostic.code === 'hedy-equal-instead-of-is') {
+            if (diagnostic.code === 'hy-equal-instead-of-is') {
               const fix = new vscode.CodeAction(
               "Reemplaça 'is' per '='",
               vscode.CodeActionKind.QuickFix
@@ -50,7 +51,7 @@ class QuickFixCodeActionProvider {
               fix.diagnostics = [diagnostic];
               fix.isPreferred = true; // Marca com a preferida aquesta solució
               codeActions.push(fix);
-            } else if (diagnostic.code === 'hedy-to-lowercase-command') {
+            } else if (diagnostic.code === 'hy-to-lowercase-command') {
               const fix = new vscode.CodeAction(
               "Converteix la comanda a minúscules",
               vscode.CodeActionKind.QuickFix
@@ -62,13 +63,26 @@ class QuickFixCodeActionProvider {
               fix.isPreferred = true; // Marca com a preferida aquesta solució
               codeActions.push(fix);
             }
-            else if (diagnostic.code === 'hedy-equalequal-instead-of-equal') {
+            else if (diagnostic.code === 'hy-equalequal-instead-of-equal') {
               const fix = new vscode.CodeAction(
               "Reemplaça '=' per '=='",
               vscode.CodeActionKind.QuickFix
               );
               fix.edit = new vscode.WorkspaceEdit();
               fix.edit.replace(document.uri, diagnostic.range, '==');
+              fix.diagnostics = [diagnostic];
+              fix.isPreferred = true; // Marca com a preferida aquesta solució
+              codeActions.push(fix);
+            }
+            else if (diagnostic.code === 'hy-unnecessary-quotes') {
+              const fix = new vscode.CodeAction(
+              "Elimina les cometes",
+              vscode.CodeActionKind.QuickFix
+              );
+              fix.edit = new vscode.WorkspaceEdit();
+              const text = document.getText(diagnostic.range);
+              const newtext = text.substring(1, text.length - 1);
+              fix.edit.replace(document.uri, diagnostic.range, newtext);
               fix.diagnostics = [diagnostic];
               fix.isPreferred = true; // Marca com a preferida aquesta solució
               codeActions.push(fix);
