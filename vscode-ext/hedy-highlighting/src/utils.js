@@ -27,15 +27,15 @@ function separarParaules(codi) {
       const posicio = match.index; // Posició inicial de la coincidència
 
       if (cometesSimples !== undefined) {
-          paraules.push({ name: `'${cometesSimples}'`, pos: posicio }); // Text entre cometes simples
+          paraules.push({ text: `'${cometesSimples}'`, pos: posicio }); // Text entre cometes simples
       } else if (cometesDobles !== undefined) {
-          paraules.push({ name: `"${cometesDobles}"`, pos: posicio }); // Text entre cometes dobles
+          paraules.push({ text: `"${cometesDobles}"`, pos: posicio }); // Text entre cometes dobles
       } else if (paraula !== undefined) {
-          paraules.push({ name: paraula, pos: posicio }); // Paraules normals amb lletres, dígits o subratllat
+          paraules.push({ text: paraula, pos: posicio }); // Paraules normals amb lletres, dígits o subratllat
       } else if (numero !== undefined) {
-          paraules.push({ name: numero, pos: posicio }); // Números enters o decimals
+          paraules.push({ text: numero, pos: posicio }); // Números enters o decimals
       } else if (simbols !== undefined) {
-          paraules.push({ name: simbols, pos: posicio }); // Seqüències de símbols consecutius
+          paraules.push({ text: simbols, pos: posicio }); // Seqüències de símbols consecutius
       }
   }
 
@@ -57,14 +57,24 @@ function detectTypeConstant(text) {
   if(word.match(/\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\b/)) return 'color';
 
   // Si comença i acaba per cometes és un string
-  if((word.startsWith('"') && word.endsWith('"')) || (word.startsWith("'") && word.endsWith("'"))) return 'string';
+  if((word.startsWith('"') && word.endsWith('"')) || (word.startsWith("'") && word.endsWith("'"))) return 'string_quoted';
   else if (word === '_') return 'blank';
   else return 'string_unquoted';
 }
 
-function validType(search, list){
+function validType(tag, list){
   for(let i = 0; i < list.length; i++){
-    if(search.startsWith(list[i])) return true;
+    if(list[i].startsWith("$number")){
+      return tag.includes("number") || tag.startsWith("entity_variable_value") || tag.startsWith("operation")
+      || tag.startsWith("function_usage");
+    }
+    else if(list[i].startsWith("$string")){
+      return tag.includes("string") || tag.startsWith("entity_variable_value") || tag.startsWith("function_usage");
+    }
+    else if(list[i].startsWith("$stored")){
+      return tag.startsWith("entity_variable_value") || tag.startsWith("function_usage");
+    }
+    else if(tag.startsWith(list[i])) return true;
   }
   return false;
 }
@@ -76,9 +86,9 @@ function detectFuctionUsages(tokens, hasAtRandom=false, hasCall=false) {
   while (i < tokens.length) {
     // at random calls
     if (hasAtRandom && i  + 2 < tokens.length 
-       && tokens[i].type === "entity_variable" && tokens[i].info.subtype === "list"
-       && tokens[i+1].type === "command" && tokens[i+1].name === "at" 
-       && tokens[i + 2].type === "command" && tokens[i + 2].name === "random"
+       && tokens[i].tag === "entity_variable_list"
+       && tokens[i+1].tag === "command_at"
+       && tokens[i + 2].tag === "command_random"
     ) {
       const phrase = [tokens[i], tokens[i + 1], tokens[i + 2]];
       result.push({
@@ -91,20 +101,20 @@ function detectFuctionUsages(tokens, hasAtRandom=false, hasCall=false) {
     } 
     // Function calls
     else if (hasCall && i +1 < tokens.length  
-        && tokens[i].type === "command" && tokens[i].name === "call" 
+        && tokens[i].tag === "command_call"
         && tokens[i + 1].type === "entity_function") {
           const pos = tokens[i].pos;
 
           // Detecta with args
-          if(i + 2 < tokens.length && tokens[i + 2].type === "command" && tokens[i + 2].name === "with") {
+          if(i + 2 < tokens.length && tokens[i + 2].tag === "command_with") {
             let phrase = [tokens[i], tokens[i + 1], tokens[i + 2]];
             i += 3;
 
             let nextargument = true;
-            while (i < tokens.length && nextargument && (tokens[i].type === "entity_variable" ||
-               tokens[i].type.startsWith("constant"))) {
+            while (i < tokens.length && nextargument && (tokens[i].tag.startsWith("entity_variable") ||
+               tokens[i].tag.startsWith("constant"))) {
 
-                if(i+2 < tokens.length && tokens[i+1].type === "command" && tokens[i+1].name === ","){
+                if(i+2 < tokens.length && tokens[i+1].tag === "command_comma_list" ){
                   phrase.push(tokens[i], tokens[i+1]);
                   i += 2;
                   nextargument = true;
@@ -142,8 +152,8 @@ function detectComparations(tokens) {
   // Preprocess to join not_in
   let j = 0;
   while (j < tokens.length) {
-    if (tokens[j].type === "command" && tokens[j].name === "not" && j + 1 < tokens.length && tokens[j + 1].type === "command" && tokens[j + 1].name === "in") {
-      tokens[j].name = "not_in";
+    if (tokens[j].tag === "command_not" && j + 1 < tokens.length && tokens[j + 1].tag === "command_in") {
+      tokens[j].text = "not_in";
       tokens[j].pos = tokens[j].pos;
       tokens[j].type = "command";
       tokens.splice(j + 1, 1);
@@ -155,14 +165,14 @@ function detectComparations(tokens) {
   const comparators = new Set(["is", "=", "==", "!=", "in", "not_in", "<", ">", "<=", ">="]);
 
   function allowedType(token) {
-    return token.type === "entity_variable" || token.type.startsWith("constant");
+    return token.tag === "entity_variable" || token.tag.startsWith("constant");
   }
 
   while (i < tokens.length) {
-      if(i+2 < tokens.length && allowedType(tokens[i]) && tokens[i+1].type === "command" && comparators.has(tokens[i+1].name) && allowedType(tokens[i+2])) {
+      if(i+2 < tokens.length && allowedType(tokens[i]) && tokens[i+1].type === "command" && comparators.has(tokens[i+1].text) && allowedType(tokens[i+2])) {
         const phrase = [tokens[i], tokens[i+1], tokens[i+2]];
         let pos = tokens[i].pos;
-        const operator = tokens[i+1].name;
+        const operator = tokens[i+1].text;
 
         // Evita comparacions en definicions de variables
         if((operator === "is" || operator === "=") && i+1 === 1){
@@ -204,7 +214,7 @@ function detectMath(tokens) {
           let pos = tokens[i].pos;
           i++;
           
-          while (i + 1 < tokens.length && tokens[i].type === "command" && operators.has(tokens[i].name) && allowedType(tokens[i + 1])) {
+          while (i + 1 < tokens.length && tokens[i].type === "command" && operators.has(tokens[i].text) && allowedType(tokens[i + 1])) {
               phrase.push(tokens[i], tokens[i + 1]);
               i += 2;
           }
@@ -236,7 +246,9 @@ function varDefinitionType(linetext, hasQuotes, define_var_operator) {
   const pos = despresIgual > despresIs ? despresIgual : despresIs;
   const despres = linetext.substring(pos, linetext.length).trim();
 
-  return detectTypeConstant(despres);
+  if(despres.match(/^ *ask /)) return 'value_mixed';
+
+  return 'value_' + detectTypeConstant(despres);
 }
 
 function enUnaLlista(text, pos, hasQuotes, define_var_operator) {

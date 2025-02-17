@@ -10,7 +10,7 @@ const higlitingHedyErrors = {
         severity: "error",
     },
     "hy-context": {
-        message: "La comanda '[NAME]' no es pot fer servir en aquest context",
+        message: "La comanda '[NAME]' no es pot fer servir en d'aquesta manera.",
         severity: "error",
     },
     "hy-at-begining": {
@@ -112,9 +112,16 @@ const higlitingHedyErrors = {
     "hy-execting-number":{
         message: "La comanda '[NAME]' espera un número",
         severity: "error",
+    },
+    "hy-execting-number-note":{
+        message: "La comanda '[NAME]' espera una nota o un número",
+        severity: "error",
+    },
+    "hy-execting-color":{
+        message: "La comanda '[NAME]' espera un color",
+        severity: "error",
     }
 };
-
 
 class HHError {
     constructor(onText, errorCode, start, end, value=undefined) {

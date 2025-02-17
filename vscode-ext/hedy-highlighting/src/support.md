@@ -84,3 +84,33 @@
 
 ## N18:
 - PYTHON COMPLET
+
+# TIPUS
++ constant
+    - number *($number)*
+        + integer
+        + decimal
+    - string 
+        + quoted
+        + unquoted
+    + note
+    + color
++ entity
+    - variable
+        :subtype
+        - list
+        - value *($number)* *($stored)*
+            - number... 
+            - string...
+            - note...
+            - color...
+    - function
+    - parameter 
++ command
+    - ...
++ operation *($number)* 
++ function_usage 
+    + return *($number)* *($stored)*
++ comparation *($boolean)*
+
+

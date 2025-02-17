@@ -292,8 +292,8 @@ class CheckHedy {
     this.history.add(lineTrim, identationLength, lineNumber); //HMM
 
     const words = this._tagWords(lineTrim, identationLength);
-
     console.log("words: ", words);
+
     let errors = this._searchMorfoSyntaxisErrors(words);
     if (errors.length > 0) errorsFound.push(...errors);
 
@@ -305,9 +305,9 @@ class CheckHedy {
 
   _tagCommands(words) {
     const iniciPAE =
-      words[0].name === "print" ||
-      words[0].name === "ask" ||
-      words[0].name === "echo";
+      words[0].text === "print" ||
+      words[0].text === "ask" ||
+      words[0].text === "echo";
 
     for (let k = 0; k < words.length; k++) {
       for (let i = 0; i < hedyCommands.length; i++) {
@@ -316,13 +316,13 @@ class CheckHedy {
 
         if (!this._usesCometesText && iniciPAE && k !== 0) continue; // Després de print, ask o echo tot és string i no comandes
  
-        if (words[k].name !== command.name) {
+        if (words[k].text !== command.text) {
           if(command.levelStart && command.levelStart > this.level) continue;
           if(command.levelEnd && command.levelEnd < this.level) continue;
 
-          if(words[k].name.toLowerCase() === command.name){
+          if(words[k].text.toLowerCase() === command.text){
             words[k].couldBe = {
-              tag: command.tag,
+              command: command.name,
               errorCode: "hy-to-lowercase-command"
             }}
           continue;
@@ -330,13 +330,13 @@ class CheckHedy {
 
         if (command.levelStart && command.levelStart > this.level) {
           words[k].couldBe = {
-            tag: command.tag,
+            command: command.name,
             errorCode: "hy-level-unavailable-yet",
           };
           continue;
         } else if (command.levelEnd && command.levelEnd < this.level) {
           words[k].couldBe = {
-            tag: command.tag,
+            command: command.name,
             errorCode: "hy-level-unavailable-deprecated",
           };
           continue;
@@ -344,7 +344,7 @@ class CheckHedy {
 
         if (command.atBegining && k !== 0) {
           words[k].couldBe = {
-            tag: command.tag,
+            command: command.name,
             errorCode: "hy-at-begining"
           };
           continue;
@@ -353,7 +353,7 @@ class CheckHedy {
         if (command.hasBefore) {
           const before = words
             .slice(0, k)
-            .map((w) => w.name)
+            .map((w) => w.text)
             .join(" ");
           contextValid &&= before.match(command.hasBefore);
         }
@@ -361,20 +361,20 @@ class CheckHedy {
         if (command.hasAfter) {
           const after = words
             .slice(k + 1)
-            .map((w) => w.name)
+            .map((w) => w.text)
             .join(" ");
           contextValid &&= after.match(command.hasAfter);
         }
 
         if (contextValid) {
-          words[k].tag = command.tag;
-          words[k].type = "command_" + words[k].tag;
-          words[k].info = command.name;
+          words[k].type = "command";
+          words[k].tag = "command_" + command.name;
+          words[k].command = command.name;
           words[k].couldBe = undefined;
           break;
         } else {
           words[k].couldBe = {
-            tag: command.tag,
+            command: command.name,
             errorCode: "hy-context",
           };
         }
@@ -398,20 +398,21 @@ class CheckHedy {
 
     // Tagging entities and constants
     for (let i = 0; i < words.length; i++) {
-      const word = words[i].name;
-      if (word === "") continue;
+      const text = words[i].text;
+      if (text === "") continue;
 
-      if (!words[i].type) {
-        const entity = this.entities.get(word);
-        const constant = detectTypeConstant(word);
+      if (words[i].type !== "command") {
+        const entity = this.entities.get(text);
+        const constant = detectTypeConstant(text);
 
         if (entity !== undefined) {
           words[i].type = "entity_" + entity.type;
-          if (words[i].type.subtype) words[i].type += "_" + entity.subtype;
-          words[i].info = entity;
+          words[i].tag = "entity_" + entity.type + "_" + (entity.subtype? entity.subtype : "mixed");
+          words[i].entity = entity;
         } else if (constant !== undefined) {
-          words[i].type = "constant_" + constant;
-          words[i].info = constant;
+          words[i].type = "constant";
+          words[i].tag = "constant_" + constant;
+          words[i].constant = constant;
         }
       }
     }
@@ -430,19 +431,17 @@ class CheckHedy {
     for(let k = 0; k < words.length; k++){
       const word = words[k];
       const start = word.pos;
-      const end = start + word.name.length;
+      const end = start + word.text.length;
 
       if(word.couldBe){
-        errorsFound.push(new HHError(word.name, word.couldBe.errorCode, start, end));
+        errorsFound.push(new HHError(word.text, word.couldBe.errorCode, start, end));
         continue;
       }
 
-      if(word.type && word.type.startsWith("command")){
-        const command_def = hedyCommands.find(c => c.tag === word.tag);
+      if(word.command){
+        const command_def = hedyCommands.find(c => c.name === word.command);
         let argsForCommand = words.length;
         if(!command_def) continue;
-
-        console.log("command_def: ", command_def, "word: ", word);
 
         if(command_def.elementsAfter !== undefined){
 
@@ -452,12 +451,12 @@ class CheckHedy {
           argsForCommand = maxExpected;
 
           if(words.length <= minExpected){
-            errorsFound.push(new HHError(word.name, "hy-command-missing-argument", start, end, minExpected - k));
+            errorsFound.push(new HHError(word.text, "hy-command-missing-argument", start, end, minExpected - k));
           }
 
           // Qualsevol element després dels necessaris són erronis
           for(let j = maxExpected +1; j < words.length; j++){
-            errorsFound.push(new HHError(command_def.name, "hy-command-unexpected-argument", words[j].pos, words[j].pos + words[j].name.length, maxExpected -k ));
+            errorsFound.push(new HHError(command_def.text, "hy-command-unexpected-argument", words[j].pos, words[j].pos + words[j].text.length, maxExpected -k ));
           }
         }
 
@@ -467,14 +466,14 @@ class CheckHedy {
             if(rule.levelStart && rule.levelStart > this.level) continue;
             if(rule.levelEnd && rule.levelEnd < this.level) continue;
 
-            for(let j= k + 1; j < argsForCommand && j < words.length; j++){
+            for(let j= k + 1; j < argsForCommand+1 && j < words.length; j++){
               const arg = words[j];
               const sstart = arg.pos;
-              const send = sstart + arg.name.length;
-              if(rule.refused && !validType(arg.type, rule.refused)) continue;
-              if(rule.allowed && validType(arg.type, rule.allowed)) continue;
+              const send = sstart + arg.text.length;
+              if(rule.refused && !validType(arg.tag, rule.refused)) continue;
+              if(rule.allowed && validType(arg.tag, rule.allowed)) continue;
   
-              errorsFound.push(new HHError(word.name, rule.codeerror, sstart, send));
+              errorsFound.push(new HHError(word.text, rule.codeerror, sstart, send));
             }
           }
         }
@@ -485,10 +484,10 @@ class CheckHedy {
         if(rule.levelStart && rule.levelStart > this.level) continue;
         if(rule.levelEnd && rule.levelEnd < this.level) continue;
         if(rule.position !== undefined && rule.position !== k) continue;
-        if(rule.refused && !validType(word.type, rule.refused)) continue;
-        if(rule.allowed && validType(word.type, rule.allowed)) continue;
+        if(rule.refused && !validType(word.tag, rule.refused)) continue;
+        if(rule.allowed && validType(word.tag, rule.allowed)) continue;
 
-        errorsFound.push(new HHError(word.name, rule.codeerror, start, end));
+        errorsFound.push(new HHError(word.text, rule.codeerror, start, end));
       }
     }
 
@@ -523,11 +522,11 @@ class CheckHedy {
         if(!error.commands.includes(taggedCommand)) continue;
 
         if(error.hasAfterCommand){
-          const after = words.slice(i + 1).map(w => w.name).join(" ");
+          const after = words.slice(i + 1).map(w => w.text).join(" ");
           if(!after.match(error.hasAfterCommand)) continue;
         }
         if(error.hasBeforeCommand){
-          const before = words.slice(0, i).map(w => w.name).join(" ");
+          const before = words.slice(0, i).map(w => w.text).join(" ");
           if(!before.match(error.hasBeforeCommand)) continue;
         }
         if(error.list || error.notlist){
@@ -535,7 +534,7 @@ class CheckHedy {
           const si = place === "before" ? i - 1 : i + 1;
           if(si < 0 || si >= words.length) continue;
 
-          const found = words[si].type === "entity_variable" && words[si].info.subtype === "list";
+          const found = words[si].tag.startsWith("entity_variable_list")
 
           if(error.list && !found) continue;
           if(error.notlist && found) continue;
@@ -545,34 +544,34 @@ class CheckHedy {
 
         if(error.beforeAndAfter && error.beforeAndAfter === "same"){
           if(i === 0 || i === words.length - 1) continue;
-          if(words[i - 1].name !== words[i + 1].name) continue;
+          if(words[i - 1].text !== words[i + 1].text) continue;
         }
 
         let start = word.pos;
-        let end = start + word.name.length;
+        let end = start + word.text.length;
 
         if (error.highlight === "before_word") {
           if(i === 0) continue;
           start = words[i-1].pos;
-          end = start + words[i-1].name.length;
+          end = start + words[i-1].text.length;
         }
         else if (error.highlight === "after_word") {
           if(i === words.length - 1) continue;
           start = words[i+1].pos;
-          end = start + words[i+1].name.length;
+          end = start + words[i+1].text.length;
         }
         else if (error.highlight === "before") {
           if(i === 0) continue;
           start = words[0].pos;
-          end = words[i-1].pos + words[i-1].name.length;
+          end = words[i-1].pos + words[i-1].text.length;
         }
         else if (error.highlight === "after") {
           if(i === words.length - 1) continue;
           start = words[i+1].pos;
-          end = words[words.length - 1].pos + words[words.length - 1].name.length;
+          end = words[words.length - 1].pos + words[words.length - 1].text.length;
         }
 
-        errorsFound.push(new HHError(word.name, error.codeerror, start, end));
+        errorsFound.push(new HHError(word.text, error.codeerror, start, end));
         
 
       }
