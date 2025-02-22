@@ -1,151 +1,147 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "hedy2",
-	"patterns": [
-		{
-			"begin": "(?<=\\b(?:print|ask|echo)\\s)",
-			"end": "$",
-			"patterns": [
-				{
-					"include": "#unquoted_phrase"
-				}
-			]
-		},
-		{
-			"begin": "(?<=\\b(?:is)\\s)(?!ask\\s)",
-			"end": "(?<=#|$)",
-			"patterns": [
-				
-				{
-					"match": "(\\w+) +(at) +(random)|(.+)",
-					"captures": {
-						"2": {
-							"name": "keyword.command.hedy2"
-						},
-						"3": {
-							"name": "support.function.hedy2"
-						},
-						"4": {
-							"patterns":[
-								{
-									"include": "#unquoted_definition"
-								}
-							]						
-						}
-					}
-				}
-			]
-		},
-		{
-			"name": "constant.numeric.hedy2",
-			"match": "[0-9]+"
-		},
-		{
-			"begin": "(?<=\\bplay\\b)",
-			"end": "(?=#|$)",
-			"patterns": [
-				{
-					"name": "support.class.note.hedy2",
-					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
-				}
-			]
-		},
-		{
-			"include": "#commands"
-		},
-		{
-			"name": "invalid.illegal.character.hedy2",
-			"match": "\\b_\\b"
-		},
-		{
-			"name": "comment.line.hedy2",
-			"match": "#.*"
-		},
-		{
-			"match": "\\b(\\w+) +(is)\\b",
-			"captures": {
-			  "1": {
-				"name": "variable.declaration.other.hedy2"
-			  },
-			  "2":{
-				"name": "keyword.command.hedy2"
-			  }
-			}
-		},
-		{
-			"name": "keyword.command.hedy2",
-			"match": "\\bis\\b"
-		}
-	],
-	"repository": {
-	"commands": {
-		"patterns": [
-		{
-			"name": "support.function.ask.hedy2",
-			"match": "\\bask\\b"
-		},
-		{
-			"name": "support.function.print.hedy2",
-			"match": "\\bprint\\b"
-		},
-		{
-			"name": "support.function.sleep.hedy2",
-			"match": "\\bsleep\\b"
-		},
-		{
-			"name": "support.function.play.hedy2",
-			"match": "\\bplay\\b"
-		},
-		{
-			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
-			"captures": {
-				"1": {
-					"name": "support.function.turtle.hedy2"
-				},
-				"2": {
-					"name": "support.class.color.hedy2"
-				}
-			}
-
-		},
-		{
-			"name": "support.function.turtle.hedy2",
-			"match": "\\b(forward|turn|color)\\b"
-		}
-		]
-	},
-		"unquoted_phrase":{
-			"patterns": [
-				{
-					"name": "comment.line.hedy1",
-					"match": "#.*"
-				},
-				{
-					"name": "invalid.illegal.character.hedy1",
-					"match": "\\b_\\b"
-				},
-				{
-					"name": "string.unquoted.hedy1",
-					"begin": "[^_]",
-					"end": "(?=\\b_\\b|#|$)"
-				}
-			]
-	},
-	"unquoted_definition":{
-		"patterns": [
-			{
-				"name": "comment.line.hedy2",
-				"match": "#.*"
-			},
-			{
-				"name": "string.regexp.hedy2",
-				"begin": ".+?(?=#|$)",
-				"end": "(?=#|$)"
-			}
-		]
-	}
-
-	
-	},
-	"scopeName": "source.hedy2"
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "hedy2",
+  "patterns": [
+    {
+      "begin": "(?<=\\b(?:print|ask|echo)\\s)",
+      "end": "$",
+      "patterns": [
+        {
+          "include": "#unquoted_phrase"
+        }
+      ]
+    },
+    {
+      "begin": "(?<=\\b(?:is)\\s)(?!ask\\s)",
+      "end": "(?<=#|$)",
+      "patterns": [
+        {
+          "match": "(\\w+) +(at) +(random)|(.+)",
+          "captures": {
+            "2": {
+              "name": "keyword.command.hedy2"
+            },
+            "3": {
+              "name": "support.function.hedy2"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#unquoted_definition"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.hedy2",
+      "match": "[0-9]+"
+    },
+    {
+      "begin": "(?<=\\bplay\\b)",
+      "end": "(?=#|$)",
+      "patterns": [
+        {
+          "name": "support.class.note.hedy2",
+          "match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
+        }
+      ]
+    },
+    {
+      "include": "#commands"
+    },
+    {
+      "name": "invalid.illegal.character.hedy2",
+      "match": "\\b_\\b"
+    },
+    {
+      "name": "comment.line.hedy2",
+      "match": "#.*"
+    },
+    {
+      "match": "\\b(\\w+) +(is)\\b",
+      "captures": {
+        "1": {
+          "name": "variable.declaration.other.hedy2"
+        },
+        "2": {
+          "name": "keyword.command.hedy2"
+        }
+      }
+    },
+    {
+      "name": "keyword.command.hedy2",
+      "match": "\\bis\\b"
+    }
+  ],
+  "repository": {
+    "commands": {
+      "patterns": [
+        {
+          "name": "support.function.ask.hedy2",
+          "match": "\\bask\\b"
+        },
+        {
+          "name": "support.function.print.hedy2",
+          "match": "\\bprint\\b"
+        },
+        {
+          "name": "support.function.sleep.hedy2",
+          "match": "\\bsleep\\b"
+        },
+        {
+          "name": "support.function.play.hedy2",
+          "match": "\\bplay\\b"
+        },
+        {
+          "match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+          "captures": {
+            "1": {
+              "name": "support.function.turtle.hedy2"
+            },
+            "2": {
+              "name": "support.class.color.hedy2"
+            }
+          }
+        },
+        {
+          "name": "support.function.turtle.hedy2",
+          "match": "\\b(forward|turn|color)\\b"
+        }
+      ]
+    },
+    "unquoted_phrase": {
+      "patterns": [
+        {
+          "name": "comment.line.hedy1",
+          "match": "#.*"
+        },
+        {
+          "name": "invalid.illegal.character.hedy1",
+          "match": "\\b_\\b"
+        },
+        {
+          "name": "string.unquoted.hedy1",
+          "begin": "[^_]",
+          "end": "(?=\\b_\\b|#|$)"
+        }
+      ]
+    },
+    "unquoted_definition": {
+      "patterns": [
+        {
+          "name": "comment.line.hedy2",
+          "match": "#.*"
+        },
+        {
+          "name": "string.regexp.hedy2",
+          "begin": ".+?(?=#|$)",
+          "end": "(?=#|$)"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.hedy2"
 }

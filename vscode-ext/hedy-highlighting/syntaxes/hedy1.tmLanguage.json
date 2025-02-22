@@ -1,110 +1,107 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "hedy1",
-	"patterns": [	
-		{
-			"name": "comment.line.hedy1",
-			"match": "#.*"
-		},
-		{
-			"begin": "(?<=\\b(?:print|ask|echo)\\s)",
-			"end": "$",
-			"patterns": [
-				{
-					"include": "#unquoted_phrase"
-				}
-			]
-		},
-		{
-			"name": "constant.numeric.hedy1",
-			"match": "[0-9]+"
-		},
-		
-		{
-			"begin": "(?<=\\bplay\\b)",
-			"end": "(?=#|$)",
-			"patterns": [
-				{
-					"name": "support.class.note.hedy1",
-					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
-				}
-			]
-		},
-		{
-			"include": "#commands"
-		},
-		{
-			"name": "invalid.illegal.character.hedy1",
-			"match": "\\b_\\b"
-		}
-	],
-	"repository": {
-	"commands": {
-		"patterns": [
-		{
-			"name": "support.function.ask.hedy1",
-			"match": "\\bask\\b"
-		},
-		{
-			"name": "support.function.print.hedy1",
-			"match": "\\bprint\\b"
-		},
-		{
-			"name": "support.function.play.hedy1",
-			"match": "\\bplay\\b"
-		},
-		{
-			"name": "support.function.echo.hedy1",
-			"match": "\\becho\\b"
-		},
-		{
-			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
-			"captures": {
-				"1": {
-					"name": "support.function.turtle.hedy1"
-				},
-				"2": {
-					"name": "support.class.color.hedy1"
-				}
-			}
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "hedy1",
+  "patterns": [
+    {
+      "name": "comment.line.hedy1",
+      "match": "#.*"
+    },
+    {
+      "begin": "(?<=\\b(?:print|ask|echo)\\s)",
+      "end": "$",
+      "patterns": [
+        {
+          "include": "#unquoted_phrase"
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.hedy1",
+      "match": "[0-9]+"
+    },
 
-		},
-		{
-			"match": "\\b(turn) +\\b(left|right)\\b",
-			"captures": {
-				"1": {
-					"name": "support.function.turtle.hedy1"
-				},
-				"2": {
-					"name": "support.class.direction.hedy1"
-				}
-			}
-
-		},
-		{
-			"name": "support.function.turtle.hedy1",
-			"match": "\\b(forward|turn|color)\\b"
-		}
-		]
-	},
-	"unquoted_phrase":{
-		"patterns": [
-			{
-				"name": "comment.line.hedy1",
-				"match": "#.*"
-			},
-			{
-				"name": "invalid.illegal.character.hedy1",
-				"match": "\\b_\\b"
-			},
-			{
-				"name": "string.unquoted.hedy1",
-				"begin": "[^_]",
-				"end": "(?=\\b_\\b|#|$)"
-			}
-		]
-	}
-	
-	},
-	"scopeName": "source.hedy1"
+    {
+      "begin": "(?<=\\bplay\\b)",
+      "end": "(?=#|$)",
+      "patterns": [
+        {
+          "name": "support.class.note.hedy1",
+          "match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
+        }
+      ]
+    },
+    {
+      "include": "#commands"
+    },
+    {
+      "name": "invalid.illegal.character.hedy1",
+      "match": "\\b_\\b"
+    }
+  ],
+  "repository": {
+    "commands": {
+      "patterns": [
+        {
+          "name": "support.function.ask.hedy1",
+          "match": "\\bask\\b"
+        },
+        {
+          "name": "support.function.print.hedy1",
+          "match": "\\bprint\\b"
+        },
+        {
+          "name": "support.function.play.hedy1",
+          "match": "\\bplay\\b"
+        },
+        {
+          "name": "support.function.echo.hedy1",
+          "match": "\\becho\\b"
+        },
+        {
+          "match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+          "captures": {
+            "1": {
+              "name": "support.function.turtle.hedy1"
+            },
+            "2": {
+              "name": "support.class.color.hedy1"
+            }
+          }
+        },
+        {
+          "match": "\\b(turn) +\\b(left|right)\\b",
+          "captures": {
+            "1": {
+              "name": "support.function.turtle.hedy1"
+            },
+            "2": {
+              "name": "support.class.direction.hedy1"
+            }
+          }
+        },
+        {
+          "name": "support.function.turtle.hedy1",
+          "match": "\\b(forward|turn|color)\\b"
+        }
+      ]
+    },
+    "unquoted_phrase": {
+      "patterns": [
+        {
+          "name": "comment.line.hedy1",
+          "match": "#.*"
+        },
+        {
+          "name": "invalid.illegal.character.hedy1",
+          "match": "\\b_\\b"
+        },
+        {
+          "name": "string.unquoted.hedy1",
+          "begin": "[^_]",
+          "end": "(?=\\b_\\b|#|$)"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.hedy1"
 }

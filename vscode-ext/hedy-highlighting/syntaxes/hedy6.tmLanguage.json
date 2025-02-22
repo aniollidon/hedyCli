@@ -1,267 +1,263 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "hedy6",
-	"patterns": [
-		{
-			"name": "invalid.illegal.character.hedy6",
-			"match": "\\b_\\b"
-		},
-		{
-			"name": "comment.line.hedy6",
-			"match": "#.*"
-		},
-		{
-			"name": "inline.quoted.conditional.element.hedy6",
-			"match": "(?<=\\bif) +(\\w+)( +is +| +in +| *= *)(\\w+)",
-			"captures": {
-				"1": {
-					"name": "string.regexp.hedy6",
-					"patterns": [
-						{
-							"include": "#inside_comp"
-						}
-					]
-				},
-				"2": {
-					"name": "keyword.command.hedy6"
-				},
-				"3": {
-					"name": "string.regexp.hedy6",
-					"patterns": [
-						{
-							"include": "#inside_comp"
-						}
-					]
-				}
-			}
-		},
-		{
-			"include": "#commands"
-		},
-		{
-			"name": "string.quoted.double.hedy6",
-			"begin": "\"",
-			"end": "\""
-		},
-		{
-			"name": "string.quoted.single.hedy6",
-			"begin": "'",
-			"end": "'"
-		},
-		
-		{
-			"name": "array.hedy6",
-			"begin": "(?<=\\b\\w+( +is | *= *))(?=.*,)(?!.*ask)",
-			"end": "(?=#|$)",
-			"patterns": [
-				{
-					"name": "constant.numeric.hedy6",
-					"match": " *[0-9]+"
-				},
-				{
-					"name": "string.regexp.hedy6",
-					"match": "\\b(\\w+)\\b"
-				},				
-				{
-					"name": "invalid.illegal.hedy6",
-					"match": ", *$"
-				},
-				{
-					"name": "keyword.command.comma.separator.hedy6",
-					"match": ","
-				}
-			]
-		},
-		{ 
-			"name": "inline.quoted.array.element.hedy6",
-			"begin": "(?<=\\b(remove) )",
-			"end": "(?=\\b(from))|$",
-			"patterns": [
-				{
-					"name": "constant.numeric.hedy6",
-					"match": " *[0-9]+"
-				},
-				{
-					"name": "string.regexp.hedy6",
-					"match": "\\b(\\w+)\\b"
-				}
-			]
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "hedy6",
+  "patterns": [
+    {
+      "name": "invalid.illegal.character.hedy6",
+      "match": "\\b_\\b"
+    },
+    {
+      "name": "comment.line.hedy6",
+      "match": "#.*"
+    },
+    {
+      "name": "inline.quoted.conditional.element.hedy6",
+      "match": "(?<=\\bif) +(\\w+)( +is +| +in +| *= *)(\\w+)",
+      "captures": {
+        "1": {
+          "name": "string.regexp.hedy6",
+          "patterns": [
+            {
+              "include": "#inside_comp"
+            }
+          ]
+        },
+        "2": {
+          "name": "keyword.command.hedy6"
+        },
+        "3": {
+          "name": "string.regexp.hedy6",
+          "patterns": [
+            {
+              "include": "#inside_comp"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "include": "#commands"
+    },
+    {
+      "name": "string.quoted.double.hedy6",
+      "begin": "\"",
+      "end": "\""
+    },
+    {
+      "name": "string.quoted.single.hedy6",
+      "begin": "'",
+      "end": "'"
+    },
 
-		},
-		{ 
-			"name": "inline.quoted.array.element.hedy6",
-			"begin": "(?<=\\b(add) )",
-			"end": "(?=\\b(to))|$",
-			"patterns": [
-				{
-					"name": "constant.numeric.hedy6",
-					"match": " *[0-9]+"
-				},
-				{
-					"name": "string.regexp.hedy6",
-					"match": "\\b(\\w+)\\b"
-				}
-			]
-		},
-		{
-			"begin": "(?<=\\w+(?: +is +| *=))(?! +ask)",
-			"end": "(?=#|$)",
-			"patterns": [
-				
-				{
-					"match": " *(\\w+) +(at) +(random)|(.*)",
-					"captures": {
-						"2": {
-							"name": "keyword.command.hedy6"
-						},
-						"3": {
-							"name": "support.function.hedy6"
-						},
-						"4": {
-							"name": "string.regexp.hedy6",
-							"patterns": [
-								{
-									"name": "constant.numeric.hedy6",
-									"match": " *[0-9]+"
-								},
-								{
-									"name": "string.regexp.hedy6",
-									"match": "\\b(\\w+)\\b"
-								},
-								{
-									"include": "#maths"
-								}
-							]
-						}
-					}
-				}
-			]
-		},
-		{
-			"begin": "(?<=\\bplay\\b)",
-			"end": "(?=#|$)",
-			"patterns": [
-				{
-					"name": "support.class.note.hedy6",
-					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
-				}
-			]
-		},
-		{
-			"name": "constant.numeric.hedy6",
-			"match": "[0-9]+"
-		},
-		{
-			"name": "keyword.command.hedy6",
-			"match": "\\b(is|at|to|from|in|not)\\b|="
-		},
-		{
-			"include": "#maths"
-		},
-		{
-			"name": "support.function.hedy6",
-			"match": "\\b(random)\\b"
-		}
-	],
-	"repository": {
-		"commands": {
-			"patterns": [
-			{
-				"name": "keyword.control.conditional.hedy6",
-				"match": "\\b(if|else)\\b"
-			},
-			{
-				"name": "support.function.ask.hedy6",
-				"match": "\\bask\\b"
-			},
-			{
-				"name": "support.function.clear.hedy6",
-				"match": "\\bclear\\b"
-			},
-			{
-				"name": "support.function.print.hedy6",
-				"match": "\\bprint\\b"
-			},
-			{
-				"name": "support.function.play.hedy6",
-				"match": "\\bplay\\b"
-			},
-			{
-				"name": "support.function.sleep.hedy6",
-				"match": "\\bsleep\\b"
-			},
-			{
-				"name": "support.function.add.hedy6",
-				"match": "\\badd\\b"
-			},
-			{
-				"name": "support.function.remove.hedy6",
-				"match": "\\bremove\\b"
-			},
-			{
-				"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
-				"captures": {
-					"1": {
-						"name": "support.function.turtle.hedy6"
-					},
-					"2": {
-						"name": "support.class.color.hedy6"
-					}
-				}
+    {
+      "name": "array.hedy6",
+      "begin": "(?<=\\b\\w+( +is | *= *))(?=.*,)(?!.*ask)",
+      "end": "(?=#|$)",
+      "patterns": [
+        {
+          "name": "constant.numeric.hedy6",
+          "match": " *[0-9]+"
+        },
+        {
+          "name": "string.regexp.hedy6",
+          "match": "\\b(\\w+)\\b"
+        },
+        {
+          "name": "invalid.illegal.hedy6",
+          "match": ", *$"
+        },
+        {
+          "name": "keyword.command.comma.separator.hedy6",
+          "match": ","
+        }
+      ]
+    },
+    {
+      "name": "inline.quoted.array.element.hedy6",
+      "begin": "(?<=\\b(remove) )",
+      "end": "(?=\\b(from))|$",
+      "patterns": [
+        {
+          "name": "constant.numeric.hedy6",
+          "match": " *[0-9]+"
+        },
+        {
+          "name": "string.regexp.hedy6",
+          "match": "\\b(\\w+)\\b"
+        }
+      ]
+    },
+    {
+      "name": "inline.quoted.array.element.hedy6",
+      "begin": "(?<=\\b(add) )",
+      "end": "(?=\\b(to))|$",
+      "patterns": [
+        {
+          "name": "constant.numeric.hedy6",
+          "match": " *[0-9]+"
+        },
+        {
+          "name": "string.regexp.hedy6",
+          "match": "\\b(\\w+)\\b"
+        }
+      ]
+    },
+    {
+      "begin": "(?<=\\w+(?: +is +| *=))(?! +ask)",
+      "end": "(?=#|$)",
+      "patterns": [
+        {
+          "match": " *(\\w+) +(at) +(random)",
+          "captures": {
+            "2": {
+              "name": "keyword.command.hedy6"
+            },
+            "3": {
+              "name": "support.function.hedy6"
+            }
+          }
+        },
+        {
+          "name": "string.regexp.hedy6",
+          "patterns": [
+            {
+              "name": "constant.numeric.hedy6",
+              "match": " *[0-9]+"
+            },
+            {
+              "name": "string.regexp.hedy6",
+              "match": "\\b(\\w+)\\b"
+            },
+            {
+              "include": "#maths"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "begin": "(?<=\\bplay\\b)",
+      "end": "(?=#|$)",
+      "patterns": [
+        {
+          "name": "support.class.note.hedy6",
+          "match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.hedy6",
+      "match": "[0-9]+"
+    },
+    {
+      "name": "keyword.command.hedy6",
+      "match": "\\b(is|at|to|from|in|not)\\b|="
+    },
+    {
+      "include": "#maths"
+    },
+    {
+      "name": "support.function.hedy6",
+      "match": "\\b(random)\\b"
+    }
+  ],
+  "repository": {
+    "commands": {
+      "patterns": [
+        {
+          "name": "keyword.control.conditional.hedy6",
+          "match": "\\b(if|else)\\b"
+        },
+        {
+          "name": "support.function.ask.hedy6",
+          "match": "\\bask\\b"
+        },
+        {
+          "name": "support.function.clear.hedy6",
+          "match": "\\bclear\\b"
+        },
+        {
+          "name": "support.function.print.hedy6",
+          "match": "\\bprint\\b"
+        },
+        {
+          "name": "support.function.play.hedy6",
+          "match": "\\bplay\\b"
+        },
+        {
+          "name": "support.function.sleep.hedy6",
+          "match": "\\bsleep\\b"
+        },
+        {
+          "name": "support.function.add.hedy6",
+          "match": "\\badd\\b"
+        },
+        {
+          "name": "support.function.remove.hedy6",
+          "match": "\\bremove\\b"
+        },
+        {
+          "match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+          "captures": {
+            "1": {
+              "name": "support.function.turtle.hedy6"
+            },
+            "2": {
+              "name": "support.class.color.hedy6"
+            }
+          }
+        },
+        {
+          "name": "support.function.turtle.hedy6",
+          "match": "\\b(forward|turn|color)\\b"
+        },
+        {
+          "name": "support.class.pressed.hedy6",
+          "match": "\\b(pressed)\\b"
+        }
+      ]
+    },
+    "inside_comp": {
+      "patterns": [
+        {
+          "name": "support.class.pressed.hedy6",
+          "match": "\\bpressed\\b"
+        },
+        {
+          "include": "#unquoted_phrase"
+        }
+      ]
+    },
+    "maths": {
+      "patterns": [
+        {
+          "name": "keyword.command.hedy6",
+          "match": " *[+\\-*\\/] *"
+        },
+        {
+          "name": "invalid.illegal.math.hedy6",
+          "match": "(?<=\\d) *[+\\-*\\/] *(?=[\\w\"'])"
+        }
+      ]
+    },
 
-			},
-			{
-				"name": "support.function.turtle.hedy6",
-				"match": "\\b(forward|turn|color)\\b"
-			},
-			{
-				"name": "support.class.pressed.hedy6",
-				"match": "\\b(pressed)\\b"
-			}
-			]
-		},
-		"inside_comp":{
-			"patterns": [
-				{
-					"name": "support.class.pressed.hedy6",
-					"match": "\\bpressed\\b"
-				},
-				{
-					"include": "#unquoted_phrase"
-				}
-			]
-		},
-		"maths":{ 
-			"patterns": [
-				{
-					"name": "keyword.command.hedy6",
-					"match": " *[+\\-*\\/] *"
-				},
-				{
-					"name": "invalid.illegal.math.hedy6",
-					"match": "(?<=\\d) *[+\\-*\\/] *(?=[\\w\"'])"
-				}
-			]
-		},
-		
-		"unquoted_phrase":{
-			"patterns": [
-				
-				{
-					"name": "comment.line.hedy5",
-					"match": "#.*"
-				},
-				{
-					"name": "constant.numeric.hedy6",
-					"match": " *[0-9]+"
-				},
-				{
-					"name": "string.regexp.hedy6",
-					"begin": ".+?(?=#|$)",
-					"end": "(?=#|$)"
-				}
-			]
-		}
-	},
-	"scopeName": "source.hedy6"
+    "unquoted_phrase": {
+      "patterns": [
+        {
+          "name": "comment.line.hedy5",
+          "match": "#.*"
+        },
+        {
+          "name": "constant.numeric.hedy6",
+          "match": " *[0-9]+"
+        },
+        {
+          "name": "string.regexp.hedy6",
+          "begin": ".+?(?=#|$)",
+          "end": "(?=#|$)"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.hedy6"
 }

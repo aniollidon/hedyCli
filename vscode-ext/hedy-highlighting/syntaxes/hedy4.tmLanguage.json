@@ -1,194 +1,189 @@
 {
-	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-	"name": "hedy4",
-	"patterns": [
-		{
-			"name": "invalid.illegal.character.hedy4",
-			"match": "\\b_\\b"
-		},
-		{
-			"include": "#commands"
-		},
-		{
-			"name": "comment.line.hedy4",
-			"match": "#.*"
-		},
-		{
-			"name": "string.quoted.double.hedy4",
-			"begin": "\"",
-			"end": "\""
-		},
-		{
-			"name": "string.quoted.single.hedy4",
-			"begin": "'",
-			"end": "'"
-		},
-		{
-			"name": "array.hedy4",
-			"begin": "(?<=\\b\\w+( +is ))(?=.*,)",
-			"end": "(?=#|$)",
-			"patterns": [
-				{
-					"name": "constant.numeric.hedy4",
-					"match": " *[0-9]+"
-				},
-				{
-					"name": "string.regexp.hedy4",
-					"match": "\\b(\\w+)\\b"
-				},
-				{
-					"name": "invalid.illegal.hedy4",
-					"match": ", *$"
-				},
-				{
-					"name": "keyword.command.comma.separator.hedy4",
-					"match": ","
-				}
-			]
-		},
-		{ 
-			"name": "inline.unquoted.array.element.hedy4",
-			"begin": "(?<=\\b(remove) )",
-			"end": "(?=\\b(from))|$",
-			"patterns": [
-				{
-					"name": "constant.numeric.hedy4",
-					"match": " *[0-9]+"
-				},
-				{
-					"name": "string.regexp.hedy4",
-					"match": "\\b(\\w+)\\b"
-				}
-			]
-
-		},
-		{ 
-			"name": "inline.unquoted.array.element.hedy4",
-			"begin": "(?<=\\b(add) )",
-			"end": "(?=\\b(to))|$",
-			"patterns": [
-				{
-					"name": "constant.numeric.hedy4",
-					"match": " *[0-9]+"
-				},
-				{
-					"name": "string.regexp.hedy4",
-					"match": "\\b(\\w+)\\b"
-				}
-			]
-
-		},
-		{
-			"begin": "(?<=\\b(?:is) )",
-			"end": "(?<=#|$)",
-			"patterns": [
-				
-				{
-					"match": "(\\w+) +(at) +(random)|(.+)",
-					"captures": {
-						"2": {
-							"name": "keyword.command.hedy4"
-						},
-						"3": {
-							"name": "support.function.hedy4"
-						},
-						"4": {
-							"patterns":[
-								{
-									"include": "#unquoted_phrase"
-								}
-							]						
-						}
-					}
-				}
-			]
-		},
-		{
-			"begin": "(?<=\\bplay\\b)",
-			"end": "(?=#|$)",
-			"patterns": [
-				{
-					"name": "support.class.note.hedy4",
-					"match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
-				}
-			]
-		},
-		{
-			"name": "constant.numeric.hedy4",
-			"match": "[0-9]+"
-		},
-		{
-			"name": "keyword.command.hedy4",
-			"match": "\\b(is|at|to|from)\\b"
-		},
-		{
-			"name": "support.function.hedy4",
-			"match": "\\b(random)\\b"
-		}
-	],
-	"repository": {
-	"commands": {
-		"patterns": [
-		{
-			"name": "support.function.ask.hedy4",
-			"match": "\\bask\\b"
-		},
-		{
-			"name": "support.function.clear.hedy4",
-			"match": "\\bclear\\b"
-		},
-		{
-			"name": "support.function.print.hedy4",
-			"match": "\\bprint\\b"
-		},
-		{
-			"name": "support.function.play.hedy4",
-			"match": "\\bplay\\b"
-		},
-		{
-			"name": "support.function.sleep.hedy4",
-			"match": "\\bsleep\\b"
-		},
-		{
-			"name": "support.function.add.hedy4",
-			"match": "\\badd\\b"
-		},
-		{
-			"name": "support.function.remove.hedy4",
-			"match": "\\bremove\\b"
-		},
-		{
-			"match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
-			"captures": {
-				"1": {
-					"name": "support.function.turtle.hedy4"
-				},
-				"2": {
-					"name": "support.class.color.hedy4"
-				}
-			}
-
-		},
-		{
-			"name": "support.function.turtle.hedy4",
-			"match": "\\b(forward|turn|color)\\b"
-		}
-		]
-	},
-	"unquoted_phrase":{
-		"patterns": [
-			{
-				"name": "comment.line.hedy4",
-				"match": "#.*"
-			},
-			{
-				"name": "string.regexp.hedy4",
-				"begin": ".+?(?=#|$)",
-				"end": "(?=#|$)"
-			}
-		]
-	}
-	
-	},
-	"scopeName": "source.hedy4"
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "hedy4",
+  "patterns": [
+    {
+      "name": "invalid.illegal.character.hedy4",
+      "match": "\\b_\\b"
+    },
+    {
+      "include": "#commands"
+    },
+    {
+      "name": "comment.line.hedy4",
+      "match": "#.*"
+    },
+    {
+      "name": "string.quoted.double.hedy4",
+      "begin": "\"",
+      "end": "\""
+    },
+    {
+      "name": "string.quoted.single.hedy4",
+      "begin": "'",
+      "end": "'"
+    },
+    {
+      "name": "array.hedy4",
+      "begin": "(?<=\\b\\w+( +is ))(?=.*,)",
+      "end": "(?=#|$)",
+      "patterns": [
+        {
+          "name": "constant.numeric.hedy4",
+          "match": " *[0-9]+"
+        },
+        {
+          "name": "string.regexp.hedy4",
+          "match": "\\b(\\w+)\\b"
+        },
+        {
+          "name": "invalid.illegal.hedy4",
+          "match": ", *$"
+        },
+        {
+          "name": "keyword.command.comma.separator.hedy4",
+          "match": ","
+        }
+      ]
+    },
+    {
+      "name": "inline.unquoted.array.element.hedy4",
+      "begin": "(?<=\\b(remove) )",
+      "end": "(?=\\b(from))|$",
+      "patterns": [
+        {
+          "name": "constant.numeric.hedy4",
+          "match": " *[0-9]+"
+        },
+        {
+          "name": "string.regexp.hedy4",
+          "match": "\\b(\\w+)\\b"
+        }
+      ]
+    },
+    {
+      "name": "inline.unquoted.array.element.hedy4",
+      "begin": "(?<=\\b(add) )",
+      "end": "(?=\\b(to))|$",
+      "patterns": [
+        {
+          "name": "constant.numeric.hedy4",
+          "match": " *[0-9]+"
+        },
+        {
+          "name": "string.regexp.hedy4",
+          "match": "\\b(\\w+)\\b"
+        }
+      ]
+    },
+    {
+      "begin": "(?<=\\b(?:is) )",
+      "end": "(?<=#|$)",
+      "patterns": [
+        {
+          "match": "(\\w+) +(at) +(random)|(.+)",
+          "captures": {
+            "2": {
+              "name": "keyword.command.hedy4"
+            },
+            "3": {
+              "name": "support.function.hedy4"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#unquoted_phrase"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "begin": "(?<=\\bplay\\b)",
+      "end": "(?=#|$)",
+      "patterns": [
+        {
+          "name": "support.class.note.hedy4",
+          "match": "\\b(?:C[0-9]|D[0-9]|E[0-9]|F[0-9]|G[0-9]|A[0-9]|B[0-9]|[1-6][0-9]|70|[1-9]|[A-G])\\b"
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.hedy4",
+      "match": "[0-9]+"
+    },
+    {
+      "name": "keyword.command.hedy4",
+      "match": "\\b(is|at|to|from)\\b"
+    },
+    {
+      "name": "support.function.hedy4",
+      "match": "\\b(random)\\b"
+    }
+  ],
+  "repository": {
+    "commands": {
+      "patterns": [
+        {
+          "name": "support.function.ask.hedy4",
+          "match": "\\bask\\b"
+        },
+        {
+          "name": "support.function.clear.hedy4",
+          "match": "\\bclear\\b"
+        },
+        {
+          "name": "support.function.print.hedy4",
+          "match": "\\bprint\\b"
+        },
+        {
+          "name": "support.function.play.hedy4",
+          "match": "\\bplay\\b"
+        },
+        {
+          "name": "support.function.sleep.hedy4",
+          "match": "\\bsleep\\b"
+        },
+        {
+          "name": "support.function.add.hedy4",
+          "match": "\\badd\\b"
+        },
+        {
+          "name": "support.function.remove.hedy4",
+          "match": "\\bremove\\b"
+        },
+        {
+          "match": "\\b(color) +\\b(blue|green|red|black|brown|gray|orange|pink|purple|white|yellow)\\b",
+          "captures": {
+            "1": {
+              "name": "support.function.turtle.hedy4"
+            },
+            "2": {
+              "name": "support.class.color.hedy4"
+            }
+          }
+        },
+        {
+          "name": "support.function.turtle.hedy4",
+          "match": "\\b(forward|turn|color)\\b"
+        }
+      ]
+    },
+    "unquoted_phrase": {
+      "patterns": [
+        {
+          "name": "comment.line.hedy4",
+          "match": "#.*"
+        },
+        {
+          "name": "string.regexp.hedy4",
+          "begin": ".+?(?=#|$)",
+          "end": "(?=#|$)"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.hedy4"
 }
