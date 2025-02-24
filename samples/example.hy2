@@ -11,9 +11,9 @@ print text #comentari
 
 # Tortuga 
 forward 10
-play C1 
+play C1  
 color red
-turn 90
+turn 90 
  
 # Constants
 a is hola 
@@ -21,18 +21,19 @@ b is 2
 b is red
 
 # Errors
-turn right  
+turn right   
 turn left   
 
-right is hola
+right is hola 
 
 print "hola"
 print _
 echo hola  
-ask blabal 
+ask blabal  
 a ask knjkdnkj 
 Print kmkmk
-hola q tal is blabla  
-
+hola q tal is blabla 
+  
 # No errors
 print hola is hola tre ro
+a is ask print blabala to ask echo

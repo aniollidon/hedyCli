@@ -13,13 +13,13 @@ choice is ask 'What do you choose?'
 choice = ask 'What do you choose?'
 choice=ask 'What do you choose?'
 
-if hola is choice print 'you chose choice'
+if hola is choice print 'you chose choice' 
 if choice is hola print 'you chose choice'
 
 if hola = choice print 'you chose choice'
 if choice = hola print 'you chose choice'
 if hola=choice print 'you chose choice'
-if choice=hola print 'you chose choice'
+if choice=hola print 'you chose choice' 
 
 print 'you chose choice'
 print 'computer chose ' computer_choice 
@@ -36,8 +36,8 @@ a=bla #comentari
 a =bla #comentari
 a= bla #comentari
     
-color red
-turn 90
+color red 
+turn 90 
 clear
 sleep 2
 print 4+4-3*2/1 'blabla' 4+4-3*2/1

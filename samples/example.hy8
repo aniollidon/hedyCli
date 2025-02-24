@@ -6,9 +6,9 @@ else print 'a is not 9'
 
 play C 
 
-
     a is dsadasda
 
 print a
 
 ampolles = ampolles - 1
+

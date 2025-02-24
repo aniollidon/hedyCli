@@ -62,17 +62,20 @@ llista is A, B, C, D, E
 if A in llista print "hi és" else print "no"
 
  
-# Errors
+# Errors 
+suma = llista at random  
 suma = is ask 2+2 #comentari
-turn right
+summm =  dmaskdmalksdml #comentari
+
+turn right 
 remove 5 from ddd
 add ssds to dsdsd
-
-#Errors
+ 
+#Errors 
 llista is _ 
 llista is hola, adeu, hola_4,
 print You enter the haunted house.
-
+ 
 is hhh, 222
 at random
 print _ 
@@ -83,7 +86,7 @@ Print then he ask you
 from remove ffdfs from
 to 
  
-llista2 = 1,2,3,4,5,hol
+llista2 = 1,2,3,4,5,hol  
 
 ampolles = 99
 print "Hi ha " ampolles " ampolles a dalt de la paret,"

@@ -3,20 +3,20 @@ print Train your parrot!
 new_word is ask Which word do you want to teach them? 
 add new_word to words
 print 🧒 Say new_word, Hedy!
-print 🦜 words at random  
+print 🦜 words at random   
 
-add hola to words 
+add hola to words  
 remove hola from words  # Comentari
  
-words is squawk, Hedy  #comentari
+words is squawk, Hedy  #comentari 
 monster_4 is ask What do you do? #comentari 
-nom is ask Bon dia com, es diu vosté? _ 
+nom is ask Bon dia com, es diu vosté? _  
 
 # Errors
 llista is hola, adeu, hola_4, words fff  
 nollista is hola #comentari
 print bb is hola
-print novariable at random  # Hauria de tenir error
+print novariable at random fff # Hauria de tenir error 
 
 is hhh, 222 
 at random
@@ -35,4 +35,4 @@ var is ask "bla,bla"
 var is el1, el2, el3
 var is ask, ask
 var is variable 
-var is "poma","poma"
+var is poma, "poma"

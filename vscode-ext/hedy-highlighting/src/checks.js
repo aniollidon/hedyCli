@@ -5,11 +5,16 @@ const {
   detectMath,
   detectFuctionUsages,
   detectComparations,
-  validType
+  validType,
+  compareType
 } = require("./utils");
 const { EntityDefinitions } = require("./definitions");
-const { hedyCommands, specificHedyErrors, hedyGeneralSintaxis } = require("./hedy-sintaxis");
-const { HHError } = require("./errors");
+const {
+  hedyCommands,
+  specificHedyErrors,
+  hedyGeneralSintaxis,
+} = require("./hedy-sintaxis");
+const { HHError, HHErrorVal, HHErrorType, HHErrorLine } = require("./errors");
 
 // No hi ha ni elif, ni and ni or (LEVS 5,6,7,8)
 const condicionalInlineRegex =
@@ -18,29 +23,67 @@ const condicionalElseInlineRegex = /(.* )(else) (.*)/;
 const bucleInlineRegex = /^(repeat +([\p{L}_\d]+) +times +)(.*)$/u;
 
 class Sintagma {
-  constructor(line, partial, code, identation, tag) {
-    this.line = line;
-    this.partial = partial;
-    this.code = code;
+  constructor(linenum, partialnum, subsintagmanum, words, identation, sintagmaTag) {
+    this.linenum = linenum; // Línia on es troba el sintagma
+    this.partialnum = partialnum; // Número de sintagma en la mateixa línia
+    this.subsintagmanum = subsintagmanum; // Número de subsintagma en el mateix sintagma - una word pot contenir un subsintagma
+    this.words = words;
     this.identation = identation;
-    this.tag = tag;
-    this.tokens = [];
-  }
+    this.sintagmaTag = sintagmaTag;
 
-  addToken(token, pos) {
-    this.tokens[pos] = token;
-  }
-
-  get(token) {
-    // Search for the token in the sintagma
-    for (let i = 0; i < this.tokens.length; i++) {
-      if (this.tokens[i] === token) return { token: token, pos: i };
+    // Crea subsintagmes 
+    Sintagma.subphrasesCount = 1;
+    for(let k = 0; k < words.length; k++){
+      const word = words[k];
+      if(word.subphrase){
+        words[k].subphrase = new Sintagma(linenum, partialnum, Sintagma.subphrasesCount, word.subphrase, identation, "subphrase");
+        Sintagma.subphrasesCount++;
+      }
     }
-    return undefined;
+  }
+
+  first(){
+    return this.words[0];
+  }
+
+  size(){
+    return this.words.length;
+  }
+
+  get(pos){
+    return this.words[pos];
+  }
+
+  start(pos){
+    return this.words[pos].pos;
+  }
+
+  end(pos){
+    return this.words[pos].end ? this.words[pos].end : this.words[pos].pos + this.words[pos].text.length;
+  }
+
+  sintagmaStart(){
+    return this.start(0);
+  }
+
+  sintagmaEnd(){
+    return this.end(this.words.length - 1);
+  }
+
+  codeSince(pos){
+    return this.words.slice(pos + 1)
+      .map((w) => w.text)
+      .join(" ");
+  }
+
+  codeUntil(pos){
+    return this.words.slice(0, pos)
+      .map((w) => w.text)
+      .join(" ");
   }
 }
 
-class History {
+class Memory {
   constructor() {
     this.past = [];
     this._partialcount = 0;
@@ -52,19 +95,19 @@ class History {
    * Es crida un cop per cada sintagma (part de la frase) que es vol analitzar
    * només en els inline es diferencia de les línies senceres
    */
-  add(code, identation, lineNumber) {
-    let tag = "action";
-    if (code.startsWith("if")) tag = "condition";
-    else if (code.startsWith("else")) tag = "not_condition";
+  newSintagma(words, identation, lineNumber) {
+    let sintagmaTag = "action";
+    if (words[0].command === "if") sintagmaTag = "condition";
+    else if (words[0].command === "else") sintagmaTag = "not_condition";
     else if (
-      code.startsWith("repeat") ||
-      code.startsWith("for") ||
-      code.startsWith("while")
+      words[0].command === "repeat" ||
+      words[0].command === "for" ||
+      words[0].command === "while"
     )
-      tag = "bucle";
-    else if (code.startsWith("define")) tag = "function_definition";
+      sintagmaTag = "bucle";
+    else if (words[0].command === "define") sintagmaTag = "function_definition";
 
-    if (this.last() !== undefined && this.last().line === lineNumber)
+    if (this.last() !== undefined && this.last().linenum === lineNumber)
       this._partialcount++;
     else this._partialcount = 0;
 
@@ -80,9 +123,9 @@ class History {
       }
     }
 
-    this.past.push(
-      new Sintagma(lineNumber, this._partialcount, code, identation, tag)
-    );
+    const sintagma = new Sintagma(lineNumber, this._partialcount, 0, words, identation, sintagmaTag)
+    this.past.push(sintagma);
+    return sintagma;
   }
 
   /*
@@ -93,14 +136,6 @@ class History {
     return this.past[this.past.length - 1];
   }
 
-  /*
-   * Es crida per afegir un token a la llista de tokens de l'últim sintagma
-   * Un token és una paraula que s'ha reconegut com a comanda vàlida
-   */
-  addToken(token, start) {
-    this.last().addToken(token, start);
-  }
-
   cercaIf(searchScoped = false, onScope = -1) {
     // Cerca l'últim if. Navegant enrere s'ha de trobar un condition abans que 2 o més actions.
     let countActions = 0;
@@ -109,9 +144,9 @@ class History {
       const sintagma = this.past[i];
 
       if (searchScoped && sintagma.identation !== onScope) continue;
-      if (sintagma.tag === "condition") return true;
-      if (sintagma.tag === "not_condition") return false;
-      if (sintagma.tag === "action") countActions++;
+      if (sintagma.sintagmaTag === "condition") return true;
+      if (sintagma.sintagmaTag === "not_condition") return false;
+      if (sintagma.sintagmaTag === "action") countActions++;
       if (countActions >= 2) return false;
     }
     return false;
@@ -122,7 +157,7 @@ class History {
     // La separació entre scopes es manté
 
     const identPast = this.last() !== undefined ? this.last().identation : 0;
-    const tagPast = this.last() !== undefined ? this.last().tag : "action";
+    const tagPast = this.last() !== undefined ? this.last().sintagmaTag : "action";
     const pastIdentable =
       tagPast === "condition" ||
       tagPast === "not_condition" ||
@@ -161,7 +196,7 @@ class History {
 
 class CheckHedy {
   constructor(level) {
-    this.history = new History();
+    this.memory = new Memory();
     this.entities = new EntityDefinitions(level);
     this.level = level;
     this._usesCometesText = level > 3;
@@ -173,6 +208,7 @@ class CheckHedy {
     this._usesCometesArreu = level >= 12;
     this._decimals = level >= 12;
     this._atrandom = level >= 3 && level <= 15;
+    this._range = level >= 11;
     this._functions = level >= 12;
     let beforeDef = "^";
     if (this._bucleInline) beforeDef = "(?:^|\\btimes\\b)";
@@ -188,10 +224,12 @@ class CheckHedy {
     const lineTrim = line.trim();
     if (lineTrim === "") return [];
     this.entities.analizeLine(line, lineNumber);
-    return this._analysePhrase(lineTrim, identationLength, lineNumber);
+    const errors = this._analysePhrase(lineTrim, identationLength, lineNumber);
+    return this._processErrors(errors, lineNumber);
   }
 
   _analysePhrase(lineTrim, identationLength, lineNumber) {
+    let errorsFound = [];
     // mira si es un bucle inline
     const bucle = this._bucleInline ? bucleInlineRegex.exec(lineTrim) : null;
 
@@ -210,7 +248,7 @@ class CheckHedy {
       const action = bucle[3];
 
       let res = this._analyseSintagma(bucledef, identationLength, lineNumber);
-      if (res.length > 0) return res;
+      errorsFound = errorsFound.concat(res);
 
       const innerIdentation = identation(action);
       res = this._analysePhrase(
@@ -218,14 +256,14 @@ class CheckHedy {
         innerIdentation + identationLength + bucledef.length,
         lineNumber
       );
+      errorsFound = errorsFound.concat(res);
 
-      if (res.length > 0) return res;
     } else if (condicional !== null) {
       const condition = condicional[1];
       const action = condicional[5];
 
       let res = this._analyseSintagma(condition, identationLength, lineNumber);
-      if (res.length > 0) return res;
+      errorsFound = errorsFound.concat(res);
 
       const innerIdentation = identation(action);
       res = this._analysePhrase(
@@ -233,21 +271,21 @@ class CheckHedy {
         innerIdentation + identationLength + condition.length,
         lineNumber
       );
-      if (res.length > 0) return res;
+      errorsFound = errorsFound.concat(res);
     } else if (elseInline !== null) {
       const actionif = elseInline[1];
       const elseword = elseInline[2];
       const actionelse = elseInline[3];
 
       let res = this._analysePhrase(actionif, identationLength, lineNumber);
-      if (res.length > 0) return res;
+      errorsFound = errorsFound.concat(res);
 
       res = this._analyseSintagma(
         elseword,
         identationLength + actionif.length,
         lineNumber
       );
-      if (res.length > 0) return res;
+      errorsFound = errorsFound.concat(res);
 
       const innerIdentation = identation(actionelse);
       res = this._analysePhrase(
@@ -255,12 +293,12 @@ class CheckHedy {
         innerIdentation + identationLength + actionif.length + elseword.length,
         lineNumber
       );
-      if (res.length > 0) return res;
+      errorsFound = errorsFound.concat(res);
     } else {
       return this._analyseSintagma(lineTrim, identationLength, lineNumber);
     }
 
-    return [];
+    return errorsFound;
   }
 
   _analyseSintagma(lineTrim, identationLength, lineNumber) {
@@ -270,14 +308,14 @@ class CheckHedy {
     if (lineTrim === "") return [];
 
     // Comprova identació.
-    if (this._usesScope && !this.history.comprovaScope(identationLength)) {
+    if (this._usesScope && !this.memory.comprovaScope(identationLength)) {
       errorsFound.push(
         new HHError("identation", "hy-identation", 0, identationLength)
       );
     } else if (
       this._usesScope &&
       !this._scopeRecursive &&
-      this.history.isScopeRecursive(identationLength)
+      this.memory.isScopeRecursive(identationLength)
     ) {
       errorsFound.push(
         new HHError(
@@ -289,42 +327,52 @@ class CheckHedy {
       );
     }
 
-    this.history.add(lineTrim, identationLength, lineNumber); //HMM
-
     const words = this._tagWords(lineTrim, identationLength);
-    console.log("words: ", words);
+    const sintagma = this.memory.newSintagma(words, identationLength, lineNumber);
+    console.log("sintagma: ", sintagma);
 
-    let errors = this._searchMorfoSyntaxisErrors(words);
+    let errors = this._searchMorfoSyntaxisErrors(sintagma);
     if (errors.length > 0) errorsFound.push(...errors);
 
-    errors = this._searchSpecificErrors(words);
+    errors = this._searchSpecificErrors(sintagma);
     if (errors.length > 0) errorsFound.push(...errors);
-    
+
     return errorsFound;
   }
 
   _tagCommands(words) {
-    const iniciPAE =
-      words[0].text === "print" ||
-      words[0].text === "ask" ||
-      words[0].text === "echo";
+    // find print|ask|echo in words
+    const positionPAE = words.findIndex(
+      (w) => w.text === "print" || w.text === "ask" || w.text === "echo"
+    );
 
     for (let k = 0; k < words.length; k++) {
       for (let i = 0; i < hedyCommands.length; i++) {
         const command = hedyCommands[i];
         let contextValid = true;
 
-        if (!this._usesCometesText && iniciPAE && k !== 0) continue; // Després de print, ask o echo tot és string i no comandes
- 
-        if (words[k].text !== command.text) {
-          if(command.levelStart && command.levelStart > this.level) continue;
-          if(command.levelEnd && command.levelEnd < this.level) continue;
+        // Després de print, ask o echo tot és string i no comandes (exeptuant at random n3)
+        if (
+          !this._usesCometesText &&
+          positionPAE != -1 &&
+          positionPAE < k &&
+          !(
+            (words[k].text === "at" && words[k + 1].text === "random") || // TODO: Això s'hauria de fer millor
+            (words[k].text === "random" && k > 0 && words[k - 1].text === "at")
+          )
+        )
+          continue;
 
-          if(words[k].text.toLowerCase() === command.text){
+        if (words[k].text !== command.text) {
+          if (command.levelStart && command.levelStart > this.level) continue;
+          if (command.levelEnd && command.levelEnd < this.level) continue;
+
+          if (words[k].text.toLowerCase() === command.text) {
             words[k].couldBe = {
               command: command.name,
-              errorCode: "hy-to-lowercase-command"
-            }}
+              errorCode: "hy-to-lowercase-command",
+            };
+          }
           continue;
         }
 
@@ -345,7 +393,7 @@ class CheckHedy {
         if (command.atBegining && k !== 0) {
           words[k].couldBe = {
             command: command.name,
-            errorCode: "hy-at-begining"
+            errorCode: "hy-at-begining",
           };
           continue;
         }
@@ -407,8 +455,13 @@ class CheckHedy {
 
         if (entity !== undefined) {
           words[i].type = "entity_" + entity.type;
-          words[i].tag = "entity_" + entity.type + "_" + (entity.subtype? entity.subtype : "mixed");
+          words[i].tag =
+            "entity_" +
+            entity.type +
+            "_" +
+            (entity.subtype ? entity.subtype : "mixed");
           words[i].entity = entity;
+
         } else if (constant !== undefined) {
           words[i].type = "constant";
           words[i].tag = "constant_" + constant;
@@ -419,73 +472,165 @@ class CheckHedy {
 
     // Processa la frase per trobar operacions
     words = detectMath(words);
-    words = detectFuctionUsages(words, this._atrandom, this._functions);
+    words = detectFuctionUsages(words, this._atrandom, this._functions, this._range);
     words = detectComparations(words);
 
     return words;
   }
 
-  _searchMorfoSyntaxisErrors(words) {
+  _searchMorfoSyntaxisErrors(sintagma) {
     const errorsFound = [];
 
-    for(let k = 0; k < words.length; k++){
-      const word = words[k];
-      const start = word.pos;
-      const end = start + word.text.length;
+    for (let k = 0; k < sintagma.size(); k++) {
+      const word = sintagma.get(k);
 
-      if(word.couldBe){
-        errorsFound.push(new HHError(word.text, word.couldBe.errorCode, start, end));
+      if(word.subphrase){
+        errorsFound.push(...this._searchMorfoSyntaxisErrors(word.subphrase));
+      }
+
+      let start = sintagma.start(k);
+      let end = sintagma.end(k);
+
+      if (word.couldBe && !word.tag.startsWith("entity")) {
+        errorsFound.push(
+          new HHError(word.text, word.couldBe.errorCode, start, end)
+        );
         continue;
       }
 
-      if(word.command){
-        const command_def = hedyCommands.find(c => c.name === word.command);
-        let argsForCommand = words.length;
-        if(!command_def) continue;
+      if (word.command) {
+        const commandDef = hedyCommands.find((c) => c.name === word.command);
+        let argsPostCommand = sintagma.size();
+        let argsPreCommand = 0;
+        if (!commandDef) continue;
 
-        if(command_def.elementsAfter !== undefined){
+        if (commandDef.elementsAfter !== undefined || commandDef.minElementsAfter !== undefined) {
 
-          const elementsAfter = Array.isArray(command_def.elementsAfter) ? command_def.elementsAfter : [command_def.elementsAfter];
-          const minExpected = k + Math.min(...elementsAfter);
-          const maxExpected = k + Math.max(...elementsAfter);
-          argsForCommand = maxExpected;
+          const elementsAfter = Array.isArray(commandDef.elementsAfter)
+            ? commandDef.elementsAfter
+            : [commandDef.elementsAfter];
+          let minExpected = k + Math.min(...elementsAfter);
+          let maxExpected = k + Math.max(...elementsAfter);
 
-          if(words.length <= minExpected){
-            errorsFound.push(new HHError(word.text, "hy-command-missing-argument", start, end, minExpected - k));
+          if(commandDef.minElementsAfter !== undefined) {
+            minExpected = k + commandDef.minElementsAfter;
+            maxExpected = sintagma.size(); // Trick to avoid for loop unexpected-argument
+          }
+
+          argsPostCommand = maxExpected;
+
+          if (sintagma.size() <= minExpected) {
+            errorsFound.push(
+              new HHErrorVal(
+                word.text,
+                "hy-command-missing-argument",
+                start,
+                end,
+                minExpected - k
+              )
+            );
           }
 
           // Qualsevol element després dels necessaris són erronis
-          for(let j = maxExpected +1; j < words.length; j++){
-            errorsFound.push(new HHError(command_def.text, "hy-command-unexpected-argument", words[j].pos, words[j].pos + words[j].text.length, maxExpected -k ));
+          for (let j = maxExpected + 1; j < sintagma.size(); j++) {
+            errorsFound.push(
+              new HHErrorVal(
+                commandDef.text,
+                "hy-command-unexpected-argument",
+                sintagma.start(j),
+                sintagma.end(j),
+                maxExpected - k
+              )
+            );
           }
         }
 
-        if(command_def.sintaxis){
-          for(let sx = 0; sx < command_def.sintaxis.length; sx++){
-            const rule = command_def.sintaxis[sx];
-            if(rule.levelStart && rule.levelStart > this.level) continue;
-            if(rule.levelEnd && rule.levelEnd < this.level) continue;
+        if(commandDef.elementsBefore !== undefined){
+          if (k < commandDef.elementsBefore) {
+            errorsFound.push(
+              new HHErrorVal(
+                word.text,
+                "hy-command-missing-argument-before",
+                start,
+                end,
+                commandDef.elementsBefore
+              )
+            );
+          }
+          else {
+            argsPreCommand = k - commandDef.elementsBefore;
+          }
+        }
+          
 
-            for(let j= k + 1; j < argsForCommand+1 && j < words.length; j++){
-              const arg = words[j];
-              const sstart = arg.pos;
-              const send = sstart + arg.text.length;
-              if(rule.refused && !validType(arg.tag, rule.refused)) continue;
-              if(rule.allowed && validType(arg.tag, rule.allowed)) continue;
-  
-              errorsFound.push(new HHError(word.text, rule.codeerror, sstart, send));
+        if (commandDef.sintaxis) {
+          for (let sx = 0; sx < commandDef.sintaxis.length; sx++) {
+            const rule = commandDef.sintaxis[sx];
+            if (rule.levelStart && rule.levelStart > this.level) continue;
+            if (rule.levelEnd && rule.levelEnd < this.level) continue;
+
+            for (
+              let j = argsPreCommand;
+              j < argsPostCommand + 1 && j < sintagma.size();
+              j++
+            ) {
+              if (j==k) continue; // No comprova la commanda en sí mateixa
+
+              const arg = sintagma.get(j);
+              const sstart = sintagma.start(j);
+              const send = sintagma.end(j);
+
+              if(commandDef.untilCommand && arg.command) break;
+              if (rule.refused && !validType(arg.tag, rule.refused)) continue;
+              if (rule.allowed && validType(arg.tag, rule.allowed)) continue;
+
+              errorsFound.push(
+                new HHErrorType(
+                  word.text,
+                  rule.codeerror,
+                  sstart,
+                  send,
+                  arg.tag
+                )
+              );
             }
           }
         }
       }
 
+      if(word.entity){
+        if(word.entity.outOfScope){
+          errorsFound.push(
+            new HHErrorLine(word.text, "hy-entity-out-of-scope", start, end, word.entity.defLine)
+          );
+        continue;
+        }
+
+        // TODO: Millorar, hauria de ser vàlid si és c = c+1 o c = c ...o un if 
+        // No hi ha alerta si depèn d'ella mateixa
+        // No hi ha alerta si és dins d0un if
+        /*if(word.entity.alreadyDefined && sintagma.linenum === word.entity.defLine && word.pos === word.entity.defChar){
+          errorsFound.push(
+            new HHErrorLine(word.text, "hy-entity-already-defined", start, end,word.entity.alreadyDefined.defLine)
+          );
+        }*/
+      }
+
       for (let i = 0; i < hedyGeneralSintaxis.length; i++) {
         const rule = hedyGeneralSintaxis[i];
-        if(rule.levelStart && rule.levelStart > this.level) continue;
-        if(rule.levelEnd && rule.levelEnd < this.level) continue;
-        if(rule.position !== undefined && rule.position !== k) continue;
-        if(rule.refused && !validType(word.tag, rule.refused)) continue;
-        if(rule.allowed && validType(word.tag, rule.allowed)) continue;
+        if (rule.levelStart && rule.levelStart > this.level) continue;
+        if (rule.levelEnd && rule.levelEnd < this.level) continue;
+        if (rule.position !== undefined && rule.position !== k) continue;
+        if (rule.subphrase!==undefined && rule.subphrase !== sintagma.subsintagmanum) continue;
+        if (rule.refused && !validType(word.tag, rule.refused)) continue;
+        if (rule.allowed && validType(word.tag, rule.allowed)) continue;
+        if(rule.special_orAllowed === "definition" && k+1 < sintagma.size() 
+          && sintagma.get(k+1).tag.startsWith("command_variable_define") ) continue;
+
+        if (rule.highlight === "line") {
+          start = sintagma.sintagmaStart();
+          end = sintagma.sintagmaEnd();
+        }
 
         errorsFound.push(new HHError(word.text, rule.codeerror, start, end));
       }
@@ -494,90 +639,119 @@ class CheckHedy {
     return errorsFound;
   }
 
-  _searchSpecificErrors(words) {
+  _searchSpecificErrors(sintagma) {
     const errorsFound = [];
 
-    for (let i = 0; i < words.length; i++) {
-      const word = words[i];
+    for (let i = 0; i < sintagma.size(); i++) {
+      const word = sintagma.get(i);
 
-      let searchWhen = false
+      if(word.subphrase){
+        errorsFound.push(...this._searchSpecificErrors(word.subphrase));
+      }
+ 
+      let searchWhen = false;
       let taggedCommand = undefined;
-    
-      if(word.type && word.type.startsWith("command")) {
+
+      if (word.type && word.type.startsWith("command")) {
         searchWhen = "valid";
-        taggedCommand = word.tag;
-      }
-      else if(word.couldBe){
+        taggedCommand = word.command;
+      } else if (word.couldBe) {
         searchWhen = "invalid";
-        taggedCommand = word.couldBe.tag;
-      }
-      else continue;
+        taggedCommand = word.couldBe.command;
+      } else continue;
 
-
-      for(let j = 0; j < specificHedyErrors.length; j++){
+      for (let j = 0; j < specificHedyErrors.length; j++) {
         const error = specificHedyErrors[j];
-        if(error.when !== searchWhen) continue;
-        if(error.levelStart && error.levelStart > this.level) continue;
-        if(error.levelEnd && error.levelEnd < this.level) continue;
-        if(!error.commands.includes(taggedCommand)) continue;
+        if (error.when !== searchWhen) continue;
+        if (error.levelStart && error.levelStart > this.level) continue;
+        if (error.levelEnd && error.levelEnd < this.level) continue;
+        if (!error.commands.includes(taggedCommand)) continue;
 
-        if(error.hasAfterCommand){
-          const after = words.slice(i + 1).map(w => w.text).join(" ");
-          if(!after.match(error.hasAfterCommand)) continue;
+        if (error.hasAfterCommand) {
+          const after = sintagma.codeSince(i);
+          if (!after.match(error.hasAfterCommand)) continue;
         }
-        if(error.hasBeforeCommand){
-          const before = words.slice(0, i).map(w => w.text).join(" ");
-          if(!before.match(error.hasBeforeCommand)) continue;
+        if (error.hasBeforeCommand) {
+          const before = sintagma.codeUntil(i);
+          if (!before.match(error.hasBeforeCommand)) continue;
         }
-        if(error.list || error.notlist){
+        if (error.list || error.notlist) {
           const place = error.list ? error.list : error.notlist;
           const si = place === "before" ? i - 1 : i + 1;
-          if(si < 0 || si >= words.length) continue;
+          if (si < 0 || si >= sintagma.size()) continue;
 
-          const found = words[si].tag.startsWith("entity_variable_list")
+          const found = sintagma.get(si).tag.startsWith("entity_variable_list");
 
-          if(error.list && !found) continue;
-          if(error.notlist && found) continue;
+          if (error.list && !found) continue;
+          if (error.notlist && found) continue;
         }
 
-        if(error.special_else && !this.history.cercaIf(this._usesScope, identationLength)) continue;
+        if (
+          error.special_else &&
+          this.memory.cercaIf(this._usesScope, sintagma.identation)
+        )
+          continue;
 
-        if(error.beforeAndAfter && error.beforeAndAfter === "same"){
-          if(i === 0 || i === words.length - 1) continue;
-          if(words[i - 1].text !== words[i + 1].text) continue;
+        if (error.beforeAndAfter && error.beforeAndAfter === "same") {
+          if (i === 0 || i+1 >= sintagma.size()) continue;
+          if (sintagma.get(i - 1).text !== sintagma.get(i + 1).text) continue;
+        } else if (error.beforeAndAfter && error.beforeAndAfter === "same-type") {
+          if (i === 0 || i+1 >= sintagma.size()) continue;
+          if (compareType(sintagma.get(i - 1).tag,sintagma.get(i + 1).tag)) continue;
         }
 
-        let start = word.pos;
-        let end = start + word.text.length;
+        let start = sintagma.start(i);
+        let end = sintagma.end(i);
 
         if (error.highlight === "before_word") {
-          if(i === 0) continue;
-          start = words[i-1].pos;
-          end = start + words[i-1].text.length;
-        }
-        else if (error.highlight === "after_word") {
-          if(i === words.length - 1) continue;
-          start = words[i+1].pos;
-          end = start + words[i+1].text.length;
-        }
-        else if (error.highlight === "before") {
-          if(i === 0) continue;
-          start = words[0].pos;
-          end = words[i-1].pos + words[i-1].text.length;
-        }
-        else if (error.highlight === "after") {
-          if(i === words.length - 1) continue;
-          start = words[i+1].pos;
-          end = words[words.length - 1].pos + words[words.length - 1].text.length;
+          if (i === 0) continue;
+          start = sintagma.start(i-1);
+          end = sintagma.end(i-1);
+        } else if (error.highlight === "after_word") {
+          if (i+1 >= sintagma.size()) continue;
+          start = sintagma.start(i+1);
+          end = sintagma.end(i+1);
+        } else if (error.highlight === "before") {
+          if (i === 0) continue;
+          start = sintagma.sintagmaStart();
+          end = sintagma.end(i - 1);
+        } else if (error.highlight === "after") {
+          if (i+1 >= sintagma.size()) continue;
+          start = sintagma.start(i + 1);
+          end = sintagma.sintagmaEnd();
         }
 
         errorsFound.push(new HHError(word.text, error.codeerror, start, end));
-        
-
       }
     }
 
     return errorsFound;
+  }
+
+  _processErrors(errors, lineNumber) {
+    // Processa els error i evita que es solapin, si dos errors coincideixen deixa el de més prioritat
+    for(let i = 0; i < errors.length; i++){
+      const error = errors[i];
+      for(let j = i+1; j < errors.length; j++){
+        const error2 = errors[j];
+        // Si interseccionen
+        if(error.start < error2.end && error2.start < error.end){
+          // Manté el de més prioritat	
+          if(error.priority > error2.priority){
+            errors.splice(j,1);
+            j--;
+            //console.log("error eliminat a la línia " + lineNumber + ":", error2, "ja que intersecciona amb", error);
+          }
+          else{
+            errors.splice(i,1);
+            i--;
+            //console.log("error eliminat a la línia " + lineNumber + ":", error, "ja que intersecciona amb", error2);
+            break;
+          }
+        }
+      }
+    }
+    return errors;
   }
 
 }

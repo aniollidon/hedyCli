@@ -6,21 +6,22 @@ print 'computer chose ' computer_choice
 add pedra to options 
 remove pedra from options 
 color red
-turn 90
-turn right
+turn 90 
+turn right   
 clear
-sleep 2 
-
+sleep 2  
+  
 lliata is  hola, ss, patata, at #ok  
 lliata is  hola, ask, patata #ok
-llista    is   print #ok 
+llista    is   print #ok  
+
 nom is ask "Bon dia com, es diu vosté?" #ok 
 nomç is ask "Bon dia com, es diu vosté?" #nok 
 nomç is ask "Bon dia com, es diu vosté?" #nok
  
 
 print You enter the haunted house.
-print options at random ' ' options at random ' ' options at random
+print options at random ' ' options at random ' ' options at random 
 
 nom is ask "Bon dia com, es diu vosté?"
 
@@ -30,7 +31,7 @@ print nom ' troba un monstre'
 final is ask 'Vols un final bo o dolent?'
 if final is bo print nom " agafa l'espasa i el monstre fuig ràpidament"
 else print 'El monstre menja ' nom ' per sopar'
- 
+  
 pretty_colors is green, yellow 
 favorite_color is ask 'What is your favorite color?'
 if favorite_color not in pretty_colors print 'pretty!'
@@ -41,7 +42,7 @@ if ç is pressed print 'They lived happily ever after ❤'
 else print 'The prince was eaten by a hippopotamus 😭'
  
 a is hola #comentari
-
+ 
 remove ddd from ddd
 add ppp to dsdsd
  
@@ -49,7 +50,7 @@ aa is 2 + 2 #comentari
 a is bla
 llista is ss, ggg, gg #comentari
 
-llista is A, B, C, D, E
+llista is A, B, C, D, E 
 if A in llista print "hi és" else print "no" 
 
 #Errors
@@ -66,12 +67,11 @@ echo hola
 ask blabal 
 a ask knjkdnkj  
 Print fdfs 
-
-
+ 
 if bla is bbbbb print 'pretty!' 
 else print 'meh'
   
-print then he ask you
+print then he ask you 
  
 
 a is ask "hola"
@@ -80,3 +80,5 @@ if a is "hola" b is hola
 else b is adeu 
 
 print b
+print 
+a is ask 

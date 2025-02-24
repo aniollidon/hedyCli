@@ -13,3 +13,11 @@ ampolles = 99
 color ampolles
 
 ampolles = ampolles - 1 
+
+a = plat + 3 # Sí  
+a = plat at random dsdas
+
+
+plat = 2,2,2
+
+print  plat at random plat at random 

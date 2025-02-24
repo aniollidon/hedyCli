@@ -62,43 +62,86 @@ function detectTypeConstant(text) {
   else return 'string_unquoted';
 }
 
+function getType(tag) {
+  if (tag.includes("number") || tag.startsWith("math")) return "number";
+  if (tag.includes("string")) return "string";
+  if (tag.includes("color")) return "color";
+  if (tag.includes("note")) return "note";
+  if (tag.startsWith("entity_variable_list")) return "list";
+  return "mixed";
+}
+
+function compareType(tag1, tag2) {
+  const type1 = getType(tag1);
+  const type2 = getType(tag2);
+  console.log("comparant ", tag1, " amb ", tag2, "resultat ", type1 === type2);
+  if (type1 === "mixed" || type2 === "mixed") return true;
+  return type1 === type2;
+}
+
 function validType(tag, list){
   for(let i = 0; i < list.length; i++){
-    if(list[i].startsWith("$number")){
-      return tag.includes("number") || tag.startsWith("entity_variable_value") || tag.startsWith("operation")
-      || tag.startsWith("function_usage");
+    let valid = false;
+    if(list[i] === "$number"){
+      valid = tag.includes("number") || tag.startsWith("entity_variable_value") || tag.startsWith("math")
+      || tag.startsWith("function_usage") || tag.startsWith("call");
     }
-    else if(list[i].startsWith("$string")){
-      return tag.includes("string") || tag.startsWith("entity_variable_value") || tag.startsWith("function_usage");
+    else if(list[i] === "$string"){
+      valid = tag.includes("string") || tag.startsWith("entity_variable_value") || tag.startsWith("function_usage") || tag.startsWith("call");
     }
-    else if(list[i].startsWith("$stored")){
-      return tag.startsWith("entity_variable_value") || tag.startsWith("function_usage");
+    else if(list[i] === "$quoted"){
+      valid = tag.includes("string_quoted") || tag.startsWith("entity_variable_value") || tag.startsWith("function_usage") || tag.startsWith("call");
     }
-    else if(tag.startsWith(list[i])) return true;
+    else if(list[i] === "$stored"){
+      valid = tag.startsWith("entity_variable_value") || tag.startsWith("function_usage") || tag.startsWith("call");
+    }
+    else if(tag.startsWith(list[i])) valid = true;
+
+    if(valid) return true;
   }
+
   return false;
 }
 
-function detectFuctionUsages(tokens, hasAtRandom=false, hasCall=false) {
+function detectFuctionUsages(tokens, hasAtRandom=false, hasCall=false, hasRange = false) {
   let result = [];
   let i = 0;
   
   while (i < tokens.length) {
     // at random calls
     if (hasAtRandom && i  + 2 < tokens.length 
-       && tokens[i].tag === "entity_variable_list"
+       && !tokens[i].command
        && tokens[i+1].tag === "command_at"
        && tokens[i + 2].tag === "command_random"
     ) {
       const phrase = [tokens[i], tokens[i + 1], tokens[i + 2]];
       result.push({
-        name: "at_random",
+        text: phrase.map(token => token.text).join(" "),
+        tag: "call_at_random",
         pos: tokens[i].pos,
+        end: phrase[phrase.length-1].pos + phrase[phrase.length-1].text.length,
         type: "function_usage",
-        phrase: phrase
+        subphrase: phrase
       });
       i += 3;
     } 
+    // range _ to _ calls
+    else if (hasRange && i + 3 < tokens.length
+      && tokens[i].command === "range"
+      && !tokens[i + 1].command
+      && tokens[i + 2].command === "to_range"
+      && !tokens[i + 3].command){
+        const phrase = [tokens[i], tokens[i + 1], tokens[i + 2], tokens[i + 3]];
+        result.push({
+          text: phrase.map(token => token.text).join(" "),
+          tag: "call_range",
+          pos: tokens[i].pos,
+          end: phrase[phrase.length-1].pos + phrase[phrase.length-1].text.length,
+          type: "function_usage",
+          subphrase: phrase
+        });
+        i += 4;
+      }
     // Function calls
     else if (hasCall && i +1 < tokens.length  
         && tokens[i].tag === "command_call"
@@ -127,10 +170,12 @@ function detectFuctionUsages(tokens, hasAtRandom=false, hasCall=false) {
             }
 
             result.push({
-              name: "function_call",
+              text: phrase.map(token => token.text).join(" "),
+              tag: "call_function",
               pos: pos,
+              end: phrase[phrase.length-1].pos + phrase[phrase.length-1].text.length,
               type: "function_usage",
-              phrase: phrase
+              subphrase: phrase
             });
           }
         }
@@ -152,9 +197,12 @@ function detectComparations(tokens) {
   // Preprocess to join not_in
   let j = 0;
   while (j < tokens.length) {
-    if (tokens[j].tag === "command_not" && j + 1 < tokens.length && tokens[j + 1].tag === "command_in") {
-      tokens[j].text = "not_in";
+    if (tokens[j].command === "not" && j + 1 < tokens.length && tokens[j + 1].command === "in") {
+      tokens[j].text = "not in";
+      tokens[j].tag = "command_not_in";
+      tokens[j].command = "not_in";
       tokens[j].pos = tokens[j].pos;
+      tokens[j].end = tokens[j + 1].end;
       tokens[j].type = "command";
       tokens.splice(j + 1, 1);
     } else {
@@ -162,10 +210,10 @@ function detectComparations(tokens) {
     }
   }
 
-  const comparators = new Set(["is", "=", "==", "!=", "in", "not_in", "<", ">", "<=", ">="]);
+  const comparators = new Set(["is", "=", "==", "!=", "in", "not in", "<", ">", "<=", ">="]);
 
   function allowedType(token) {
-    return token.tag === "entity_variable" || token.tag.startsWith("constant");
+    return token.tag.startsWith("entity_variable") || token.tag.startsWith("constant") || token.tag.startsWith("command_pressed") || token.tag.startsWith("call_range");
   }
 
   while (i < tokens.length) {
@@ -182,10 +230,12 @@ function detectComparations(tokens) {
         }
 
         result.push({
-          name: "comp_"+operator,
+          text: phrase.map(token => token.text).join(" "),
+          tag: "comparation_"+tokens[i+1].tag,
           pos: pos,
+          end: phrase[phrase.length-1].pos + phrase[phrase.length-1].text.length,
           type: "comparation",
-          phrase: phrase
+          subphrase: phrase
         });
         i += 3;
       } else {
@@ -205,7 +255,7 @@ function detectMath(tokens) {
   const operators = new Set(["+", "-", "*", "/"]);
 
   function allowedType(token) {
-    return token.type === "entity_variable" || token.type.startsWith("constant_number");
+    return !token.command;
   }
 
   while (i < tokens.length) {
@@ -214,17 +264,19 @@ function detectMath(tokens) {
           let pos = tokens[i].pos;
           i++;
           
-          while (i + 1 < tokens.length && tokens[i].type === "command" && operators.has(tokens[i].text) && allowedType(tokens[i + 1])) {
+          while (i + 1 < tokens.length && tokens[i].command && operators.has(tokens[i].text) && allowedType(tokens[i + 1])) {
               phrase.push(tokens[i], tokens[i + 1]);
               i += 2;
           }
           
           if (phrase.length > 1) {
               result.push({
-                  name: "math",
+                  text: phrase.map(token => token.text).join(" "),
+                  tag: "math",
                   pos: pos,
+                  end: phrase[phrase.length-1].pos + phrase[phrase.length-1].text.length,
                   type: "operation",
-                  phrase: phrase
+                  subphrase: phrase
               });
           } else {
               result.push(phrase[0]);
@@ -238,7 +290,7 @@ function detectMath(tokens) {
   return result;
 }
 
-function varDefinitionType(linetext, hasQuotes, define_var_operator) {
+function varDefinitionType(linetext, hasQuotes, define_var_operator, entities) {
   const isList = enUnaLlista(linetext, linetext.length-1, hasQuotes, define_var_operator);
   if(isList) return 'list';
   const despresIgual = define_var_operator.includes("=") ? linetext.indexOf('=')+1 : -1;
@@ -246,6 +298,8 @@ function varDefinitionType(linetext, hasQuotes, define_var_operator) {
   const pos = despresIgual > despresIs ? despresIgual : despresIs;
   const despres = linetext.substring(pos, linetext.length).trim();
 
+  if(despres.match(/\+|-|\*|\//)) return 'value_mixed';
+  if(entities[despres.trim()]) return 'value_mixed';
   if(despres.match(/^ *ask /)) return 'value_mixed';
 
   return 'value_' + detectTypeConstant(despres);
@@ -331,5 +385,6 @@ module.exports = {
     detectMath,
     detectFuctionUsages,
     detectComparations,
-    validType
+    validType,
+    compareType
 }

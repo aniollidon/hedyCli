@@ -1,11 +1,3 @@
-var = hola
-var1 = 44, jj
+var = 1
 
-var2 = hola 44
-var3 = llista1, llista2 
-print 'a','a' var 
-print var1 at random
-
-add 4 to var1 
- 
-a is var1 at random 
+var = var +1 

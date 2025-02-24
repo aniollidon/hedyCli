@@ -21,12 +21,25 @@ convertListToComandClass = (comands) => {
     return comands.map((comand) => new Command(comand));
 }
 
+const operationTemplate = {
+    levelStart: 6,
+    minElementsAfter: 1,
+    untilCommand: true,
+    elementsBefore: 1,
+    sintaxis:[
+    {
+        allowed: ["$number"],
+        codeerror: "hy-execting-number"
+    }],
+}
+
 
 const hedyCommands = convertListToComandClass([
     {
         text: "print",
         description: "Mostra un text per pantalla",
         atBegining: true,
+        minElementsAfter: 1,
         sintaxis:[
         {
             refused: ["entity_variable_list"],
@@ -34,7 +47,7 @@ const hedyCommands = convertListToComandClass([
         },
         {
             levelStart: 4,
-            allowed: ["constant_string_quoted", "entity_variable", "at_random"],
+            allowed: ["$number", "$quoted"],
             codeerror: "hy-text-must-be-quoted"
         }
         ]      
@@ -113,7 +126,8 @@ const hedyCommands = convertListToComandClass([
         text: "ask",
         levelEnd: 1,
         description: "Pregunta a l'usuari i guarda el valor per retornar-lo el pròxim 'echo'",
-        atBegining: true
+        atBegining: true,
+        minElementsAfter: 1,
     },
     {
         text: "ask",
@@ -121,6 +135,7 @@ const hedyCommands = convertListToComandClass([
         hasBefore: /^[\p{L}_\d]+ (is|=)$/gu,
         levelStart: 2,
         levelEnd: 18,
+        minElementsAfter: 1,
         sintaxis:[
             {
                 refused: ["entity_variable_list"],
@@ -128,7 +143,7 @@ const hedyCommands = convertListToComandClass([
             },
             {
                 levelStart: 4,
-                allowed: ["constant_string_quoted", "entity_variable", "at_random"],
+                allowed: ["$number", "$quoted"],
                 codeerror: "hy-text-must-be-quoted"
             }
         ]
@@ -137,7 +152,8 @@ const hedyCommands = convertListToComandClass([
         text: "echo",
         description: "Retorna el resultat d'ask per pantalla",
         atBegining: true,
-        levelEnd: 1
+        levelEnd: 1,
+        minElementsAfter: 1
     },
     {
         text: "right",
@@ -153,17 +169,17 @@ const hedyCommands = convertListToComandClass([
     },
     {
         text: "is",
-        description: "Defineix una variable",
-        name: "variable_define_is",
-        levelStart: 2,
-        hasBefore: /^[\p{L}_\d]+$/gu
-    },
-    {
-        text: "is",
         description: "Compara dos valors i/o variables",
         name: "compare_is",
         levelStart: 2,
         hasBefore: /^(if|elif|while) .*/gu
+    },
+    { // No hauria d'importar l'ordre, però sino no funciona l'error hy-variabledef-multiplewords
+        text: "is",
+        description: "Defineix una variable",
+        name: "variable_define_is",
+        levelStart: 2,
+        hasBefore: /^[\p{L}_\d]+$/gu
     },
     {
         text: ",",
@@ -207,6 +223,7 @@ const hedyCommands = convertListToComandClass([
         description: "Indica fins a quin numero es defineix l'interval, va després de 'range'",
         levelStart: 11,
         elementsAfter: 1,
+        elementsBefore: 1,
         expected: "number",
         hasBefore:  /\brange/g,
     },
@@ -216,7 +233,7 @@ const hedyCommands = convertListToComandClass([
         levelStart: 3,
         levelEnd: 15,
         hasBefore: /[\p{L}_\d]+$/gu,
-        hasAfter: / +random\b/gu,
+        hasAfter: /^ *\brandom\b/gu,
         elementsAfter: 1
     },
     {
@@ -241,14 +258,18 @@ const hedyCommands = convertListToComandClass([
         levelStart: 5,
         atBegining: true,
         elementsAfter: 1,
-        expected: "condition"
+        sintaxis:[
+            {
+                refused: ["entity_variable_list"],
+                codeerror: "hy-cant-print-list"
+            }]
     },
     {
         text: "else",
         description: "Indica la branca alternativa d'una condició",
         levelStart: 5,
         atBegining: true,
-        elementsAfter: 1
+        elementsAfter: 0
     },
     {
         text: "pressed",
@@ -259,12 +280,10 @@ const hedyCommands = convertListToComandClass([
     },
     {
         text:"not",
-        name: "not_in",
         description: "Indica que un element no està a la llista",
         levelStart: 5,
         hasBefore: /^if .*/g,
         hasAfter: /\bin\b/g,
-        elementsAfter: 2,
     },
     {
         text:"in",
@@ -275,42 +294,57 @@ const hedyCommands = convertListToComandClass([
     },
     {
         text: "=",
-        name: "variable_define_equal",
-        description: "Defineix una variable",
-        levelStart: 6,
-        hasBefore: /^[\p{L}_\d]+$/gu
-    },
-    {
-        text: "=",
         description: "Compara dos valors i/o variables",
         name: "compare_equal",
         levelStart: 6,
         elementsAfter: 1,
         hasBefore: /^(if|elif|while) .*/gu
     },
+    { // No hauria d'importar l'ordre, però sino no funciona l'error hy-variabledef-multiplewords
+        text: "=",
+        name: "variable_define_equal",
+        description: "Defineix una variable",
+        levelStart: 6,
+        hasBefore: /^[\p{L}_\d]+$/gu
+    },
     {
         text: "+",
         name: "sum",
         description: "Suma dos valors",
-        levelStart: 6
+        levelStart: 6,
+        minElementsAfter: 1,
+        untilCommand: true,
+        elementsBefore: 1,
+        sintaxis:[
+        {
+            levelEnd: 11,
+            allowed: ["$number"],
+            codeerror: "hy-execting-number"
+        },
+        {
+            levelStart: 12,
+            allowed: ["$number", "$quoted"],
+            codeerror: "hy-execting-number-string"
+        }
+        ],
     },
     {
         text: "-",
         name: "rest",
         description: "Resta dos valors",
-        levelStart: 6
+        ...operationTemplate
     },
     {
         text:"*",
         name: "multiplication",
         description: "Multiplica dos valors",
-        levelStart: 6
+        ...operationTemplate
     },
     {
         text:"/",
         name: "division",
         description: "Divideix dos valors",
-        levelStart: 6
+        ...operationTemplate
     },
     {
         text:"repeat",
@@ -340,7 +374,7 @@ const hedyCommands = convertListToComandClass([
         levelStart: 11,
         hasBefore: /^for .* in$/g,
         expected1: "number",
-        elementsAfter: 2,
+        elementsAfter: 3,
     },
     {
         text: "define",
@@ -446,9 +480,12 @@ const hedyCommands = convertListToComandClass([
 
 const hedyGeneralSintaxis = [
     {
-        allowed: ["command", "entity_variable"],
+        allowed: ["command"],
+        special_orAllowed: "definition",
         codeerror: "hy-lines-must-start-with",
-        position: 0
+        position: 0,
+        subphrase: 0,
+        highlight: "line"
     },
     {
         refused: ["constant_blank"],
@@ -460,7 +497,7 @@ const hedyGeneralSintaxis = [
         codeerror: "hy-text-must-be-quoted"
     },
     {
-        levelEnd: 12,
+        levelEnd: 11,
         refused: ["constant_number_decimal"],
         codeerror: "hy-not-decimals"
     }
@@ -514,6 +551,15 @@ const specificHedyErrors = [
         codeerror: "hy-before-needs-nolist",
         commands: ["from", "to_list"]
     },
+
+    {
+        hasAfterCommand: /^is\b/g,
+        when: "invalid",
+        highlight: "command",
+        codeerror: "hy-pressed-must-be-second",
+        commands: ["pressed"]
+    },
+
     {
         notlist: "before",
         when: "valid",
@@ -533,14 +579,14 @@ const specificHedyErrors = [
         when: "valid",
         highlight: "after_word",
         codeerror: "hy-after-needs-list",
-        commands: ["in"]
+        commands: ["in", "not_in"]
     },
     {
         list: "before",
         when: "valid",
         highlight: "before_word",
         codeerror: "hy-before-needs-nolist",
-        commands: ["in"]
+        commands: ["in", "not_in"]
     },
     {
         levelStart: 14,
@@ -583,7 +629,15 @@ const specificHedyErrors = [
         highlight: "after_word",
         codeerror: "hy-same-comparison",
         commands: ["greater_than", "less_than", "greater_than_or_equal", "less_than_or_equal", "compare_equalequal", "not_equal", "compare_is", "compare_equal"]
-    }
+    },
+    {
+        when: "valid",
+        levelStart:12,
+        beforeAndAfter: "same-type",
+        highlight: "after_word",
+        codeerror: "hy-execting-same-type",
+        commands: ["sum"]
+    },
 ];
 
 module.exports = {
