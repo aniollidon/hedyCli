@@ -78,11 +78,15 @@ function compareType(tag1, tag2) {
   return type1 === type2;
 }
 
-function validType(tag, list){
+function validType(tag, list){ // TODO millorar a les variables
   for(let i = 0; i < list.length; i++){
     let valid = false;
     if(list[i] === "$number"){
       valid = tag.includes("number") || tag.startsWith("entity_variable_value") || tag.startsWith("math")
+      || tag.startsWith("function_usage") || tag.startsWith("call");
+    }
+    else if(list[i] === "$number_integer"){
+      valid = tag.includes("number_integer") || tag.startsWith("entity_variable_value") || tag.startsWith("math")
       || tag.startsWith("function_usage") || tag.startsWith("call");
     }
     else if(list[i] === "$string"){

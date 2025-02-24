@@ -14,7 +14,7 @@ const {
   specificHedyErrors,
   hedyGeneralSintaxis,
   errorMapping
-} = require("./hedy-sintaxis");
+} = require("./hedy-syntax");
 const { HHError, HHErrorVal, HHErrorType, HHErrorLine } = require("./errors");
 
 // No hi ha ni elif, ni and ni or (LEVS 5,6,7,8)
@@ -332,7 +332,7 @@ class CheckHedy {
     const sintagma = this.memory.newSintagma(words, identationLength, lineNumber);
     console.log("sintagma: ", sintagma);
 
-    let errors = this._searchMorfoSyntaxisErrors(sintagma);
+    let errors = this._searchMorphosyntacticErrors(sintagma);
     if (errors.length > 0) errorsFound.push(...errors);
 
     errors = this._searchSpecificErrors(sintagma);
@@ -479,14 +479,14 @@ class CheckHedy {
     return words;
   }
 
-  _searchMorfoSyntaxisErrors(sintagma) {
+  _searchMorphosyntacticErrors(sintagma) {
     const errorsFound = [];
 
     for (let k = 0; k < sintagma.size(); k++) {
       const word = sintagma.get(k);
 
       if(word.subphrase){
-        errorsFound.push(...this._searchMorfoSyntaxisErrors(word.subphrase));
+        errorsFound.push(...this._searchMorphosyntacticErrors(word.subphrase));
       }
 
       let start = sintagma.start(k);
@@ -564,9 +564,9 @@ class CheckHedy {
         }
           
 
-        if (commandDef.sintaxis) {
-          for (let sx = 0; sx < commandDef.sintaxis.length; sx++) {
-            const rule = commandDef.sintaxis[sx];
+        if (commandDef.syntax) {
+          for (let sx = 0; sx < commandDef.syntax.length; sx++) {
+            const rule = commandDef.syntax[sx];
             if (rule.levelStart && rule.levelStart > this.level) continue;
             if (rule.levelEnd && rule.levelEnd < this.level) continue;
 
@@ -582,6 +582,7 @@ class CheckHedy {
               const send = sintagma.end(j);
 
               if(commandDef.untilCommand && arg.command) break;
+              if(rule.position !== undefined && rule.position !== j - argsPreCommand) continue;
               if (rule.refused && !validType(arg.tag, rule.refused)) continue;
               if (rule.allowed && validType(arg.tag, rule.allowed)) continue;
 

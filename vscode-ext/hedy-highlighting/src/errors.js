@@ -115,6 +115,16 @@ const higlitingHedyErrors = {
         severity: "error",
         priority: 10,
     },
+    "hy-execting-number-integer": {
+        message: "La comanda '[NAME]' espera un número enter. [TYPE-FOUND].",
+        severity: "error",
+        priority: 10,
+    },
+    "hy-execting-command-times": {
+        message: "La comanda '[NAME]' espera un número enter i després la comanda 'times'. [TYPE-FOUND] a la segona posició.",
+        severity: "error",
+        priority: 10,
+    },
     "hy-execting-number-string": {
         message: "La comanda '[NAME]' espera un número o text. [TYPE-FOUND].",
         severity: "error",
