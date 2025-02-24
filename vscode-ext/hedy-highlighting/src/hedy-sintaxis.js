@@ -179,14 +179,22 @@ const hedyCommands = convertListToComandClass([
         description: "Defineix una variable",
         name: "variable_define_is",
         levelStart: 2,
-        hasBefore: /^[\p{L}_\d]+$/gu
+        hasBefore: /^[\p{L}_\d]+$/gu,
+        sintaxis:[
+            {
+                levelEnd: 11,
+                refused: ["constant_string_quoted"],
+                codeerror: "hy-unnecessary-quotes"
+            }
+        ]
     },
     {
         text: ",",
         name: "comma_list",
         description: "Separa els elements d'una llista",
         levelStart: 3,
-        hasBefore: /is |=/g
+        hasBefore: /is |=/g,
+        minElementsAfter: 1
     },
     {
         text: "remove",
@@ -259,6 +267,10 @@ const hedyCommands = convertListToComandClass([
         atBegining: true,
         elementsAfter: 1,
         sintaxis:[
+            {
+                allowed: ["condition"],
+                codeerror: "hy-execting-condition"
+            },
             {
                 refused: ["entity_variable_list"],
                 codeerror: "hy-cant-print-list"
@@ -364,7 +376,7 @@ const hedyCommands = convertListToComandClass([
         text: "for",
         description: "Itera sobre una llista",
         atBegining: true,
-        expected: "comparation", // TODO CHECK IN
+        expected: "condition", // TODO CHECK IN
         levelStart: 10,
         elementsAfter: 1,
     },
@@ -626,22 +638,67 @@ const specificHedyErrors = [
     {
         when: "valid",
         beforeAndAfter: "same",
-        highlight: "after_word",
-        codeerror: "hy-same-comparison",
-        commands: ["greater_than", "less_than", "greater_than_or_equal", "less_than_or_equal", "compare_equalequal", "not_equal", "compare_is", "compare_equal"]
+        highlight: "line",
+        codeerror: "hy-same-comparison-true",
+        commands: ["greater_than_or_equal", "less_than_or_equal", "compare_equalequal", "compare_is", "compare_equal"]
+    },
+    {
+        when: "valid",
+        beforeAndAfter: "same",
+        highlight: "line",
+        codeerror: "hy-same-comparison-false",
+        commands: ["greater_than", "less_than", "not_equal"]
     },
     {
         when: "valid",
         levelStart:12,
         beforeAndAfter: "same-type",
-        highlight: "after_word",
+        highlight: "line",
         codeerror: "hy-execting-same-type",
         commands: ["sum"]
     },
+    {
+        when: "valid",
+        beforeAndAfter: "same-type",
+        highlight: "line",
+        codeerror: "hy-execting-same-type",
+        commands: ["greater_than", "less_than", "greater_than_or_equal", "less_than_or_equal", "compare_equalequal", "not_equal", "compare_is", "compare_equal"]
+    },
+    {
+        when: "valid",
+        beforeAndAfter: "same-constant-text",
+        highlight: "line",
+        codeerror: "hy-always-true",
+        commands: ["greater_than", "less_than",  "not_equal"]
+    },
+    {
+        when: "valid",
+        beforeAndAfter: "same-constant-text",
+        highlight: "line",
+        codeerror: "hy-always-false",
+        commands: ["greater_than_or_equal", "less_than_or_equal", "compare_equalequal", , "compare_is", "compare_equal"]
+    },
+    {
+        commands: ["variable_define_is"]
+    }
 ];
+
+const errorMapping = [
+    {
+        codeerror: "hy-command-unexpected-argument",
+        on: ["if", "elif", "while", "for"],
+        to: "hy-command-unexpected-argument-conditional"
+    },
+    {
+        codeerror: "hy-command-missing-argument",
+        on: [","], // TODO hauria de ser comma_list
+        to: "hy-command-missing-argument-comma"
+    },
+]
 
 module.exports = {
     hedyCommands,
     specificHedyErrors,
-    hedyGeneralSintaxis
+    hedyGeneralSintaxis,
+    errorMapping
 }

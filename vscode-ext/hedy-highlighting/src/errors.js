@@ -50,6 +50,16 @@ const higlitingHedyErrors = {
         severity: "error",
         priority: 1,
     },
+    "hy-command-unexpected-argument-conditional": {
+        message: "La comanda '[NAME]' només accepta una condició després.",
+        severity: "error",
+        priority: 1,
+    },
+    "hy-command-missing-argument-comma": {
+        message: "Després d'una coma hi ha d'haver un element.",
+        severity: "error",
+        priority: 1,
+    },
     "hy-level-unavailable-yet": {
         message: "La comanda '[NAME]' encara no es pot fer servir en aquest nivell.",
         severity: "error",
@@ -59,11 +69,6 @@ const higlitingHedyErrors = {
         message: "La comanda '[NAME]' ja no es pot fer servir en aquest nivell.",
         severity: "error",
         priority: 2,
-    },
-    "hy-same-comparison": {
-        message: "No té massa sentit comparar dos cops el mateix.",
-        severity: "warning",
-        priority: 3,
     },
     "hy-to-lowercase-command": {
         message: "Potser volies utilitzar la comanda '[LOWER]'?, si és així ha d'estar tota en minúscules.",
@@ -80,10 +85,30 @@ const higlitingHedyErrors = {
         severity: "warning",
         priority: 5,
     },
+     "hy-always-false":{
+        message: "La condició sempre és falsa i mai es compleix.",
+        severity: "warning",
+        priority: 5,
+    },
+    "hy-always-true":{
+        message: "La condició sempre és certa i sempre es compleix.",
+        severity: "warning",
+        priority: 5,
+    },
+    "hy-same-comparison-true": {
+        message: "No té massa sentit comparar dos cops el mateix. Sempre serà cert.",
+        severity: "warning",
+        priority: 6,
+    },
+    "hy-same-comparison-false": {
+        message: "No té massa sentit comparar dos cops el mateix. Sempre serà fals.",
+        severity: "warning",
+        priority: 6,
+    },
     "hy-execting-same-type": {
         message: "La comanda '[NAME]' espera el mateix tipus abans i després.",
         severity: "warning",
-        priority: 5,
+        priority: 6,
     },
     "hy-execting-number": {
         message: "La comanda '[NAME]' espera un número. [TYPE-FOUND].",
@@ -102,6 +127,11 @@ const higlitingHedyErrors = {
     },
     "hy-execting-color": {
         message: "La comanda '[NAME]' espera un color. [TYPE-FOUND].",
+        severity: "error",
+        priority: 10,
+    },
+    "hy-execting-condition":{
+        message: "La comanda '[NAME]' espera una condició després.",
         severity: "error",
         priority: 10,
     },
@@ -177,7 +207,7 @@ const higlitingHedyErrors = {
         priority: 255,
     },
     "hy-unnecessary-quotes": {
-        message: "En aquest nivell no calen cometes pels textos.",
+        message: "En aquest nivell encara no cal cometes per aquest text.",
         severity: "info",
         priority: 255,
     },

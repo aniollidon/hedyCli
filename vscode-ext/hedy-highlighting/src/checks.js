@@ -4,7 +4,7 @@ const {
   detectTypeConstant,
   detectMath,
   detectFuctionUsages,
-  detectComparations,
+  detectConditions,
   validType,
   compareType
 } = require("./utils");
@@ -13,6 +13,7 @@ const {
   hedyCommands,
   specificHedyErrors,
   hedyGeneralSintaxis,
+  errorMapping
 } = require("./hedy-sintaxis");
 const { HHError, HHErrorVal, HHErrorType, HHErrorLine } = require("./errors");
 
@@ -473,7 +474,7 @@ class CheckHedy {
     // Processa la frase per trobar operacions
     words = detectMath(words);
     words = detectFuctionUsages(words, this._atrandom, this._functions, this._range);
-    words = detectComparations(words);
+    words = detectConditions(words);
 
     return words;
   }
@@ -698,6 +699,9 @@ class CheckHedy {
         } else if (error.beforeAndAfter && error.beforeAndAfter === "same-type") {
           if (i === 0 || i+1 >= sintagma.size()) continue;
           if (compareType(sintagma.get(i - 1).tag,sintagma.get(i + 1).tag)) continue;
+        } else if (error.beforeAndAfter && error.beforeAndAfter === "same-constant-text") {
+          if (i === 0 || i+1 >= sintagma.size()) continue;
+          if (sintagma.get(i - 1).constant !== sintagma.get(i + 1).constant) continue;
         }
 
         let start = sintagma.start(i);
@@ -720,6 +724,10 @@ class CheckHedy {
           start = sintagma.start(i + 1);
           end = sintagma.sintagmaEnd();
         }
+        else if (error.highlight === "line") {
+          start = sintagma.sintagmaStart();
+          end = sintagma.sintagmaEnd();
+        }
 
         errorsFound.push(new HHError(word.text, error.codeerror, start, end));
       }
@@ -729,6 +737,20 @@ class CheckHedy {
   }
 
   _processErrors(errors, lineNumber) {
+    // Ajusta el mapeig d'errors
+    for(let i= 0; i < errors.length; i++){
+      const error = errors[i];
+      for(let j=0; j< errorMapping.length; j++){
+        const mapping = errorMapping[j];
+        if(mapping.codeerror === error.errorCode){
+          console.log("error mapejat a la línia " + lineNumber + ":", error, "a", mapping);
+          if(mapping.on && !mapping.on.includes(error.onText)) continue;
+          errors[i].errorCode = mapping.to;
+          break;
+        }
+      }
+    }
+
     // Processa els error i evita que es solapin, si dos errors coincideixen deixa el de més prioritat
     for(let i = 0; i < errors.length; i++){
       const error = errors[i];

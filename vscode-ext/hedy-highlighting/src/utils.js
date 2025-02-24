@@ -74,7 +74,6 @@ function getType(tag) {
 function compareType(tag1, tag2) {
   const type1 = getType(tag1);
   const type2 = getType(tag2);
-  console.log("comparant ", tag1, " amb ", tag2, "resultat ", type1 === type2);
   if (type1 === "mixed" || type2 === "mixed") return true;
   return type1 === type2;
 }
@@ -190,7 +189,7 @@ function detectFuctionUsages(tokens, hasAtRandom=false, hasCall=false, hasRange 
   return result;
 }
 
-function detectComparations(tokens) {
+function detectConditions(tokens) {
   let result = [];
   let i = 0;
 
@@ -231,10 +230,10 @@ function detectComparations(tokens) {
 
         result.push({
           text: phrase.map(token => token.text).join(" "),
-          tag: "comparation_"+tokens[i+1].tag,
+          tag: "condition_"+tokens[i+1].tag,
           pos: pos,
           end: phrase[phrase.length-1].pos + phrase[phrase.length-1].text.length,
-          type: "comparation",
+          type: "condition",
           subphrase: phrase
         });
         i += 3;
@@ -384,7 +383,7 @@ module.exports = {
     detectTypeConstant,
     detectMath,
     detectFuctionUsages,
-    detectComparations,
+    detectConditions,
     validType,
     compareType
 }
