@@ -19,8 +19,8 @@ const higlitingHedyErrors = {
         severity: "info",
         priority: 0,
     },
-    "hy-entity-already-defined": {
-        message: "La declaració de la variable '[NAME]' sobreescriu la definició de la línia [LINE].",
+    "hy-entity-changes-content-type": {
+        message: "Vigila que la variable '[NAME]' ha canviat el tipus a respecte la seva definició a la línia [LINE].",
         severity: "warning",
         priority: 0,
     },
@@ -143,6 +143,11 @@ const higlitingHedyErrors = {
     "hy-execting-condition":{
         message: "La comanda '[NAME]' espera una condició després.",
         severity: "error",
+        priority: 10,
+    },
+    "hy-use-elseif-instead":{
+        message: "Si després d'un 'else' vols fer 'if', utilitza la comanda 'elif'.",
+        severity: "warning",
         priority: 10,
     },
     "hy-after-needs-list": {

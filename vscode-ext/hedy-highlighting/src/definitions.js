@@ -36,6 +36,34 @@ class EntityDefinitions {
     this.names = {};
   }
 
+  #setEntity(name, type, scope, lineNumber, startChar, subtype = "value_mixed") {
+    if( this.names[name] !== undefined && !this.names[name].outOfScope){
+      if(subtype != this.names[name].subtype || type != this.names[name].type){
+        this.names[name].changes.push({
+          line: lineNumber,
+          char: startChar,
+          scope: scope,
+          oldType: this.names[name].type,
+          newType: type,
+          oldSubtype: this.names[name].subtype,
+          newSubtype: subtype,
+        });
+
+        this.names[name].subtype = "value_mixed";
+      }
+    }
+    else{
+      this.names[name] = {
+        defLine: lineNumber,
+        defChar: startChar,
+        scope: scope,
+        type: type,
+        subtype: subtype,
+        changes: [],
+      };
+    }
+  }
+
   analizeLine(text, lineNumber) {
     // troba la posició del primer caràcter no espaiat de la línia
     const firstNoSpaceChar = text.search(/[^ ]/);
@@ -84,18 +112,7 @@ class EntityDefinitions {
         this.names
       );
 
-      const alreadyDefined =
-        this.names[variableName] !== undefined &&
-        !this.names[variableName].outOfScope;
-
-      this.names[variableName] = {
-        scope: scope,
-        type: "variable",
-        defLine: lineNumber,
-        defChar: startChar,
-        subtype: subtype,
-        alreadyDefined: alreadyDefined? this.names[variableName]: false,
-      };
+      this.#setEntity(variableName, "variable", scope, lineNumber, startChar, subtype);
 
       this.tokens.push({
         line: lineNumber,
@@ -114,18 +131,7 @@ class EntityDefinitions {
         const variableName = forMatch[1];
         const startChar = forMatch.index + forMatch[0].indexOf(variableName);
 
-        const alreadyDefined =
-        this.names[variableName] !== undefined &&
-        !this.names[variableName].outOfScope;
-
-        this.names[variableName] = {
-          scope: undefined,
-          type: "variable",
-          defLine: lineNumber,
-          defChar: startChar,
-          subtype: "value_mixed",
-          alreadyDefined: alreadyDefined? this.names[variableName]: false,
-        };
+        this.#setEntity(variableName, "variable", scope, lineNumber, startChar);
 
         this.tokens.push({
           line: lineNumber,
@@ -149,17 +155,7 @@ class EntityDefinitions {
         const functionName = match2[2];
         const startChar = match2.index + match2[0].indexOf(functionName);
 
-        const alreadyDefined =
-        this.names[functionName] !== undefined &&
-        !this.names[functionName].outOfScope;
-
-        this.names[functionName] = {
-          scope: 0,
-          type: "function",
-          defLine: lineNumber,
-          defChar: startChar,
-          alreadyDefined: alreadyDefined? this.names[functionName]: false,
-        };
+        this.#setEntity(functionName, "function", 0, lineNumber, startChar);
 
         this.tokens.push({
           line: lineNumber,
@@ -182,17 +178,7 @@ class EntityDefinitions {
           const paramName = param.trim();
           const startChar = withMatch.index + withMatch[0].indexOf(paramName);
 
-          const alreadyDefined =
-          this.names[paramName] !== undefined &&
-          !this.names[paramName].outOfScope;
-  
-          this.names[paramName] = {
-            scope: undefined,
-            type: "parameter",
-            defLine: lineNumber,
-            defChar: startChar,
-            alreadyDefined: alreadyDefined? this.names[paramName]: false,
-          };
+          this.#setEntity(paramName, "parameter", 0, lineNumber, startChar);
 
           this.tokens.push({
             line: lineNumber,
@@ -249,13 +235,7 @@ class EntityDefinitions {
 
           if (!functionName || startChar < 0) continue;
 
-          if (!this.names[functionName])
-            this.names[functionName] = {
-              scope: 0,
-              type: "function",
-              defLine: lineNumber,
-              defChar: startChar,
-            };
+          this.#setEntity(functionName, "function", 0, lineNumber, startChar);
 
           this.tokens.push({
             line: lineNumber,
@@ -303,7 +283,7 @@ class EntityDefinitions {
             line: lineNumber,
             startChar: startChar,
             length: variableName.length,
-            type: "variable",
+            type: this.names[variableName].type,
             modifiers: ["use"],
           });
         }

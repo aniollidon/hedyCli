@@ -30,7 +30,7 @@ remove pedra from options
 print "Bla" #comentari
 aa is 2+2  #comentari
 aa = 2+2 #comentari
-a is bla #comentari
+a is bla #comentari 
 a = bla #comentari
 a=bla #comentari
 a =bla #comentari
@@ -49,9 +49,9 @@ favorite_color is ask 'Color?'
 if favorite_color not in pretty_colors print 'pretty!'
 else print 'meh'
 
-if g is pressed print 'Go'
+if g is pressed print 'Go' 
 else print 'No go'
-
+ 
 # Errors
 suma = is ask 2+2 #comentari
 turn right

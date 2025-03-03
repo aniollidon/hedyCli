@@ -169,6 +169,18 @@ const hedyCommands = convertListToComandClass([
     name: "compare_is",
     levelStart: 2,
     hasBefore: /^(if|elif|while) .*/gu,
+    syntax: [
+      {
+        levelEnd: 11,
+        allowed: ["$number", "$string"],
+        codeerror: "hy-execting-number-string",
+      },
+      {
+        levelStart: 12,
+        allowed: ["$number", "$quoted"],
+        codeerror: "hy-execting-number-string",
+      },
+    ],
   },
   {
     // No hauria d'importar l'ordre, però sino no funciona l'error hy-variabledef-multiplewords
@@ -320,6 +332,18 @@ const hedyCommands = convertListToComandClass([
     levelStart: 6,
     elementsAfter: 1,
     hasBefore: /^(if|elif|while) .*/gu,
+    syntax: [
+      {
+        levelEnd: 11,
+        allowed: ["$number", "$string"],
+        codeerror: "hy-execting-number-string",
+      },
+      {
+        levelStart: 12,
+        allowed: ["$number", "$quoted"],
+        codeerror: "hy-execting-number-string",
+      },
+    ],
   },
   {
     // No hauria d'importar l'ordre, però sino no funciona l'error hy-variabledef-multiplewords
@@ -444,60 +468,126 @@ const hedyCommands = convertListToComandClass([
     text: "and",
     description: "Indica que es compleixen dues condicions",
     levelStart: 13,
-    expected1: "condition",
-    expected_m1: "condition",
+    minElementsAfter: 1,
+    elementsBefore: 1,
+    untilCommand: true,
     hasBefore: /^(if|elif|while) .*/g,
+    syntax: [
+      {
+        allowed: ["condition"],
+        codeerror: "hy-execting-condition",
+      },
+    ],
   },
   {
     text: "or",
     description: "Indica que es compleix una de dues condicions",
     levelStart: 13,
-    expected1: "condition",
-    expected_m1: "condition",
+    minElementsAfter: 1,
+    elementsBefore: 1,
+    untilCommand: true,
     hasBefore: /^(if|elif|while) .*/g,
+    syntax: [
+      {
+        allowed: ["condition"],
+        codeerror: "hy-execting-condition",
+      },
+    ],
   },
   {
     text: "return",
     description: "Retorna un valor d'una funció",
     levelStart: 14,
     atBegining: true,
-    elementsAfter: 1,
+    elementsAfter: 1
   },
   {
     text: ">",
     name: "greater_than",
     description: "Compara si un valor és més gran que un altre",
     levelStart: 14,
+    elementsAfter: 1,
+    elementsBefore: 1,
+    syntax: [
+      {
+        allowed: ["$number"],
+        codeerror: "hy-execting-number",
+      },
+    ],
   },
   {
     text: "<",
     name: "less_than",
     description: "Compara si un valor és més petit que un altre",
     levelStart: 14,
+    elementsAfter: 1,
+    elementsBefore: 1,
+    syntax: [
+      {
+        allowed: ["$number"],
+        codeerror: "hy-execting-number",
+      },
+    ],
   },
   {
     text: ">=",
     name: "greater_than_or_equal",
     description: "Compara si un valor és més gran o igual que un altre",
     levelStart: 14,
+    elementsAfter: 1,
+    elementsBefore: 1,
+    syntax: [
+      {
+        allowed: ["$number"],
+        codeerror: "hy-execting-number",
+      },
+    ],
   },
   {
     text: "<=",
     name: "less_than_or_equal",
     description: "Compara si un valor és més petit o igual que un altre",
     levelStart: 14,
+    elementsAfter: 1,
+    elementsBefore: 1,
+    syntax: [
+      {
+        allowed: ["$number"],
+        codeerror: "hy-execting-number",
+      },
+    ],
   },
   {
     text: "==",
     name: "compare_equalequal",
     description: "Compara si dos valors són iguals",
     levelStart: 14,
+    elementsAfter: 1,
+    elementsBefore: 1,
+    syntax: [
+      {
+        levelStart: 12,
+        allowed: ["$number", "$quoted"],
+        codeerror: "hy-execting-number-string",
+      },
+      
+    ],
   },
   {
     text: "!=",
     name: "not_equal",
     description: "Compara si dos valors són diferents",
     levelStart: 14,
+    elementsAfter: 1,
+    elementsBefore: 1,
+    syntax: [
+      {
+        levelStart: 12,
+        allowed: ["$number", "$quoted"],
+        refused: ["call"],
+        codeerror: "hy-execting-number-string",
+      },
+    ],
   },
   {
     text: "while",
@@ -747,7 +837,12 @@ const specificHedyErrors = [
     ],
   },
   {
-    commands: ["variable_define_is"],
+    when: "valid",
+    levelStart:17,
+    hasAfterCommand: /^if\b/g,
+    highlight: "after_word",
+    codeerror: "hy-use-elseif-instead",
+    commands: ["else"],
   },
 ];
 

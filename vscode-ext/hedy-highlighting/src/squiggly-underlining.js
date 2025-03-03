@@ -41,7 +41,7 @@ class QuickFixCodeActionProvider {
         const codeActions = [];
 
         context.diagnostics.forEach((diagnostic) => {
-            if (diagnostic.code === 'hy-equal-instead-of-is') {
+            if (diagnostic.code === 'hy-recomended-equal') {
               const fix = new vscode.CodeAction(
               "Reemplaça 'is' per '='",
               vscode.CodeActionKind.QuickFix
@@ -63,7 +63,7 @@ class QuickFixCodeActionProvider {
               fix.isPreferred = true; // Marca com a preferida aquesta solució
               codeActions.push(fix);
             }
-            else if (diagnostic.code === 'hy-equalequal-instead-of-equal') {
+            else if (diagnostic.code === 'hy-recomended-equalequal') {
               const fix = new vscode.CodeAction(
               "Reemplaça '=' per '=='",
               vscode.CodeActionKind.QuickFix
@@ -87,6 +87,19 @@ class QuickFixCodeActionProvider {
               fix.isPreferred = true; // Marca com a preferida aquesta solució
               codeActions.push(fix);
             }
+            else if (diagnostic.code === 'hy-text-must-be-quoted'){
+              const fix = new vscode.CodeAction(
+              "Afegeix cometes",
+              vscode.CodeActionKind.QuickFix
+              );
+              fix.edit = new vscode.WorkspaceEdit();
+              const text = document.getText(diagnostic.range);
+              const newtext = `"${text}"`;
+              fix.edit.replace(document.uri, diagnostic.range, newtext);
+              fix.diagnostics = [diagnostic];
+              fix.isPreferred = true; // Marca com a preferida aquesta solució
+              codeActions.push(fix);
+            }
         });
 
         return codeActions;
@@ -103,6 +116,7 @@ function activate(){
 
     vscode.workspace.onDidChangeTextDocument(event => {
     if (!event.document.languageId.startsWith("hedy")) return;
+    if(event.contentChanges.length === 0) return;
     const hedyLevel = parseInt(event.document.languageId.replace("hedy", ""));
 
     const document = event.document;

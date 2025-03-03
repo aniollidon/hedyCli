@@ -5,15 +5,16 @@ const {
   detectMath,
   detectFuctionUsages,
   detectConditions,
+  detectAndOr,
   validType,
-  compareType
+  compareType,
 } = require("./utils");
 const { EntityDefinitions } = require("./definitions");
 const {
   hedyCommands,
   specificHedyErrors,
   hedyGeneralSintaxis,
-  errorMapping
+  errorMapping,
 } = require("./hedy-syntax");
 const { HHError, HHErrorVal, HHErrorType, HHErrorLine } = require("./errors");
 
@@ -24,7 +25,14 @@ const condicionalElseInlineRegex = /(.* )(else) (.*)/;
 const bucleInlineRegex = /^(repeat +([\p{L}_\d]+) +times +)(.*)$/u;
 
 class Sintagma {
-  constructor(linenum, partialnum, subsintagmanum, words, identation, sintagmaTag) {
+  constructor(
+    linenum,
+    partialnum,
+    subsintagmanum,
+    words,
+    identation,
+    sintagmaTag
+  ) {
     this.linenum = linenum; // Línia on es troba el sintagma
     this.partialnum = partialnum; // Número de sintagma en la mateixa línia
     this.subsintagmanum = subsintagmanum; // Número de subsintagma en el mateix sintagma - una word pot contenir un subsintagma
@@ -32,53 +40,64 @@ class Sintagma {
     this.identation = identation;
     this.sintagmaTag = sintagmaTag;
 
-    // Crea subsintagmes 
+    // Crea subsintagmes
     Sintagma.subphrasesCount = 1;
-    for(let k = 0; k < words.length; k++){
+    for (let k = 0; k < words.length; k++) {
       const word = words[k];
-      if(word.subphrase){
-        words[k].subphrase = new Sintagma(linenum, partialnum, Sintagma.subphrasesCount, word.subphrase, identation, "subphrase");
+      if (word.subphrase) {
+        words[k].subphrase = new Sintagma(
+          linenum,
+          partialnum,
+          Sintagma.subphrasesCount,
+          word.subphrase,
+          identation,
+          "subphrase"
+        );
         Sintagma.subphrasesCount++;
       }
     }
   }
 
-  first(){
+  first() {
     return this.words[0];
   }
 
-  size(){
+  size() {
     return this.words.length;
   }
 
-  get(pos){
+  get(pos) {
     return this.words[pos];
   }
 
-  start(pos){
+  start(pos) {
     return this.words[pos].pos;
   }
 
-  end(pos){
-    return this.words[pos].end ? this.words[pos].end : this.words[pos].pos + this.words[pos].text.length;
+  end(pos) {
+    return this.words[pos].end
+      ? this.words[pos].end
+      : this.words[pos].pos + this.words[pos].text.length;
   }
 
-  sintagmaStart(){
+  sintagmaStart() {
     return this.start(0);
   }
 
-  sintagmaEnd(){
+  sintagmaEnd() {
     return this.end(this.words.length - 1);
   }
 
-  codeSince(pos){
-    return this.words.slice(pos + 1)
+  codeSince(pos) {
+    return this.words
+      .slice(pos + 1)
       .map((w) => w.text)
       .join(" ");
   }
 
-  codeUntil(pos){
-    return this.words.slice(0, pos)
+  codeUntil(pos) {
+    return this.words
+      .slice(0, pos)
       .map((w) => w.text)
       .join(" ");
   }
@@ -124,7 +143,14 @@ class Memory {
       }
     }
 
-    const sintagma = new Sintagma(lineNumber, this._partialcount, 0, words, identation, sintagmaTag)
+    const sintagma = new Sintagma(
+      lineNumber,
+      this._partialcount,
+      0,
+      words,
+      identation,
+      sintagmaTag
+    );
     this.past.push(sintagma);
     return sintagma;
   }
@@ -158,7 +184,8 @@ class Memory {
     // La separació entre scopes es manté
 
     const identPast = this.last() !== undefined ? this.last().identation : 0;
-    const tagPast = this.last() !== undefined ? this.last().sintagmaTag : "action";
+    const tagPast =
+      this.last() !== undefined ? this.last().sintagmaTag : "action";
     const pastIdentable =
       tagPast === "condition" ||
       tagPast === "not_condition" ||
@@ -226,7 +253,7 @@ class CheckHedy {
     if (lineTrim === "") return [];
     this.entities.analizeLine(line, lineNumber);
     const errors = this._analysePhrase(lineTrim, identationLength, lineNumber);
-    return this._processErrors(errors, lineNumber);
+    return this._processErrors(errors, line, lineNumber);
   }
 
   _analysePhrase(lineTrim, identationLength, lineNumber) {
@@ -258,7 +285,6 @@ class CheckHedy {
         lineNumber
       );
       errorsFound = errorsFound.concat(res);
-
     } else if (condicional !== null) {
       const condition = condicional[1];
       const action = condicional[5];
@@ -329,7 +355,11 @@ class CheckHedy {
     }
 
     const words = this._tagWords(lineTrim, identationLength);
-    const sintagma = this.memory.newSintagma(words, identationLength, lineNumber);
+    const sintagma = this.memory.newSintagma(
+      words,
+      identationLength,
+      lineNumber
+    );
     console.log("sintagma: ", sintagma);
 
     let errors = this._searchMorphosyntacticErrors(sintagma);
@@ -462,7 +492,6 @@ class CheckHedy {
             "_" +
             (entity.subtype ? entity.subtype : "mixed");
           words[i].entity = entity;
-
         } else if (constant !== undefined) {
           words[i].type = "constant";
           words[i].tag = "constant_" + constant;
@@ -473,8 +502,14 @@ class CheckHedy {
 
     // Processa la frase per trobar operacions
     words = detectMath(words);
-    words = detectFuctionUsages(words, this._atrandom, this._functions, this._range);
+    words = detectFuctionUsages(
+      words,
+      this._atrandom,
+      this._functions,
+      this._range
+    );
     words = detectConditions(words);
+    words = detectAndOr(words);
 
     return words;
   }
@@ -485,7 +520,7 @@ class CheckHedy {
     for (let k = 0; k < sintagma.size(); k++) {
       const word = sintagma.get(k);
 
-      if(word.subphrase){
+      if (word.subphrase) {
         errorsFound.push(...this._searchMorphosyntacticErrors(word.subphrase));
       }
 
@@ -505,15 +540,17 @@ class CheckHedy {
         let argsPreCommand = 0;
         if (!commandDef) continue;
 
-        if (commandDef.elementsAfter !== undefined || commandDef.minElementsAfter !== undefined) {
-
+        if (
+          commandDef.elementsAfter !== undefined ||
+          commandDef.minElementsAfter !== undefined
+        ) {
           const elementsAfter = Array.isArray(commandDef.elementsAfter)
             ? commandDef.elementsAfter
             : [commandDef.elementsAfter];
           let minExpected = k + Math.min(...elementsAfter);
           let maxExpected = k + Math.max(...elementsAfter);
 
-          if(commandDef.minElementsAfter !== undefined) {
+          if (commandDef.minElementsAfter !== undefined) {
             minExpected = k + commandDef.minElementsAfter;
             maxExpected = sintagma.size(); // Trick to avoid for loop unexpected-argument
           }
@@ -546,7 +583,7 @@ class CheckHedy {
           }
         }
 
-        if(commandDef.elementsBefore !== undefined){
+        if (commandDef.elementsBefore !== undefined) {
           if (k < commandDef.elementsBefore) {
             errorsFound.push(
               new HHErrorVal(
@@ -557,12 +594,10 @@ class CheckHedy {
                 commandDef.elementsBefore
               )
             );
-          }
-          else {
+          } else {
             argsPreCommand = k - commandDef.elementsBefore;
           }
         }
-          
 
         if (commandDef.syntax) {
           for (let sx = 0; sx < commandDef.syntax.length; sx++) {
@@ -575,14 +610,18 @@ class CheckHedy {
               j < argsPostCommand + 1 && j < sintagma.size();
               j++
             ) {
-              if (j==k) continue; // No comprova la commanda en sí mateixa
+              if (j == k) continue; // No comprova la commanda en sí mateixa
 
               const arg = sintagma.get(j);
               const sstart = sintagma.start(j);
               const send = sintagma.end(j);
 
-              if(commandDef.untilCommand && arg.command) break;
-              if(rule.position !== undefined && rule.position !== j - argsPreCommand) continue;
+              if (commandDef.untilCommand && arg.command) break;
+              if (
+                rule.position !== undefined &&
+                rule.position !== j - argsPreCommand
+              )
+                continue;
               if (rule.refused && !validType(arg.tag, rule.refused)) continue;
               if (rule.allowed && validType(arg.tag, rule.allowed)) continue;
 
@@ -600,22 +639,39 @@ class CheckHedy {
         }
       }
 
-      if(word.entity){
-        if(word.entity.outOfScope){
+      if (word.entity) {
+        if (word.entity.outOfScope) {
           errorsFound.push(
-            new HHErrorLine(word.text, "hy-entity-out-of-scope", start, end, word.entity.defLine)
+            new HHErrorLine(
+              word.text,
+              "hy-entity-out-of-scope",
+              start,
+              end,
+              word.entity.defLine
+            )
           );
-        continue;
+          continue;
         }
 
-        // TODO: Millorar, hauria de ser vàlid si és c = c+1 o c = c ...o un if 
-        // No hi ha alerta si depèn d'ella mateixa
-        // No hi ha alerta si és dins d0un if
-        /*if(word.entity.alreadyDefined && sintagma.linenum === word.entity.defLine && word.pos === word.entity.defChar){
-          errorsFound.push(
-            new HHErrorLine(word.text, "hy-entity-already-defined", start, end,word.entity.alreadyDefined.defLine)
-          );
-        }*/
+        for (let ch of word.entity.changes) {
+          if (
+            ch.line === sintagma.linenum &&
+            ch.char === word.pos &&
+            ch.oldSubtype !== ch.newSubtype &&
+            !ch.oldSubtype.includes("mixed") &&
+            !ch.newSubtype.includes("mixed")
+          ) {
+            errorsFound.push(
+              new HHErrorLine(
+                word.text,
+                "hy-entity-changes-content-type",
+                start,
+                sintagma.sintagmaEnd(),
+                word.entity.defLine
+              )
+            );
+          }
+        }
       }
 
       for (let i = 0; i < hedyGeneralSintaxis.length; i++) {
@@ -623,11 +679,19 @@ class CheckHedy {
         if (rule.levelStart && rule.levelStart > this.level) continue;
         if (rule.levelEnd && rule.levelEnd < this.level) continue;
         if (rule.position !== undefined && rule.position !== k) continue;
-        if (rule.subphrase!==undefined && rule.subphrase !== sintagma.subsintagmanum) continue;
+        if (
+          rule.subphrase !== undefined &&
+          rule.subphrase !== sintagma.subsintagmanum
+        )
+          continue;
         if (rule.refused && !validType(word.tag, rule.refused)) continue;
         if (rule.allowed && validType(word.tag, rule.allowed)) continue;
-        if(rule.special_orAllowed === "definition" && k+1 < sintagma.size() 
-          && sintagma.get(k+1).tag.startsWith("command_variable_define") ) continue;
+        if (
+          rule.special_orAllowed === "definition" &&
+          k + 1 < sintagma.size() &&
+          sintagma.get(k + 1).tag.startsWith("command_variable_define")
+        )
+          continue;
 
         if (rule.highlight === "line") {
           start = sintagma.sintagmaStart();
@@ -647,10 +711,10 @@ class CheckHedy {
     for (let i = 0; i < sintagma.size(); i++) {
       const word = sintagma.get(i);
 
-      if(word.subphrase){
+      if (word.subphrase) {
         errorsFound.push(...this._searchSpecificErrors(word.subphrase));
       }
- 
+
       let searchWhen = false;
       let taggedCommand = undefined;
 
@@ -695,14 +759,27 @@ class CheckHedy {
           continue;
 
         if (error.beforeAndAfter && error.beforeAndAfter === "same") {
-          if (i === 0 || i+1 >= sintagma.size()) continue;
+          if (i === 0 || i + 1 >= sintagma.size()) continue;
           if (sintagma.get(i - 1).text !== sintagma.get(i + 1).text) continue;
-        } else if (error.beforeAndAfter && error.beforeAndAfter === "same-type") {
-          if (i === 0 || i+1 >= sintagma.size()) continue;
-          if (compareType(sintagma.get(i - 1).tag,sintagma.get(i + 1).tag)) continue;
-        } else if (error.beforeAndAfter && error.beforeAndAfter === "same-constant-text") {
-          if (i === 0 || i+1 >= sintagma.size()) continue;
-          if (sintagma.get(i - 1).constant !== sintagma.get(i + 1).constant) continue;
+        } else if (
+          error.beforeAndAfter &&
+          error.beforeAndAfter === "same-type"
+        ) {
+          if (i === 0 || i + 1 >= sintagma.size()) continue;
+          if (compareType(sintagma.get(i - 1).tag, sintagma.get(i + 1).tag))
+            continue;
+        } else if (
+          error.beforeAndAfter &&
+          error.beforeAndAfter === "same-constant-text"
+        ) {
+          if (i === 0 || i + 1 >= sintagma.size()) continue;
+          if (
+            sintagma.get(i - 1).constant === undefined &&
+            sintagma.get(i + 1).constant === undefined
+          )
+            continue;
+          if (sintagma.get(i - 1).constant !== sintagma.get(i + 1).constant)
+            continue;
         }
 
         let start = sintagma.start(i);
@@ -710,22 +787,21 @@ class CheckHedy {
 
         if (error.highlight === "before_word") {
           if (i === 0) continue;
-          start = sintagma.start(i-1);
-          end = sintagma.end(i-1);
+          start = sintagma.start(i - 1);
+          end = sintagma.end(i - 1);
         } else if (error.highlight === "after_word") {
-          if (i+1 >= sintagma.size()) continue;
-          start = sintagma.start(i+1);
-          end = sintagma.end(i+1);
+          if (i + 1 >= sintagma.size()) continue;
+          start = sintagma.start(i + 1);
+          end = sintagma.end(i + 1);
         } else if (error.highlight === "before") {
           if (i === 0) continue;
           start = sintagma.sintagmaStart();
           end = sintagma.end(i - 1);
         } else if (error.highlight === "after") {
-          if (i+1 >= sintagma.size()) continue;
+          if (i + 1 >= sintagma.size()) continue;
           start = sintagma.start(i + 1);
           end = sintagma.sintagmaEnd();
-        }
-        else if (error.highlight === "line") {
+        } else if (error.highlight === "line") {
           start = sintagma.sintagmaStart();
           end = sintagma.sintagmaEnd();
         }
@@ -737,15 +813,14 @@ class CheckHedy {
     return errorsFound;
   }
 
-  _processErrors(errors, lineNumber) {
+  _processErrors(errors, line, lineNumber) {
     // Ajusta el mapeig d'errors
-    for(let i= 0; i < errors.length; i++){
+    for (let i = 0; i < errors.length; i++) {
       const error = errors[i];
-      for(let j=0; j< errorMapping.length; j++){
+      for (let j = 0; j < errorMapping.length; j++) {
         const mapping = errorMapping[j];
-        if(mapping.codeerror === error.errorCode){
-          console.log("error mapejat a la línia " + lineNumber + ":", error, "a", mapping);
-          if(mapping.on && !mapping.on.includes(error.onText)) continue;
+        if (mapping.codeerror === error.errorCode) {
+          if (mapping.on && !mapping.on.includes(error.onText)) continue;
           errors[i].errorCode = mapping.to;
           break;
         }
@@ -753,20 +828,19 @@ class CheckHedy {
     }
 
     // Processa els error i evita que es solapin, si dos errors coincideixen deixa el de més prioritat
-    for(let i = 0; i < errors.length; i++){
+    for (let i = 0; i < errors.length; i++) {
       const error = errors[i];
-      for(let j = i+1; j < errors.length; j++){
+      for (let j = i + 1; j < errors.length; j++) {
         const error2 = errors[j];
         // Si interseccionen
-        if(error.start < error2.end && error2.start < error.end){
-          // Manté el de més prioritat	
-          if(error.priority > error2.priority){
-            errors.splice(j,1);
+        if (error.start < error2.end && error2.start < error.end) {
+          // Manté el de més prioritat
+          if (error.priority > error2.priority) {
+            errors.splice(j, 1);
             j--;
             //console.log("error eliminat a la línia " + lineNumber + ":", error2, "ja que intersecciona amb", error);
-          }
-          else{
-            errors.splice(i,1);
+          } else {
+            errors.splice(i, 1);
             i--;
             //console.log("error eliminat a la línia " + lineNumber + ":", error, "ja que intersecciona amb", error2);
             break;
@@ -774,9 +848,26 @@ class CheckHedy {
         }
       }
     }
+
+    // Si dos errors són idèntics i consecutius seperats per només espais fusiona-ho
+    for (let i = 0; i < errors.length - 1; i++) {
+      const error = errors[i];
+      const error2 = errors[i + 1];
+      if (
+        error.errorCode === error2.errorCode &&
+        error.getMessage() === error2.getMessage()
+      ) {
+        const textBeween = line.substring(error.end, error2.start).trim();
+        if (textBeween === "") {
+          error.end = error2.end;
+          errors.splice(i + 1, 1);
+          i--;
+        }
+      }
+    }
+
     return errors;
   }
-
 }
 
 module.exports = {

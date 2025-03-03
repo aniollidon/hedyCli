@@ -15,7 +15,7 @@ plat = hola
 plats = entrant, primer plat, postres, 2+2
 a = plat #Sí 
 a = plat at random #Sí
-a is plat at random #Sí 
+a is plat at random #Sí  
 a = plat + 3 # Sí 
 a = plat - 3 # Sí
 a is plat * 3 # Sí
@@ -26,7 +26,7 @@ c is ask 'bla' # ddd
 remove plat from plats # Sí
 remove plat bla from plats # no 
 add plat bla to plats # No
-
+ 
 
 
 plats = primer plat, segon plat, postre 

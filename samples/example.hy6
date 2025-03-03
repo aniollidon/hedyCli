@@ -39,11 +39,11 @@ a is bla #comentari
 a = bla #comentari
 s a=bla #comentari
 a =bla #comentari
-a= bla #comentari
+a= bla #comentari 
 a is hola #comentari 
 
-color red 
-turn 90 
+color red  dff gfggg  ggg  
+turn 90  
 clear
 sleep 2
 print 4+4-3*2/1 'blabla' 4+4-3*2/1
@@ -51,7 +51,7 @@ print 4+4-3*2/1 'blabla' 4+4-3*2/1
 print options at random ' ' options at random ' ' options at random
 
 pretty_colors is green, yellow
-favorite_color is ask 'Color?'
+favorite_color is ask 'Color?' 
 if favorite_color not in pretty_colors print 'pretty!'
 else print 'meh'
 
@@ -74,9 +74,9 @@ add ssds to dsdsd
 #Errors 
 llista is _ 
 llista is hola, adeu, hola_4,
-print You enter the haunted house.
+print You enter the haunted house. 
  
-is hhh, 222
+is hhh, 222  
 at random
 print _ 
 echo hola
@@ -84,16 +84,16 @@ ask blabal
 a ask knjkdnkj
 Print then he ask you
 from remove ffdfs from
-to 
+to
  
 llista2 = 1,2,3,4,5,hol  
 
-ampolles = 99
+ampolles = 99  
 print "Hi ha " ampolles " ampolles a dalt de la paret,"
 print "Hi ha " ampolles " ampolles a dalt de la paret,"
 print "Pero si una ampolla caiguès per mala sort,"
 ampolles = ampolles - 1
-hola = 3+5*2*hlllll
+hola = 3+5*2*hlllll  
 print "Queden " ampolles " ampolles a dalt de la paret."
 sleep
 

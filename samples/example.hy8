@@ -10,5 +10,6 @@ play C
 
 print a
 
-ampolles = ampolles - 1
+ampolles = ampolles - 1 
 
+  

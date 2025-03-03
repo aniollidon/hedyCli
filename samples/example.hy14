@@ -19,4 +19,4 @@ print calcula_preu_nou with quantitat, percentatge , Hhhh
 preu_nou = call calcula_preu_nou with preu_vell, descompte
 print 'El nou preu és ' preu_nou ' euros'   
 
-call calcula_preu_nou with preu_vell, descompte
+call calcula_preu_nou with preu_vell, descompte 
