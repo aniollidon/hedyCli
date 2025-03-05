@@ -44,7 +44,7 @@ print 4+4-3*2/1 'blabla' 4+4-3*2/1
 
 print options at random ' ' options at random ' ' options at random
 
-pretty_colors is green, yellow
+pretty_colors is green, yellow 
 favorite_color is ask 'Color?'
 if favorite_color not in pretty_colors print 'pretty!'
 else print 'meh'

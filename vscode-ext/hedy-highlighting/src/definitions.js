@@ -96,7 +96,7 @@ class EntityDefinitions {
 
     // Regex per trobar `var is|=`
     const declarationRegex = new RegExp(
-      `${before_def} *\\b([\\p{L}_\\d]+) *( ${this._define_var_operator})`,
+      `${before_def} *([\\p{L}_\\d]+) *( ${this._define_var_operator})`,
       "gu"
     );
 

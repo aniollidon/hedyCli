@@ -14,9 +14,9 @@ descompte = ask "Amb quin percentatge de descompte?"
  
 quantitat = 4
 percentatge = 10
-print calcula_preu_nou with quantitat, percentatge , Hhhh  
+print call calcula_preu_nou with quantitat, percentatge
 
 preu_nou = call calcula_preu_nou with preu_vell, descompte
 print 'El nou preu és ' preu_nou ' euros'   
 
-call calcula_preu_nou with preu_vell, descompte 
+call calcula_preu_nou with preu_vell, descompte  

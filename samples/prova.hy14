@@ -4,4 +4,4 @@ pelicula_recomanada = "Tintin"
 if pelicula_recomanada == pelicules_nens at random
     print "La pel·lícula recomanada és " pelicula_recomanada
 else
-    print "No problem!"
+    print "No problem!"  

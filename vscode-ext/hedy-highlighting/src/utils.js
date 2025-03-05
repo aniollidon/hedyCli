@@ -15,12 +15,12 @@ function entreCometes(text, pos) {
 
 function separarParaules(codi) {
   const regex =
-    /'([^']*)'|"([^"]*)"|(\d+\.\d+|\d+)|([\p{L}_\d.]+)|([^\p{L}\d\s."']+)/gu;
+    /'([^']*)'|"([^"]*)"|([\p{L}_\d.]+)|(\d+\.\d+|\d+)|([^\p{L}\d\s."']+)/gu;
   let paraules = [];
   let match;
 
   while ((match = regex.exec(codi)) !== null) {
-    const [_, cometesSimples, cometesDobles, numero, paraula, simbols] = match;
+    const [_, cometesSimples, cometesDobles, paraula, numero, simbols] = match;
     const posicio = match.index; // Posició inicial de la coincidència
 
     if (cometesSimples !== undefined) {
@@ -147,7 +147,6 @@ function detectFuctionUsages(
 ) {
   let result = [];
   let i = 0;
-  hasFunctions = false;
 
   while (i < tokens.length) {
     // ask ... calls

@@ -74,6 +74,10 @@ class Sintagma {
     return this.words[pos].pos;
   }
 
+  position_last(word){
+    return this.words.map((w) => w.text).lastIndexOf(word);
+  }
+
   end(pos) {
     return this.words[pos].end
       ? this.words[pos].end
@@ -360,7 +364,7 @@ class CheckHedy {
       identationLength,
       lineNumber
     );
-    console.log("sintagma: ", sintagma);
+    console.log("línia " + (lineNumber + 1) + ":", sintagma);
 
     let errors = this._searchMorphosyntacticErrors(sintagma);
     if (errors.length > 0) errorsFound.push(...errors);
@@ -625,14 +629,11 @@ class CheckHedy {
               if (rule.refused && !validType(arg.tag, rule.refused)) continue;
               if (rule.allowed && validType(arg.tag, rule.allowed)) continue;
 
+              const type = arg.couldBe
+                ? "command_" + arg.couldBe.command
+                : arg.tag;
               errorsFound.push(
-                new HHErrorType(
-                  word.text,
-                  rule.codeerror,
-                  sstart,
-                  send,
-                  arg.tag
-                )
+                new HHErrorType(word.text, rule.codeerror, sstart, send, type)
               );
             }
           }
@@ -715,31 +716,45 @@ class CheckHedy {
         errorsFound.push(...this._searchSpecificErrors(word.subphrase));
       }
 
-      let searchWhen = false;
-      let taggedCommand = undefined;
-
-      if (word.type && word.type.startsWith("command")) {
-        searchWhen = "valid";
-        taggedCommand = word.command;
-      } else if (word.couldBe) {
-        searchWhen = "invalid";
-        taggedCommand = word.couldBe.command;
-      } else continue;
-
       for (let j = 0; j < specificHedyErrors.length; j++) {
         const error = specificHedyErrors[j];
-        if (error.when !== searchWhen) continue;
+
         if (error.levelStart && error.levelStart > this.level) continue;
         if (error.levelEnd && error.levelEnd < this.level) continue;
-        if (!error.commands.includes(taggedCommand)) continue;
 
-        if (error.hasAfterCommand) {
-          const after = sintagma.codeSince(i);
-          if (!after.match(error.hasAfterCommand)) continue;
+        if (error.commands) {
+          let searchWhen = false;
+          let taggedCommand = undefined;
+
+          if (word.type && word.type.startsWith("command")) {
+            searchWhen = "valid";
+            taggedCommand = word.command;
+          } else if (word.couldBe) {
+            searchWhen = "invalid";
+            taggedCommand = word.couldBe.command;
+          } else continue;
+
+          if (error.whenCommand && error.whenCommand !== searchWhen) continue;
+          if (!error.commands.includes(taggedCommand)) continue;
+        } else if (error.tags) {
+          if (!validType(word.tag, error.tags)) continue;
         }
-        if (error.hasBeforeCommand) {
+
+        let match = undefined;
+
+        if (error.match){
+          match = error.match.exec(word.text);
+          if (!match) continue;
+        }
+        if (error.hasAfter) {
+          const after = sintagma.codeSince(i);
+          match = after.match(error.hasAfter);
+          if (!match) continue;
+        }
+        if (error.hasBefore) {
           const before = sintagma.codeUntil(i);
-          if (!before.match(error.hasBeforeCommand)) continue;
+          match = before.match(error.hasBefore);
+          if (!match) continue;
         }
         if (error.list || error.notlist) {
           const place = error.list ? error.list : error.notlist;
@@ -757,6 +772,13 @@ class CheckHedy {
           this.memory.cercaIf(this._usesScope, sintagma.identation)
         )
           continue;
+
+        if(error.special_callArguments && word.entity){
+          continue;
+          //if(word.entity.params && word.entity.params.length === sintagma.size() - i - 1) continue; 
+          // TODO check num arguments MILLORAR. NO ESTÀ BE
+          
+        }
 
         if (error.beforeAndAfter && error.beforeAndAfter === "same") {
           if (i === 0 || i + 1 >= sintagma.size()) continue;
@@ -804,6 +826,13 @@ class CheckHedy {
         } else if (error.highlight === "line") {
           start = sintagma.sintagmaStart();
           end = sintagma.sintagmaEnd();
+        }
+        else if (error.highlight === "match_last") {
+          if(!match) continue;
+          const found = sintagma.position_last(match[0]);
+          if(found === -1) continue;
+          start = sintagma.start(found);
+          end = sintagma.end(found);
         }
 
         errorsFound.push(new HHError(word.text, error.codeerror, start, end));

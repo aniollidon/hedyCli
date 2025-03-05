@@ -15,7 +15,7 @@ define song with place, place2
     print 'My Bonnie is over the ' place 
  
 call song with 'ocean' 
-call song with 'sea'
+call song with 'sea' 
 call song with 'ocean'
 
  
