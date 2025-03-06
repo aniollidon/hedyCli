@@ -10,7 +10,7 @@ define calcula_preu_nou with quantitat, percentatge
 
 preu_vell = ask "Quant hi ha a l'etiqueta de preu?" 
 descompte = ask "Amb quin percentatge de descompte?"
- 
+  
  
 quantitat = 4
 percentatge = 10

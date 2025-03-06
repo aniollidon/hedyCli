@@ -54,9 +54,12 @@ pretty_colors is green, yellow
 favorite_color is ask 'Color?' 
 if favorite_color not in pretty_colors print 'pretty!'
 else print 'meh'
+ 
+if pressed is 55 print 'You pressed 55'
+else print 'You did not press 55'
 
 if g is pressed print 'Go'
-else print 'No go'
+else print 'No go' 
 
 llista is A, B, C, D, E
 if A in llista print "hi és" else print "no"
@@ -82,7 +85,7 @@ print _
 echo hola
 ask blabal 
 a ask knjkdnkj
-Print then he ask you
+Print then he ask you 
 from remove ffdfs from
 to
  

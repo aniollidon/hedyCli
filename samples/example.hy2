@@ -18,12 +18,12 @@ turn 90
 # Constants
 a is hola 
 b is 2
-b is red
+b is red    
 
 # Errors
 turn right   
 turn left   
-
+ 
 right is hola 
 
 print "hola"
@@ -32,7 +32,7 @@ echo hola
 ask blabal  
 a ask knjkdnkj 
 Print kmkmk
-hola q tal is blabla 
+q tal is blabla 
   
 # No errors
 print hola is hola tre ro

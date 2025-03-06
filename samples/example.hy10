@@ -9,7 +9,7 @@ distances = 10, 20, 30, 40, 50, 60
 for distance in distances
     forward distance
 
-ampolles = ampolles - 1
+ampolles = ampolles - 1 
 
 plat = hola
 plats = entrant, primer plat, postres, 2+2

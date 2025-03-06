@@ -11,7 +11,7 @@ print 'Llest o no. Ves que vinc!'
 
 ampolles = 99 
 color ampolles
-
+ 
 ampolles = ampolles - 1 
 
 a = plat + 3 # Sí  

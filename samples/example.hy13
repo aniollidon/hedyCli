@@ -23,7 +23,7 @@ print 'Un ianqui baixa a la ciutat'
 define linia_1 with nota_1, nota_2, nota_3
     play C4
     play C4
-    play D4
+    play D4 
     play E4
     play _
     play _
