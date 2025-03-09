@@ -14,7 +14,7 @@ class Memory {
    */
   newSintagma(words, identation, lineNumber) {
     let sintagmaTag = 'action'
-    if (words[0].command === 'if') sintagmaTag = 'condition'
+    if (words[0].command === 'if' || words[0].command === 'elif') sintagmaTag = 'condition'
     else if (words[0].command === 'else') sintagmaTag = 'not_condition'
     else if (words[0].command === 'repeat' || words[0].command === 'for' || words[0].command === 'while')
       sintagmaTag = 'bucle'
@@ -72,7 +72,7 @@ class Memory {
     const pastIdentable =
       tagPast === 'condition' || tagPast === 'not_condition' || tagPast === 'bucle' || tagPast === 'function_definition'
 
-    // L'identació ha de se múltiple de la definida
+    // L'identació ha de ser múltiple de la definida
     if (identation > 0 && this._definedScopeIdentation !== -1 && identation % this._definedScopeIdentation !== 0)
       return false
 

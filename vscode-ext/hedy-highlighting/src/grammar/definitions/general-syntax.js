@@ -12,8 +12,7 @@
 
 const hedyGeneralSyntax = [
   {
-    allowed: ['command', 'call_function', 'call_ask'],
-    special_orAllowed: 'definition',
+    allowed: ['call_echo', 'call_function', 'call_ask', 'call_print', 'command', 'declaration'],
     codeerror: 'hy-lines-must-start-with',
     positionInSintagma: 0,
     subphrase: 0,
@@ -38,6 +37,12 @@ const hedyGeneralSyntax = [
     levelEnd: 11,
     refused: ['constant_number_decimal'],
     codeerror: 'hy-not-decimals',
+  },
+  {
+    refused: ['call_function_return'],
+    subphrase: 0,
+    levelStart: 14,
+    codeerror: 'hy-function-return-unused',
   },
 ]
 

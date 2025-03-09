@@ -1,20 +1,16 @@
 const lang = require('../lang/catala.js')
 
 const severityAndPriority = {
-  'hy-context': {
+  'hy-command-context': {
+    severity: 'error',
+    priority: 0,
+  },
+  'hy-type-context': {
     severity: 'error',
     priority: 0,
   },
   'hy-recomended-equal': {
     severity: 'info',
-    priority: 0,
-  },
-  'hy-lines-must-start-with': {
-    severity: 'error',
-    priority: 0,
-  },
-  'hy-text-must-be-quoted': {
-    severity: 'error',
     priority: 0,
   },
   'hy-recomended-equalequal': {
@@ -25,7 +21,7 @@ const severityAndPriority = {
     severity: 'warning',
     priority: 0,
   },
-  'hy-at-begining': {
+  'hy-lines-must-start-with': {
     severity: 'error',
     priority: 1,
   },
@@ -45,7 +41,11 @@ const severityAndPriority = {
     severity: 'error',
     priority: 1,
   },
-  'hy-execting-function-definition': {
+  'hy-function-missing-argument': {
+    severity: 'error',
+    priority: 1,
+  },
+  'hy-function-unexpected-argument': {
     severity: 'error',
     priority: 1,
   },
@@ -57,17 +57,37 @@ const severityAndPriority = {
     severity: 'error',
     priority: 1,
   },
+  'hy-execting-number-string': {
+    severity: 'error',
+    priority: 1,
+  },
+  'hy-refused-function-void': {
+    severity: 'error',
+    priority: 1,
+  },
+  'hy-function-return-unused': {
+    severity: 'warning',
+    priority: 1,
+  },
   'hy-level-unavailable-yet': {
+    severity: 'error',
+    priority: 2,
+  },
+  'hy-random-usage': {
+    severity: 'error',
+    priority: 2,
+  },
+  'hy-at-begining': {
     severity: 'error',
     priority: 2,
   },
   'hy-level-unavailable-deprecated': {
     severity: 'error',
-    priority: 2,
+    priority: 3,
   },
   'hy-to-lowercase-command': {
     severity: 'warning',
-    priority: 3,
+    priority: 4,
   },
   'hy-entity-out-of-scope': {
     severity: 'warning',
@@ -93,6 +113,10 @@ const severityAndPriority = {
     severity: 'warning',
     priority: 6,
   },
+  'hy-text-must-be-quoted': {
+    severity: 'error',
+    priority: 7,
+  },
   'hy-execting-number': {
     severity: 'error',
     priority: 10,
@@ -102,10 +126,6 @@ const severityAndPriority = {
     priority: 10,
   },
   'hy-execting-command-times': {
-    severity: 'error',
-    priority: 10,
-  },
-  'hy-execting-number-string': {
     severity: 'error',
     priority: 10,
   },
@@ -124,6 +144,34 @@ const severityAndPriority = {
   'hy-use-elseif-instead': {
     severity: 'warning',
     priority: 10,
+  },
+  'hy-execting-function-definition': {
+    severity: 'error',
+    priority: 10,
+  },
+  'hy-comma-list-needs-brackets': {
+    severity: 'error',
+    priority: 10,
+  },
+  'hy-execting-parameter': {
+    severity: 'error',
+    priority: 11,
+  },
+  'hy-warn-random-operation': {
+    severity: 'warning',
+    priority: 20,
+  },
+  'hy-warn-function-return-operation': {
+    severity: 'warning',
+    priority: 20,
+  },
+  'hy-warn-storing-condition': {
+    severity: 'warning',
+    priority: 20,
+  },
+  'hy-warn-math-operation-compare': {
+    severity: 'warning',
+    priority: 20,
   },
   'hy-after-needs-list': {
     severity: 'warning',
@@ -201,7 +249,7 @@ const severityAndPriority = {
     severity: 'warning',
     priority: 255,
   },
-  'hy-call-function-arguments': {
+  'hy-list-open-needs-close': {
     severity: 'error',
     priority: 255,
   },
@@ -273,8 +321,7 @@ class HHErrorType extends HHError {
   }
 
   _process_messsage(message) {
-    const extra = "S'ha trobat " + lang.type2text(this.type)
-    message = message.replace('[TYPE-FOUND]', extra)
+    message = message.replace('[TYPE]', lang.type2text(this.type))
     message = super._process_messsage(message)
     return message
   }

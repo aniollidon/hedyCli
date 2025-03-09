@@ -1,1 +1,30 @@
-7kk = 4444 
+define bla with  hh, jj
+    print hh
+
+define ble with  hh, jj
+    return hh
+
+m = 3
+if 2 > call ble with 3, 4
+    print 3
+else
+    print 4  
+
+
+define bla with  hh, jj
+    print hh
+
+define ble with  hh, jj 
+    return hh
+
+call ble with 3, 4  # TODO Warning de que té retorn 
+  
+m = 3
+l = 1,1
+b = range 3 to 3  777
+
+
+if 2 >    
+    print 3
+else
+    print 4  

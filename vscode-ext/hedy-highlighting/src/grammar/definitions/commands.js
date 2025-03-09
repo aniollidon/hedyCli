@@ -26,7 +26,7 @@
   + number_integer: Número enter + retorn de numeros (funcions, variables, etc.)
   + $string: String + retorn de strings (funcions, variables, etc.)
   + $quoted: String entre cometes + retorn de strings (funcions, variables, etc.)
-  + $stored: retorns (funcions, variables, etc.)
+  + $value: retorns (funcions, variables, etc.)
 */
 
 const operationTemplate = {
@@ -39,6 +39,10 @@ const operationTemplate = {
       allowed: ['$number'],
       codeerror: 'hy-execting-number',
     },
+    {
+      refused: ['call_function_return'],
+      codeerror: 'hy-warn-function-return-operation',
+    },
   ],
 }
 
@@ -50,6 +54,7 @@ const commandDefinition = [
     syntax: [
       {
         refused: ['entity_variable_list'],
+        levelEnd: 16,
         codeerror: 'hy-cant-print-list',
       },
       {
@@ -59,7 +64,7 @@ const commandDefinition = [
       {
         levelStart: 4,
         allowed: ['$number', '$quoted'],
-        codeerror: 'hy-text-must-be-quoted',
+        codeerror: 'hy-execting-number-string',
       },
     ],
   },
@@ -103,7 +108,7 @@ const commandDefinition = [
     elementsAfter: 1,
     syntax: [
       {
-        allowed: ['$stored', 'constant_color'],
+        allowed: ['$value', 'constant_color'],
         codeerror: 'hy-execting-color',
       },
     ],
@@ -141,6 +146,7 @@ const commandDefinition = [
     syntax: [
       {
         refused: ['entity_variable_list'],
+        levelEnd: 16,
         codeerror: 'hy-cant-print-list',
       },
       {
@@ -150,7 +156,7 @@ const commandDefinition = [
       {
         levelStart: 4,
         allowed: ['$number', '$quoted'],
-        codeerror: 'hy-text-must-be-quoted',
+        codeerror: 'hy-execting-number-string',
       },
     ],
   },
@@ -193,6 +199,7 @@ const commandDefinition = [
     text: 'is',
     name: 'variable_define_is',
     levelStart: 2,
+    minElementsAfter: 1,
     hasBefore: /^[\p{L}_\d]+$/gu,
     syntax: [
       {
@@ -200,13 +207,37 @@ const commandDefinition = [
         refused: ['constant_string_quoted'],
         codeerror: 'hy-unnecessary-quotes',
       },
+      {
+        refused: ['function_call_void'],
+        codeerror: 'hy-refused-function-void',
+      },
+      {
+        refused: ['condition'],
+        codeerror: 'hy-warn-storing-condition',
+      },
     ],
+  },
+  {
+    // no hauria d'importar l'ordre, però sino no funciona l'error de deteccio de comes
+    text: ',',
+    name: 'comma_argument',
+    levelStart: 13,
+    hasBefore: /\bwith\b/g,
+    minElementsAfter: 1,
   },
   {
     text: ',',
     name: 'comma_list',
     levelStart: 3,
+    levelEnd: 15,
     hasBefore: /is |=/g,
+    minElementsAfter: 1,
+  },
+  {
+    text: ',',
+    name: 'comma_list',
+    levelStart: 15,
+    hasBefore: /\[/g,
     minElementsAfter: 1,
   },
   {
@@ -334,7 +365,23 @@ const commandDefinition = [
     text: '=',
     name: 'variable_define_equal',
     levelStart: 6,
+    minElementsAfter: 1,
     hasBefore: /^[\p{L}_\d]+$/gu,
+    syntax: [
+      {
+        levelEnd: 11,
+        refused: ['constant_string_quoted'],
+        codeerror: 'hy-unnecessary-quotes',
+      },
+      {
+        refused: ['call_function_void'],
+        codeerror: 'hy-refused-function-void',
+      },
+      {
+        refused: ['condition'],
+        codeerror: 'hy-warn-storing-condition',
+      },
+    ],
   },
   {
     text: '+',
@@ -353,6 +400,14 @@ const commandDefinition = [
         levelStart: 12,
         allowed: ['$number', '$quoted'],
         codeerror: 'hy-execting-number-string',
+      },
+      {
+        refused: ['call_function_return'],
+        codeerror: 'hy-warn-function-return-operation',
+      },
+      {
+        refused: ['call_at_random'],
+        codeerror: 'hy-warn-random-operation',
       },
     ],
   },
@@ -420,7 +475,11 @@ const commandDefinition = [
     minElementsAfter: 1,
     syntax: [
       {
-        allowed: ['entity_function', 'entity_parameter', 'command_with', 'command_argument_separator'],
+        refused: ['constant'],
+        codeerror: 'hy-execting-parameter',
+      },
+      {
+        allowed: ['entity_function', 'entity_parameter', 'command_with', 'command_comma_argument'],
         codeerror: 'hy-execting-function-definition',
       },
     ],
@@ -429,18 +488,12 @@ const commandDefinition = [
     text: 'call',
     levelStart: 12,
     atBegining: false,
+    usesParameters: true,
   },
   {
     text: 'with',
     levelStart: 13,
     hasBefore: /(^define|\bcall) +/g,
-    minElementsAfter: 1,
-  },
-  {
-    text: ',',
-    name: 'argument_separator',
-    levelStart: 13,
-    hasBefore: /\bwith\b/g,
     minElementsAfter: 1,
   },
   {
@@ -488,6 +541,18 @@ const commandDefinition = [
         allowed: ['$number'],
         codeerror: 'hy-execting-number',
       },
+      {
+        refused: ['math'],
+        codeerror: 'hy-warn-math-operation-compare',
+      },
+      {
+        refused: ['call_function_return'],
+        codeerror: 'hy-warn-function-return-operation',
+      },
+      {
+        refused: ['call_at_random'],
+        codeerror: 'hy-warn-random-operation',
+      },
     ],
   },
   {
@@ -500,6 +565,18 @@ const commandDefinition = [
       {
         allowed: ['$number'],
         codeerror: 'hy-execting-number',
+      },
+      {
+        refused: ['math'],
+        codeerror: 'hy-warn-math-operation-compare',
+      },
+      {
+        refused: ['call_function_return'],
+        codeerror: 'hy-warn-function-return-operation',
+      },
+      {
+        refused: ['call_at_random'],
+        codeerror: 'hy-warn-random-operation',
       },
     ],
   },
@@ -514,6 +591,18 @@ const commandDefinition = [
         allowed: ['$number'],
         codeerror: 'hy-execting-number',
       },
+      {
+        refused: ['math'],
+        codeerror: 'hy-warn-math-operation-compare',
+      },
+      {
+        refused: ['call_function_return'],
+        codeerror: 'hy-warn-function-return-operation',
+      },
+      {
+        refused: ['call_at_random'],
+        codeerror: 'hy-warn-random-operation',
+      },
     ],
   },
   {
@@ -526,6 +615,18 @@ const commandDefinition = [
       {
         allowed: ['$number'],
         codeerror: 'hy-execting-number',
+      },
+      {
+        refused: ['math'],
+        codeerror: 'hy-warn-math-operation-compare',
+      },
+      {
+        refused: ['call_function_return'],
+        codeerror: 'hy-warn-function-return-operation',
+      },
+      {
+        refused: ['call_at_random'],
+        codeerror: 'hy-warn-random-operation',
       },
     ],
   },
@@ -540,6 +641,18 @@ const commandDefinition = [
         levelStart: 12,
         allowed: ['$number', '$quoted'],
         codeerror: 'hy-execting-number-string',
+      },
+      {
+        refused: ['math'],
+        codeerror: 'hy-warn-math-operation-compare',
+      },
+      {
+        refused: ['call_function_return'],
+        codeerror: 'hy-warn-function-return-operation',
+      },
+      {
+        refused: ['call_at_random'],
+        codeerror: 'hy-warn-random-operation',
       },
     ],
   },
@@ -556,6 +669,18 @@ const commandDefinition = [
         refused: ['call'],
         codeerror: 'hy-execting-number-string',
       },
+      {
+        refused: ['math'],
+        codeerror: 'hy-warn-math-operation-compare',
+      },
+      {
+        refused: ['call_function_return'],
+        codeerror: 'hy-warn-function-return-operation',
+      },
+      {
+        refused: ['call_at_random'],
+        codeerror: 'hy-warn-random-operation',
+      },
     ],
   },
   {
@@ -569,6 +694,18 @@ const commandDefinition = [
         codeerror: 'hy-execting-condition',
       },
     ],
+  },
+  {
+    text: '[',
+    name: 'list_open',
+    levelStart: 16,
+    minElementsAfter: 1,
+  },
+  {
+    text: ']',
+    name: 'list_close',
+    levelStart: 16,
+    minElementsBefore: 1,
   },
   {
     text: 'elif',

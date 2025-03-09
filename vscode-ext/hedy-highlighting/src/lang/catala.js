@@ -10,7 +10,7 @@ const commands = {
   rest: 'resta (-)',
   multiplication: 'multiplicació (*)',
   division: 'divisió (/)',
-  argument_separator: "coma (separador d'arguments)",
+  comma_argument: "coma (separador d'arguments)",
   greater_than: 'major (>)',
   less_than: 'menor (<)',
   greater_than_or_equal: 'major o igual (>=)',
@@ -20,8 +20,11 @@ const commands = {
 }
 
 const errors = {
-  'hy-context': {
+  'hy-command-context': {
     message: "La comanda '[NAME]' no es pot fer servir d'aquesta manera.",
+  },
+  'hy-type-context': {
+    message: "El text '[NAME]' que és [TYPE] no es pot fer servir d'aquesta manera.",
   },
   'hy-recomended-equal': {
     message: "És més recomanable fer servir '=' enlloc de 'is'.",
@@ -95,23 +98,23 @@ const errors = {
     message: "La comanda '[NAME]' espera el mateix tipus abans i després.",
   },
   'hy-execting-number': {
-    message: "La comanda '[NAME]' espera un número. [TYPE-FOUND].",
+    message: "La comanda '[NAME]' espera un número. S'ha trobat [TYPE].",
   },
   'hy-execting-number-integer': {
-    message: "La comanda '[NAME]' espera un número enter. [TYPE-FOUND].",
+    message: "La comanda '[NAME]' espera un número enter. S'ha trobat [TYPE].",
   },
   'hy-execting-command-times': {
     message:
-      "La comanda '[NAME]' espera un número enter i després la comanda 'times'. [TYPE-FOUND] a la segona posició.",
+      "La comanda '[NAME]' espera un número enter i després la comanda 'times'. S'ha trobat [TYPE] a la segona posició.",
   },
   'hy-execting-number-string': {
-    message: "La comanda '[NAME]' espera un número o text. [TYPE-FOUND].",
+    message: "La comanda '[NAME]' espera un número o text. S'ha trobat [TYPE].",
   },
   'hy-execting-number-note': {
-    message: "La comanda '[NAME]' espera una nota o un número. [TYPE-FOUND].",
+    message: "La comanda '[NAME]' espera una nota o un número. S'ha trobat [TYPE].",
   },
   'hy-execting-color': {
-    message: "La comanda '[NAME]' espera un color. [TYPE-FOUND].",
+    message: "La comanda '[NAME]' espera un color. S'ha trobat [TYPE].",
   },
   'hy-execting-condition': {
     message: "La comanda '[NAME]' espera una condició després.",
@@ -177,14 +180,51 @@ const errors = {
   'hy-function-argument-duplicated': {
     message: 'Al definir una funció no es poden repetir arguments ni utilitzar el nom de la mateixa funció.',
   },
-  'hy-call-function-arguments': {
+  'hy-function-missing-argument': {
     message: "La funció '[NAME]' espera [VALUE] arguments.",
+  },
+  'hy-function-unexpected-argument': {
+    message: "La funció '[NAME]' només espera [VALUE] arguments.",
   },
   'hy-ask-not-in-definition': {
     message: "La comanda 'ask' ha d'anar dins d'una definició de variable.",
   },
   'hy-pressed-needs-is': {
     message: "La comanda '[NAME]' no funciona amb '=', només funciona amb un 'is' davant.",
+  },
+  'hy-execting-parameter': {
+    message: "En la definició d'una funció s'espera un nom de paràmetre vàlid. S'ha trobat [TYPE].",
+  },
+  'hy-refused-function-void': {
+    message: 'Aquesta funció no retorna res, només es pot cridar sola.',
+  },
+  'hy-warn-function-return-operation': {
+    message:
+      'De moment no pots operar amb les crides a funcions, és una bona idea, però encara no es pot. Guarda el resultat en una variable.',
+  },
+  'hy-warn-storing-condition': {
+    message: 'De moment no pots guardar les condicions, és una bona idea, però encara no es pot.',
+  },
+  'hy-warn-math-operation-compare': {
+    message:
+      'De moment no pots comparar operacions matemàtiques, és una bona idea, però encara no es pot. Guarda el resultat en una variable.',
+  },
+  'hy-warn-random-operation': {
+    message:
+      "De moment no pots fer operacions amb el resultat de 'at random', és una bona idea, però encara no es pot. Guarda el resultat en una variable.",
+  },
+  'hy-random-usage': {
+    message: "La comanda 'random' espera la comanda 'at' abans.",
+  },
+  'hy-comma-list-needs-brackets': {
+    message:
+      "Sembla que estas intentant definir una llista sense claudàtors. Recorda que les llistes s'han de rodejar amb claudàtors.",
+  },
+  'hy-list-open-needs-close': {
+    message: 'Falta tancar el claudàtor de la llista.',
+  },
+  'hy-function-return-unused': {
+    message: "Aquesta funció retorna un valor que no s'està guardant en cap variable.",
   },
 }
 
@@ -215,6 +255,19 @@ function type2text(type) {
     tipus = 'una variable'
   } else if (type.startsWith('command')) {
     tipus = 'la comanda ' + command2text(type.replace('command_', ''))
+  } else if (type.startsWith('call_function_return')) {
+    tipus = 'una crida a una funció amb retorn'
+  } else if (type.startsWith('call_function_void')) {
+    tipus = 'una crida a una funció sense retorn'
+  } else if (type.startsWith('call')) {
+    tipus = 'una crida a una funció'
+  } else if (type.startsWith('condition')) {
+    let tt = type.replace('condition_command_', '')
+    tipus = 'una condició ' + command2text(tt)
+  } else if (type.startsWith('math')) {
+    tipus = 'una operació matemàtica'
+  } else if (type.startsWith('braced_list')) {
+    tipus = 'una definició de llista'
   } else tipus = 'un ' + type
 
   return tipus

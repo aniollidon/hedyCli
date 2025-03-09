@@ -10,9 +10,14 @@ const errorMapping = [
     to: 'hy-command-missing-argument-comma',
   },
   {
-    codeerror: 'hy-context',
+    codeerror: 'hy-command-context',
     on: ['ask'],
     to: 'hy-ask-not-in-definition',
+  },
+  {
+    codeerror: 'hy-level-unavailable-yet',
+    on: ['random'],
+    to: 'hy-random-usage',
   },
 ]
 

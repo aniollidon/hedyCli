@@ -1,6 +1,6 @@
 const { entreCometes } = require('../utils')
 
-function detectTypeConstant(text, hasNumbers = false) {
+function detectTypeConstant(text, hasNumbers = true) {
   const word = text.trim()
 
   // Si és un número
@@ -47,36 +47,41 @@ function validType(tag, list) {
         tag.startsWith('entity_variable_value') ||
         tag.startsWith('entity_parameter') ||
         tag.startsWith('math') ||
-        tag.startsWith('function_usage') ||
-        tag.startsWith('call')
+        tag.startsWith('call_at_random') ||
+        tag.startsWith('call_function_return') ||
+        tag.startsWith('list_access')
     } else if (list[i] === '$number_integer') {
       valid =
         tag.includes('number_integer') ||
         tag.startsWith('entity_variable_value') ||
         tag.startsWith('entity_parameter') ||
         tag.startsWith('math') ||
-        tag.startsWith('function_usage') ||
-        tag.startsWith('call')
+        tag.startsWith('call_at_random') ||
+        tag.startsWith('call_function_return') ||
+        tag.startsWith('list_access')
     } else if (list[i] === '$string') {
       valid =
         tag.includes('string') ||
         tag.startsWith('entity_variable_value') ||
         tag.startsWith('entity_parameter') ||
-        tag.startsWith('function_usage') ||
-        tag.startsWith('call')
+        tag.startsWith('call_at_random') ||
+        tag.startsWith('call_function_return') ||
+        tag.startsWith('list_access')
     } else if (list[i] === '$quoted') {
       valid =
         tag.includes('string_quoted') ||
         tag.startsWith('entity_variable_value') ||
         tag.startsWith('entity_parameter') ||
-        tag.startsWith('function_usage') ||
-        tag.startsWith('call')
-    } else if (list[i] === '$stored') {
+        tag.startsWith('call_at_random') ||
+        tag.startsWith('call_function_return') ||
+        tag.startsWith('list_access')
+    } else if (list[i] === '$value') {
       valid =
         tag.startsWith('entity_variable_value') ||
         tag.startsWith('entity_parameter') ||
-        tag.startsWith('function_usage') ||
-        tag.startsWith('call')
+        tag.startsWith('call_at_random') ||
+        tag.startsWith('call_function_return') ||
+        tag.startsWith('list_access')
     } else if (tag.startsWith(list[i])) valid = true
 
     if (valid) return true
@@ -99,7 +104,7 @@ function varDefinitionType(linetext, hasQuotes, hanNumbers, define_var_operator,
   if (despres.match(/at random/)) return 'value_mixed'
   if (despres.match(/^ *call /)) return 'value_mixed'
 
-  return 'value_' + detectTypeConstant(despres, hanNumbers)
+  return 'value_' + detectTypeConstant(despres)
 }
 
 function enUnaLlista(text, pos, hasQuotes, define_var_operator) {

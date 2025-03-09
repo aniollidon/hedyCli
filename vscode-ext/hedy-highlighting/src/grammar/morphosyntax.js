@@ -1,12 +1,29 @@
-// TODO detect also partial failed usages
-// pex: range | range 1 to
-function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, hasRange = false) {
+function detectPrintUsages(tokens) {
   let result = []
   let i = 0
 
   while (i < tokens.length) {
+    // (print|echo) ... calls
+    if (i + 1 < tokens.length && (tokens[i].command === 'print' || tokens[i].command === 'echo')) {
+      const phrase = [tokens[i]]
+      i++
+
+      while (i < tokens.length) {
+        phrase.push(tokens[i])
+        i++
+      }
+
+      result.push({
+        text: phrase.map(token => token.text).join(' '),
+        tag: 'call_' + phrase[0].command,
+        pos: phrase[0].pos,
+        end: phrase[phrase.length - 1].pos + phrase[phrase.length - 1].text.length,
+        type: 'function_usage',
+        subphrase: phrase,
+      })
+    }
     // ask ... calls
-    if (i + 1 < tokens.length && tokens[i].command === 'ask' && !tokens[i + 1].command) {
+    else if (i + 1 < tokens.length && tokens[i].command === 'ask' && !tokens[i + 1].command) {
       const phrase = [tokens[i]]
       i++
       while (i < tokens.length && !tokens[i].command) {
@@ -21,9 +38,113 @@ function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, 
         type: 'function_usage',
         subphrase: phrase,
       })
+    } else {
+      result.push(tokens[i])
+      i++
     }
+  }
+
+  return result
+}
+
+function detectDeclarations(tokens) {
+  let result = []
+  let i = 0
+
+  while (i < tokens.length) {
+    // <var> is|= ... declarations
+    if (
+      i + 1 < tokens.length &&
+      (tokens[i + 1].command === 'variable_define_is' || tokens[i + 1].command === 'variable_define_equal')
+    ) {
+      const phrase = [tokens[i], tokens[i + 1]]
+      i += 2
+
+      while (i < tokens.length) {
+        phrase.push(tokens[i])
+        i++
+      }
+
+      result.push({
+        text: phrase.map(token => token.text).join(' '),
+        tag: 'declaration',
+        pos: phrase[0].pos,
+        end: phrase[phrase.length - 1].pos + phrase[phrase.length - 1].text.length,
+        type: 'declaration',
+        subphrase: phrase,
+      })
+    } else {
+      result.push(tokens[i])
+      i++
+    }
+  }
+
+  return result
+}
+
+function detectBracedList(tokens) {
+  let result = []
+  let i = 0
+
+  while (i < tokens.length) {
+    if (tokens[i].command === 'list_open') {
+      let phrase = [tokens[i]]
+      i++
+      while (i < tokens.length && tokens[i].command !== 'list_close') {
+        phrase.push(tokens[i])
+        i++
+      }
+      if (i < tokens.length && tokens[i].command === 'list_close') {
+        phrase.push(tokens[i])
+        i++
+      }
+      result.push({
+        text: phrase.map(token => token.text).join(' '),
+        tag: 'braced_list',
+        pos: phrase[0].pos,
+        end: phrase[phrase.length - 1].pos + phrase[phrase.length - 1].text.length,
+        type: 'braced_list',
+        subphrase: phrase,
+      })
+    } else {
+      result.push(tokens[i])
+      i++
+    }
+  }
+  return result
+}
+
+function detectListAccess(tokens) {
+  let result = []
+  let i = 0
+
+  while (i < tokens.length) {
+    if (i + 1 < tokens.length && tokens[i].entity && tokens[i + 1].tag === 'braced_list') {
+      let phrase = [tokens[i], tokens[i + 1]]
+      result.push({
+        text: phrase.map(token => token.text).join(' '),
+        tag: 'list_access',
+        pos: phrase[0].pos,
+        end: phrase[1].end,
+        type: 'list_access',
+        subphrase: phrase,
+      })
+      i += 2
+    } else {
+      result.push(tokens[i])
+      i++
+    }
+  }
+  return result
+}
+
+function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, hasRange = false) {
+  let result = []
+  let i = 0
+
+  while (i < tokens.length) {
     // at random calls
-    else if (
+    if (
       hasAtRandom &&
       i + 2 < tokens.length &&
       !tokens[i].command &&
@@ -65,15 +186,15 @@ function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, 
       i += move
     }
     // Function calls
-    else if (
-      hasFunctions &&
-      i + 1 < tokens.length &&
-      tokens[i].tag === 'command_call' &&
-      tokens[i + 1].type === 'entity_function'
-    ) {
+    else if (hasFunctions && tokens[i].command === 'call') {
       const pos = tokens[i].pos
-      const phrase = [tokens[i], tokens[i + 1]]
-      i += 2
+      const phrase = [tokens[i]]
+      i++
+
+      if (i < tokens.length) {
+        phrase.push(tokens[i])
+        i++
+      }
 
       // Detecta with args
       if (i < tokens.length && tokens[i].tag === 'command_with') {
@@ -90,22 +211,25 @@ function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, 
           i++
           nextargument = false
 
-          if (i < tokens.length && tokens[i].command === 'argument_separator') {
+          if (i < tokens.length && tokens[i].text === ',') {
             phrase.push(tokens[i], tokens[i])
             i++
             nextargument = true
           }
         }
-
-        result.push({
-          text: phrase.map(token => token.text).join(' '),
-          tag: 'call_function',
-          pos: pos,
-          end: phrase[phrase.length - 1].pos + phrase[phrase.length - 1].text.length,
-          type: 'function_usage',
-          subphrase: phrase,
-        })
       }
+
+      const tag =
+        phrase[1] && phrase[1].tag.startsWith('entity_function_return') ? 'call_function_return' : 'call_function_void'
+
+      result.push({
+        text: phrase.map(token => token.text).join(' '),
+        tag: tag,
+        pos: pos,
+        end: phrase[phrase.length - 1].pos + phrase[phrase.length - 1].text.length,
+        type: 'function_usage',
+        subphrase: phrase,
+      })
     } else {
       result.push(tokens[i])
       i++
@@ -266,9 +390,17 @@ function detectMath(tokens) {
   return result
 }
 
-module.exports = {
-  detectMath,
-  detectFuctionUsages,
-  detectConditions,
-  detectAndOr,
+function detectMorpho(words, hasAtRandom, hasFunctions, hasRange) {
+  words = detectBracedList(words)
+  words = detectListAccess(words)
+  words = detectMath(words)
+  words = detectFuctionUsages(words, hasAtRandom, hasFunctions, hasRange)
+  words = detectConditions(words)
+  words = detectAndOr(words)
+  words = detectPrintUsages(words)
+  words = detectDeclarations(words)
+
+  return words
 }
+
+module.exports = { detectMorpho }

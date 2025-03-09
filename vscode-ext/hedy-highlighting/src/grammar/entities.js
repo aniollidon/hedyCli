@@ -166,6 +166,8 @@ class EntityDefinitions {
           const paramName = param.trim()
           const startChar = withMatch.index + withMatch[0].indexOf(paramName)
 
+          if (paramName.startsWith("'") || paramName.startsWith('"') || !paramName) continue
+
           this.#setEntity(paramName, 'parameter', undefined, lineNumber, startChar)
 
           this.tokens.push({

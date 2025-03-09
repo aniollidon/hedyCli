@@ -1,116 +1,132 @@
 # HEDY NIVELLS:
 
 ## N1: (no hi ha variables)
+
 - `print`, `ask`, `echo`, `play`, `turn`, `forward`
 - Comentaris amb `#`
 - No commetes
 
 ## N2:
+
 - Variables (definides amb `is`)
 - `is`, `sleep`
 - `echo` (removed)
 
 ## N3:
+
 - Llistes
-    - `at random`
-    - `remove .. from`, `add .. to`
+  - `at random`
+  - `remove .. from`, `add .. to`
 
 ## N4:
+
 - Strings amb cometes: `""`, `''`
 - `clear`
 
 ## N5:
+
 - Condicionals:
-    - `if`, `else`
-    - `in`, `not in`
-    - `pressed`: `if g is pressed`
+  - `if`, `else`
+  - `in`, `not in`
+  - `pressed`: `if g is pressed`
 
 ## N6:
+
 - Mates: `+`, `-`, `*`, `/`
 - S'afegeix l'operador `=` per definir variables (s'accepta `is` o `=`)
 
 ## N7:
+
 - Bucles: (inline) `repeat .. times`
-    - `repeat`, `times`
+  - `repeat`, `times`
 
 ## N8:
+
 - Identació per bucles i condicionals
 
 ## N9:
+
 - Identació dins identació
 
 ## N10:
+
 - Bucles `for .. in`
-    - `for`, `in`
+  - `for`, `in`
 
 ## N11:
+
 - Bucles `for .. in range .. to ..`
-    - `range`, `to`
+  - `range`, `to`
 
 ## N12:
+
 - Mates amb decimals
 - Sumar strings
 - Funcions sense paràmetres:
-    - `define`
-    - `call`
+  - `define`
+  - `call`
 - Cometes a totes les strings: llistes o comparcions
 
 ## N13:
+
 - Funcions amb paràmetres
-    - `with`
+  - `with`
 - Comparacions avançades
-    - `and`, `or`
+  - `and`, `or`
 
 ## N14:
+
 - Comparacions avançades II
-    - Nous operadors: `>`, `<`, `>=`, `<=`, `==`, `!=`
+  - Nous operadors: `>`, `<`, `>=`, `<=`, `==`, `!=`
 - Funcions amb retorn
-    - `return`
+  - `return`
 
 ## N15:
+
 - Bucles `while`
-    - `while`
+  - `while`
 
 ## N16:
+
 - Accedir als elements d'una llista amb `[]`
 - Es defineixen les llistes amb `[]`
 - Desapareix `at random` i s'usa `[random]`
-    - `at` (removed)
+  - `at` (removed)
 
 ## N17:
+
 - Afegim els dos punts a l'inici dels blocs identats (`:`)
 - Condicionals amb `elif`
-    - `elif`
+  - `elif`
 
 ## N18:
+
 - PYTHON COMPLET
 
 # TIPUS
-+ constant
-    - number *($number)*
-        + integer
-        + decimal
-    - string 
-        + quoted
-        + unquoted
-    + note
-    + color
-+ entity
-    - variable
-        :subtype
-        - list
-        - value *($number)* *($stored)*
-            - number... 
-            - string...
-            - note...
-            - color...
-    - function
-    - parameter 
-+ command
-    - ...
-+ operation *($number)* 
-+ function_usage 
-    + return *($number)* *($stored)*
-+ comparation *($boolean)*
 
-
+- constant
+  - number _($number)_
+    - integer
+    - decimal
+  - string
+    - quoted
+    - unquoted
+  * note
+  * color
+- entity
+  - variable :subtype
+    - list
+    - value _($number)_ _($value)_
+      - number...
+      - string...
+      - note...
+      - color...
+  - function
+  - parameter
+- command
+  - ...
+- operation _($number)_
+- function_usage
+  - return _($number)_ _($value)_
+- comparation _($boolean)_

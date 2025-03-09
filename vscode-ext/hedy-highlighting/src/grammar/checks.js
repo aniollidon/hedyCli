@@ -3,7 +3,7 @@ const { EntityDefinitions } = require('./entities')
 const { Memory } = require('./memory')
 const { hedyCommands, specificHedyErrors, hedyGeneralSyntax, errorMapping } = require('./definitions/hedy-syntax')
 const { HHError, HHErrorVal, HHErrorType, HHErrorLine } = require('./errors')
-const { detectMath, detectFuctionUsages, detectConditions, detectAndOr } = require('./morphosyntax')
+const { detectMorpho } = require('./morphosyntax')
 const { validType, compareTypes, detectTypeConstant } = require('./types')
 
 // No hi ha ni elif, ni and ni or (LEVS 5,6,7,8)
@@ -18,7 +18,6 @@ class CheckHedy {
     this.level = level
     this._usesCometesText = level > 3
     this._defineVarOp = level >= 6 ? 'is|=' : 'is'
-    this._usesNumbers = level >= 6
     this._conditionalInline = level >= 5 && level < 8
     this._usesScope = level >= 8
     this._scopeRecursive = level >= 9
@@ -114,13 +113,14 @@ class CheckHedy {
 
     const words = this._tagWords(lineTrim, identationLength)
     const sintagma = this.memory.newSintagma(words, identationLength, lineNumber)
-    console.log('línia ' + (lineNumber + 1) + ':', sintagma)
 
     let errors = this._searchMorphosyntacticErrors(sintagma)
     if (errors.length > 0) errorsFound.push(...errors)
 
     errors = this._searchSpecificErrors(sintagma)
     if (errors.length > 0) errorsFound.push(...errors)
+
+    console.log('línia ' + (lineNumber + 1) + ':', sintagma)
 
     return errorsFound
   }
@@ -206,7 +206,7 @@ class CheckHedy {
         } else {
           words[k].couldBe = {
             command: command.name,
-            errorCode: 'hy-context',
+            errorCode: 'hy-command-context',
           }
         }
       }
@@ -234,7 +234,7 @@ class CheckHedy {
 
       if (words[i].type !== 'command') {
         const entity = this.entities.get(text)
-        const constant = detectTypeConstant(text, this._usesNumbers)
+        const constant = detectTypeConstant(text)
 
         if (entity !== undefined) {
           words[i].type = 'entity_' + entity.type
@@ -254,10 +254,7 @@ class CheckHedy {
     }
 
     // Processa la frase per trobar operacions
-    words = detectMath(words)
-    words = detectFuctionUsages(words, this._atrandom, this._functions, this._range)
-    words = detectConditions(words)
-    words = detectAndOr(words)
+    words = detectMorpho(words, this._atrandom, this._functions, this._range)
 
     return words
   }
@@ -282,39 +279,73 @@ class CheckHedy {
 
       if (word.command) {
         const commandDef = hedyCommands.find(c => c.name === word.command)
-        let argsPostCommand = sintagma.size()
-        let argsPreCommand = 0
+        let endArgsCommand = sintagma.size()
+        let startArgsCommand = 0
         if (!commandDef) continue
+        sintagma.markUsed(k)
+        let usesParameters = false
 
-        if (commandDef.elementsAfter !== undefined || commandDef.minElementsAfter !== undefined) {
-          const elementsAfter = Array.isArray(commandDef.elementsAfter)
-            ? commandDef.elementsAfter
-            : [commandDef.elementsAfter]
-          let minExpected = k + Math.min(...elementsAfter)
-          let maxExpected = k + Math.max(...elementsAfter)
+        if (
+          commandDef.elementsAfter !== undefined ||
+          commandDef.minElementsAfter !== undefined ||
+          commandDef.usesParameters
+        ) {
+          let elementsAfter = [0]
+
+          if (commandDef.usesParameters) {
+            if (k + 1 < sintagma.size() && sintagma.get(k + 1).entity && sintagma.get(k + 1).entity.params) {
+              usesParameters = sintagma.get(k + 1).entity.params.length
+              elementsAfter = [sintagma.get(k + 1).entity.params.length * 2 + 2] // call [NAME] with [PARAM], [PARAM] // 2*params -1 (params + commas) + 2 (name & with)
+            }
+          } else if (Array.isArray(commandDef.elementsAfter)) elementsAfter = commandDef.elementsAfter
+          else elementsAfter = [commandDef.elementsAfter]
+
+          let endArgsMin = k + Math.min(...elementsAfter)
+          let endArgsMax = k + Math.max(...elementsAfter)
 
           if (commandDef.minElementsAfter !== undefined) {
-            minExpected = k + commandDef.minElementsAfter
-            maxExpected = sintagma.size() // Trick to avoid for loop unexpected-argument
+            endArgsMin = k + commandDef.minElementsAfter
+            endArgsMax = sintagma.size() // Trick to avoid for loop unexpected-argument
           }
 
-          argsPostCommand = maxExpected
+          endArgsCommand = endArgsMax
 
-          if (sintagma.size() <= minExpected) {
-            errorsFound.push(new HHErrorVal(word.text, 'hy-command-missing-argument', start, end, minExpected - k))
+          if (sintagma.size() <= endArgsMin) {
+            if (usesParameters)
+              errorsFound.push(
+                new HHErrorVal(
+                  sintagma.get(1).text,
+                  'hy-function-missing-argument',
+                  sintagma.start(1),
+                  sintagma.end(1),
+                  usesParameters,
+                ),
+              )
+            else errorsFound.push(new HHErrorVal(word.text, 'hy-command-missing-argument', start, end, endArgsMin - k))
           }
 
           // Qualsevol element després dels necessaris són erronis
-          for (let j = maxExpected + 1; j < sintagma.size(); j++) {
-            errorsFound.push(
-              new HHErrorVal(
-                commandDef.text,
-                'hy-command-unexpected-argument',
-                sintagma.start(j),
-                sintagma.end(j),
-                maxExpected - k,
-              ),
-            )
+          for (let j = endArgsMax + 1; j < sintagma.size(); j++) {
+            if (usesParameters)
+              errorsFound.push(
+                new HHErrorVal(
+                  sintagma.get(1).text,
+                  'hy-function-unexpected-argument',
+                  sintagma.start(j),
+                  sintagma.end(j),
+                  usesParameters,
+                ),
+              )
+            else
+              errorsFound.push(
+                new HHErrorVal(
+                  commandDef.text,
+                  'hy-command-unexpected-argument',
+                  sintagma.start(j),
+                  sintagma.end(j),
+                  endArgsMax - k,
+                ),
+              )
           }
         }
 
@@ -324,8 +355,13 @@ class CheckHedy {
               new HHErrorVal(word.text, 'hy-command-missing-argument-before', start, end, commandDef.elementsBefore),
             )
           } else {
-            argsPreCommand = k - commandDef.elementsBefore
+            startArgsCommand = k - commandDef.elementsBefore
           }
+        }
+
+        // Marca com a utilitzats els arguments vàlids
+        for (let j = startArgsCommand; j < endArgsCommand + 1 && j < sintagma.size(); j++) {
+          sintagma.markUsed(j)
         }
 
         if (commandDef.syntax) {
@@ -334,7 +370,7 @@ class CheckHedy {
             if (rule.levelStart && rule.levelStart > this.level) continue
             if (rule.levelEnd && rule.levelEnd < this.level) continue
 
-            for (let j = argsPreCommand; j < argsPostCommand + 1 && j < sintagma.size(); j++) {
+            for (let j = startArgsCommand; j < endArgsCommand + 1 && j < sintagma.size(); j++) {
               if (j == k) continue // No comprova la commanda en sí mateixa
 
               const arg = sintagma.get(j)
@@ -343,7 +379,7 @@ class CheckHedy {
 
               if (commandDef.untilCommand && arg.command) break
               if (rule.positionInSintagma !== undefined && rule.positionInSintagma !== k) continue
-              if (rule.position !== undefined && rule.position !== j - argsPreCommand) continue
+              if (rule.position !== undefined && rule.position !== j - startArgsCommand) continue
               if (rule.refused && !validType(arg.tag, rule.refused)) continue
               if (rule.allowed && validType(arg.tag, rule.allowed)) continue
 
@@ -388,20 +424,25 @@ class CheckHedy {
         if (rule.positionInSintagma !== undefined && rule.positionInSintagma !== k) continue
         if (rule.subphrase !== undefined && rule.subphrase !== sintagma.subsintagmanum) continue
         if (rule.refused && !validType(word.tag, rule.refused)) continue
-        if (rule.allowed && validType(word.tag, rule.allowed)) continue
-        if (
-          rule.special_orAllowed === 'definition' &&
-          k + 1 < sintagma.size() &&
-          sintagma.get(k + 1).tag.startsWith('command_variable_define')
-        )
+        if (rule.allowed && validType(word.tag, rule.allowed)) {
+          sintagma.markUsed(k)
           continue
+        }
 
         if (rule.highlight === 'line') {
           start = sintagma.sintagmaStart()
           end = sintagma.sintagmaEnd()
         }
 
-        errorsFound.push(new HHError(word.text, rule.codeerror, start, end))
+        errorsFound.push(new HHErrorType(word.text, rule.codeerror, start, end, word.tag))
+      }
+    }
+
+    // Busca paraules no utilitzades
+    for (let k = 0; k < sintagma.size(); k++) {
+      const word = sintagma.get(k)
+      if (!word.used) {
+        errorsFound.push(new HHErrorType(word.text, 'hy-type-context', sintagma.start(k), sintagma.end(k), word.tag))
       }
     }
 
@@ -411,8 +452,8 @@ class CheckHedy {
   _searchSpecificErrors(sintagma) {
     const errorsFound = []
 
-    for (let i = 0; i < sintagma.size(); i++) {
-      const word = sintagma.get(i)
+    for (let k = 0; k < sintagma.size(); k++) {
+      const word = sintagma.get(k)
 
       if (word.subphrase) {
         errorsFound.push(...this._searchSpecificErrors(word.subphrase))
@@ -449,18 +490,18 @@ class CheckHedy {
           if (!match) continue
         }
         if (error.hasAfter) {
-          const after = sintagma.codeSince(i)
+          const after = sintagma.codeSince(k)
           match = after.match(error.hasAfter)
           if (!match) continue
         }
         if (error.hasBefore) {
-          const before = sintagma.codeUntil(i)
+          const before = sintagma.codeUntil(k)
           match = before.match(error.hasBefore)
           if (!match) continue
         }
         if (error.list || error.notlist) {
           const place = error.list ? error.list : error.notlist
-          const si = place === 'before' ? i - 1 : i + 1
+          const si = place === 'before' ? k - 1 : k + 1
           if (si < 0 || si >= sintagma.size()) continue
 
           const found = sintagma.get(si).tag.startsWith('entity_variable_list')
@@ -471,42 +512,42 @@ class CheckHedy {
 
         if (error.special_else && this.memory.cercaIf(this._usesScope, sintagma.identation)) continue
 
-        if (error.special_callArguments && word.entity) {
-          continue
-          //if(word.entity.params && word.entity.params.length === sintagma.size() - i - 1) continue;
-          // TODO check num arguments MILLORAR. NO ESTÀ BE
-        }
-
         if (error.beforeAndAfter && error.beforeAndAfter === 'same') {
-          if (i === 0 || i + 1 >= sintagma.size()) continue
-          if (sintagma.get(i - 1).text !== sintagma.get(i + 1).text) continue
+          if (k === 0 || k + 1 >= sintagma.size()) continue
+          if (sintagma.get(k - 1).text !== sintagma.get(k + 1).text) continue
         } else if (error.beforeAndAfter && error.beforeAndAfter === 'same-type') {
-          if (i === 0 || i + 1 >= sintagma.size()) continue
-          if (compareTypes(sintagma.get(i - 1).tag, sintagma.get(i + 1).tag)) continue
+          if (k === 0 || k + 1 >= sintagma.size()) continue
+          if (compareTypes(sintagma.get(k - 1).tag, sintagma.get(k + 1).tag)) continue
         } else if (error.beforeAndAfter && error.beforeAndAfter === 'same-constant-text') {
-          if (i === 0 || i + 1 >= sintagma.size()) continue
-          if (sintagma.get(i - 1).constant === undefined && sintagma.get(i + 1).constant === undefined) continue
-          if (sintagma.get(i - 1).constant !== sintagma.get(i + 1).constant) continue
+          if (k === 0 || k + 1 >= sintagma.size()) continue
+          if (sintagma.get(k - 1).constant === undefined && sintagma.get(k + 1).constant === undefined) continue
+          if (sintagma.get(k - 1).constant !== sintagma.get(k + 1).constant) continue
         }
 
-        let start = sintagma.start(i)
-        let end = sintagma.end(i)
+        let start = sintagma.start(k)
+        let end = sintagma.end(k)
 
         if (error.highlight === 'before_word') {
-          if (i === 0) continue
-          start = sintagma.start(i - 1)
-          end = sintagma.end(i - 1)
+          if (k === 0) continue
+          start = sintagma.start(k - 1)
+          end = sintagma.end(k - 1)
         } else if (error.highlight === 'after_word') {
-          if (i + 1 >= sintagma.size()) continue
-          start = sintagma.start(i + 1)
-          end = sintagma.end(i + 1)
-        } else if (error.highlight === 'before') {
-          if (i === 0) continue
+          if (k + 1 >= sintagma.size()) continue
+          start = sintagma.start(k + 1)
+          end = sintagma.end(k + 1)
+        } else if (error.highlight === 'definition') {
           start = sintagma.sintagmaStart()
-          end = sintagma.end(i - 1)
+          end = sintagma.sintagmaEnd()
+          for (let i = 0; i + 1 < sintagma.size(); i++) {
+            if (sintagma.get(i).tag.startsWith('command_variable_define')) start = sintagma.start(i + 1)
+          }
+        } else if (error.highlight === 'before') {
+          if (k === 0) continue
+          start = sintagma.sintagmaStart()
+          end = sintagma.end(k - 1)
         } else if (error.highlight === 'after') {
-          if (i + 1 >= sintagma.size()) continue
-          start = sintagma.start(i + 1)
+          if (k + 1 >= sintagma.size()) continue
+          start = sintagma.start(k + 1)
           end = sintagma.sintagmaEnd()
         } else if (error.highlight === 'line') {
           start = sintagma.sintagmaStart()
@@ -551,11 +592,11 @@ class CheckHedy {
           if (error.priority > error2.priority) {
             errors.splice(j, 1)
             j--
-            //console.log("error eliminat a la línia " + lineNumber + ":", error2, "ja que intersecciona amb", error);
+            //console.log('error eliminat a la línia ' + lineNumber + ':', error2, 'ja que intersecciona amb', error)
           } else {
             errors.splice(i, 1)
             i--
-            //console.log("error eliminat a la línia " + lineNumber + ":", error, "ja que intersecciona amb", error2);
+            //console.log('error eliminat a la línia ' + lineNumber + ':', error, 'ja que intersecciona amb', error2)
             break
           }
         }

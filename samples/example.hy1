@@ -3,20 +3,20 @@ print I remember my friend telling me to go into the old mansion...
 print There are 3 doors in front of me..
 ask Which door should i pick?
 echo I choose door  
-print ...?
+print ...? 
 
 turn left
-forward 33 
-
+forward 33   
+ 
 play C1
-play 70   
-
+play 70    
+  
 color red
 color blue
 color green
 color yellow 
 color purple 
-color orange  
+color orange    
 color pink 
 color black 
 color white

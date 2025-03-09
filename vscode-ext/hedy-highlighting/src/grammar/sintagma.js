@@ -37,6 +37,15 @@ class Sintagma {
     return this.words[pos]
   }
 
+  markUsed(pos) {
+    this.words[pos].used = true
+
+    if (this.words[pos].subphrase)
+      for (let k = 0; k < this.words[pos].subphrase.words.length; k++) {
+        this.words[pos].subphrase.markUsed(k)
+      }
+  }
+
   start(pos) {
     return this.words[pos].pos
   }

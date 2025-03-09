@@ -9,7 +9,7 @@
   + hasAfter: RegExp que ha de tenir la paraula anterior al tag/commanda es vol aplicar l'error (default = NO CHECK)
   + notlist: 'before' o 'after' per indicar que la paraula anterior o posterior no pot ser una llista (default = NO CHECK)
   + list: 'before' o 'after' per indicar que la paraula anterior o posterior ha de ser una llista (default = NO CHECK)
-  + highlight: 'word', 'line', 'before_word', 'after_word', 'match_last' o 'match_first' (default = 'word')
+  + highlight: 'word', 'line', 'before_word', 'after_word', 'definition', 'match_last' o 'match_first' (default = 'word')
   + whenCommand: 'invalid' per indicar que l'error només s'aplica quan la comanda no és vàlida 
                  [no compleix el regex de comanda] (default = NO CHECK)
   + special_else: true per indicar que l'error només s'aplica a 'else' i 'elif' (default = NO CHECK)
@@ -80,6 +80,7 @@ const specificHedyErrors = [
   },
   {
     commands: ['at'],
+    levelEnd: 15,
     notlist: 'before',
     highlight: 'before_word',
     codeerror: 'hy-before-needs-list',
@@ -217,17 +218,19 @@ const specificHedyErrors = [
     codeerror: 'hy-function-argument-duplicated',
   },
   {
-    commands: ['entity_function'],
-    levelStart: 12,
-    special_callArguments: true,
-    codeerror: 'hy-call-function-arguments',
+    commands: ['comma_list'],
+    levelStart: 16,
+    whenCommand: 'invalid',
+    hasBefore: /is |=/g,
+    highlight: 'definition',
+    codeerror: 'hy-comma-list-needs-brackets',
   },
-  /*{
-      tags: ["entity_function"],
-      levelStart: 14,
-      special_call_Return: true,
-      codeerror: "hy-call-function-return",
-  }*/
+  {
+    commands: ['list_open'],
+    levelStart: 16,
+    hasAfter: /^[^\]]*$/g,
+    codeerror: 'hy-list-open-needs-close',
+  },
 ]
 
 module.exports = specificHedyErrors

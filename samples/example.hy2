@@ -8,14 +8,14 @@ print But as you enter monster_3 attacks you!
 print bla monster_1 monster_2 monster_3
 monster_4 is ask monster 4? 
 print text #comentari
-
+ 
 # Tortuga 
-forward 10
+forward 10 
 play C1  
 color red
 turn 90 
  
-# Constants
+# Constants   
 a is hola 
 b is 2
 b is red    
