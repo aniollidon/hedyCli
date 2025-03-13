@@ -1,3 +1,4 @@
 nom = "Hedy el robot" 3 # Ha de donar error
-punts = 25 "punts" # Ha de donar error
- 
+punts = "punts" 5 # Ha de donar error
+
+llista = 1, 5, 5, 5, 5 5 

@@ -7,13 +7,18 @@
     "autoClosingPairs": [
         ["remove ", " from"],
         ["add ", " to"],
-        ["repeat", "times"],
-        ["range", "to"],
-        ["\"", "\""],
-        ["'", "'"]
-    ],
+        ["repeat", " times"],
+        ["range", " to"],
+        { "open": "'", "close": "'", "notIn": ["string", "comment"] },
+        { "open": "\"", "close": "\"", "notIn": ["string"] }
+      ],
     "surroundingPairs": [
         ["\"", "\""],
         ["'", "'"]
-    ]
+    ],
+    "autoCloseBefore": ":,=]` \n\t",
+    "indentationRules": {
+        "increaseIndentPattern": "^(\\s)*(for|if|elif|else|repeat|while)\\b.*$",
+        "decreaseIndentPattern": "^[^ ]$"
+    }
 }

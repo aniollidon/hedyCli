@@ -210,6 +210,15 @@ const specificHedyErrors = [
     codeerror: 'hy-entitydef-starts-with-number',
     highlight: 'word',
   },
+  /* // TODO! no funciona correctament
+  {
+    commands: ['variable_define_equal', 'variable_define_is'],
+    levelStart: 12,
+    special_defiction: true,
+    codeerror: 'hy-definition-wrong-format',
+    highlight: 'definition',
+    hasAfter: /(^(?! *([\p{L}_\d]+|['"].*?['"]|\[.*\]) *$)(?!.*,.*).+$|([, ]([\p{L}_\d]+|['"].*?['"]|\[.*\])){2})/gu,
+  },*/
   {
     commands: ['define'],
     levelStart: 12,
@@ -218,7 +227,7 @@ const specificHedyErrors = [
     codeerror: 'hy-function-argument-duplicated',
   },
   {
-    commands: ['comma_list'],
+    commands: ['comma_bracedlist'],
     levelStart: 16,
     whenCommand: 'invalid',
     hasBefore: /is |=/g,
@@ -230,6 +239,26 @@ const specificHedyErrors = [
     levelStart: 16,
     hasAfter: /^[^\]]*$/g,
     codeerror: 'hy-list-open-needs-close',
+  },
+  {
+    commands: ['bracket_open_access'],
+    levelStart: 16,
+    notlist: 'before',
+    codeerror: 'hy-bracket-needs-before-list',
+    highlight: 'before_word',
+  },
+  {
+    commands: ['for'],
+    levelStart: 10,
+    hasAfter: /\bis\b/g,
+    highlight: 'line',
+    codeerror: 'hy-bad-definition-for-is',
+  },
+  {
+    commands: ['bracket_open_access', 'bracket_open_definition'],
+    levelStart: 16,
+    hasAfter: /^[^\]]*$/g,
+    codeerror: 'hy-bracket-open-needs-close',
   },
 ]
 

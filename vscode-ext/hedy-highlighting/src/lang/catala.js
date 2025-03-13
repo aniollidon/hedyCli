@@ -2,6 +2,7 @@ const commands = {
   compare_is: 'is (comparació)',
   variable_define_is: 'is (definició de variable)',
   comma_list: 'comma (llista)',
+  comma_bracedlist: 'comma (llista[])',
   to_list: 'to (llista)',
   to_range: 'to (després de range)',
   compare_equal: 'igual (comparació)',
@@ -17,6 +18,7 @@ const commands = {
   less_than_or_equal: 'menor o igual (<=)',
   compare_equalequal: 'igual (==)',
   not_equal: 'diferent (!=)',
+  random_braced: 'random',
 }
 
 const errors = {
@@ -117,7 +119,7 @@ const errors = {
     message: "La comanda '[NAME]' espera un color. S'ha trobat [TYPE].",
   },
   'hy-execting-condition': {
-    message: "La comanda '[NAME]' espera una condició després.",
+    message: "La comanda '[NAME]' espera una condició després. S'ha trobat [TYPE].",
   },
   'hy-use-elseif-instead': {
     message: "Si després d'un 'else' vols fer 'if', utilitza la comanda 'elif'.",
@@ -136,6 +138,9 @@ const errors = {
   },
   'hy-cant-print-list': {
     message: 'Les llistes no es poden imprimir directament.',
+  },
+  'hy-softwarn-print-list': {
+    message: 'Segur que vols imprimir una llista? i no volies imprimir un element de la llista?',
   },
   'hy-cant-print-function': {
     message: 'Les funcions no es poden imprimir directament. Fes servir la comanda "call".',
@@ -162,14 +167,29 @@ const errors = {
   'hy-blanks-not-allowed': {
     message: "Els espais en blanc s'han d'omplir amb codi!",
   },
-  'hy-identation': {
+  'hy-identation-not-expected': {
+    message: "La identació no és correcta. Només després d'un bucle o condició cal indentar.",
+  },
+  'hy-identation-large': {
+    message: 'La indentació és massa gran. Afegeix només [EXPECTED] espais extres respecte la línia anterior.',
+  },
+  'hy-identation-small': {
+    message: 'La indentació és massa petita. Afegeix [EXPECTED] espais extres respecte la línia anterior.',
+  },
+  'hy-identation-expected': {
     message:
-      "La identació no és correcta. Després d'un bucle o condició cal indentar. només en aquests casos.\n" +
-      "Recorda que has de ser consistent amb la indentació, cal mantenir sempre la mateixa quantitat d'espais per nivell.",
+      "S'Esperava una indentació en aquesta línia que no s'ha trobat. Afegeix [EXPECTED] espais extres respecte la línia anterior.",
+  },
+  'hy-fileends-identation-expected': {
+    message: "S'ha trobat una condició o bucle sense un bloc de codi identat posterior.",
   },
   'hy-identation-multiple-unavailable': {
     message:
       'En aquest nivell encara no es pot definir un bucle/condició dins un altre bucle/condició. Només es permeten bucles/condicions independents.',
+  },
+  'hy-identation-misalignment': {
+    message:
+      "Cal ser consistent amb la indentació. Fins ara feies servir [EXPECTED] espais per identar però en aquesta línia n'hi ha [FOUND]. Els espais utilitzats han de ser múltiple de [EXPECTED].",
   },
   'hy-unnecessary-quotes': {
     message: 'En aquest nivell encara no cal cometes per aquest text.',
@@ -225,6 +245,29 @@ const errors = {
   },
   'hy-function-return-unused': {
     message: "Aquesta funció retorna un valor que no s'està guardant en cap variable.",
+  },
+  'hy-list-definition-types': {
+    message: "Dins una definició de llista només s'accepten valors constants. S'ha trobat [TYPE].",
+  },
+  'hy-list-access-types': {
+    message: "Només pots accedir a llistes amb números enters o variables. S'ha trobat [TYPE].",
+  },
+  'hy-bracket-needs-before-list': {
+    message: "Abans d'un accés per clàudator cal una llista.",
+  },
+  'hy-access-brackets-format-arguments': {
+    message:
+      "En l'accés a una llista per clàudator cal seguir el format 'llista[num]', on només hi ha un valor d'accés.",
+  },
+  'hy-definition-wrong-format': {
+    message:
+      "La definició no és correcta, s'ha trobat múltiples paraules, si son una llista han d'estar separades per comes",
+  },
+  'hy-bad-definition-for-is': {
+    message: "La definició de 'for' necessita un 'in' enlloc de 'is'.",
+  },
+  'hy-bracket-open-needs-close': {
+    message: 'Falta tancar el claudàtor.',
   },
 }
 

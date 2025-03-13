@@ -19,6 +19,11 @@ const errorMapping = [
     on: ['random'],
     to: 'hy-random-usage',
   },
+  {
+    codeerror: 'hy-command-unexpected-argument',
+    on: ['['], // TODO hauria de ser bracket_open_access
+    to: 'hy-access-brackets-format-arguments',
+  },
 ]
 
 module.exports = errorMapping

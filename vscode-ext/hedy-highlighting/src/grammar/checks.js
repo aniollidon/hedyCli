@@ -2,7 +2,7 @@ const { identation, separarParaules } = require('../utils')
 const { EntityDefinitions } = require('./entities')
 const { Memory } = require('./memory')
 const { hedyCommands, specificHedyErrors, hedyGeneralSyntax, errorMapping } = require('./definitions/hedy-syntax')
-const { HHError, HHErrorVal, HHErrorType, HHErrorLine } = require('./errors')
+const { HHError, HHErrorVal, HHErrorVals, HHErrorType, HHErrorLine } = require('./errors')
 const { detectMorpho } = require('./morphosyntax')
 const { validType, compareTypes, detectTypeConstant } = require('./types')
 
@@ -105,10 +105,38 @@ class CheckHedy {
     if (lineTrim === '') return []
 
     // Comprova identació.
-    if (this._usesScope && !this.memory.comprovaScope(identationLength)) {
-      errorsFound.push(new HHError('identation', 'hy-identation', 0, identationLength))
-    } else if (this._usesScope && !this._scopeRecursive && this.memory.isScopeRecursive(identationLength)) {
-      errorsFound.push(new HHError('identation', 'hy-identation-multiple-unavailable', 0, identationLength))
+    if (this._usesScope) {
+      const scopeCheck = this.memory.comprovaScope(identationLength)
+      if (scopeCheck === 'missaligned') {
+        errorsFound.push(
+          new HHErrorVals('identation', 'hy-identation-misalignment', 0, identationLength, {
+            EXPECTED: this.memory.getDefinedIdentation(),
+            FOUND: identationLength,
+          }),
+        )
+      } else if (scopeCheck === 'not_expected') {
+        errorsFound.push(new HHError('identation', 'hy-identation-not-expected', 0, identationLength))
+      } else if (scopeCheck === 'large') {
+        errorsFound.push(
+          new HHErrorVals('identation', 'hy-identation-large', 0, identationLength, {
+            EXPECTED: this.memory.getDefinedIdentation(),
+          }),
+        )
+      } else if (scopeCheck === 'small') {
+        errorsFound.push(
+          new HHErrorVals('identation', 'hy-identation-small', 0, identationLength, {
+            EXPECTED: this.memory.getDefinedIdentation(),
+          }),
+        )
+      } else if (scopeCheck === 'expected') {
+        errorsFound.push(
+          new HHErrorVals('identation', 'hy-identation-expected', 0, identationLength, {
+            EXPECTED: this.memory.getDefinedIdentation(),
+          }),
+        )
+      } else if (!this._scopeRecursive && this.memory.isScopeRecursive(identationLength)) {
+        errorsFound.push(new HHError('identation', 'hy-identation-multiple-unavailable', 0, identationLength))
+      }
     }
 
     const words = this._tagWords(lineTrim, identationLength)
@@ -118,6 +146,9 @@ class CheckHedy {
     if (errors.length > 0) errorsFound.push(...errors)
 
     errors = this._searchSpecificErrors(sintagma)
+    if (errors.length > 0) errorsFound.push(...errors)
+
+    errors = this._searchNotUsed(sintagma)
     if (errors.length > 0) errorsFound.push(...errors)
 
     console.log('línia ' + (lineNumber + 1) + ':', sintagma)
@@ -280,7 +311,7 @@ class CheckHedy {
       if (word.command) {
         const commandDef = hedyCommands.find(c => c.name === word.command)
         let endArgsCommand = sintagma.size()
-        let startArgsCommand = 0
+        let startArgsCommand = k
         if (!commandDef) continue
         sintagma.markUsed(k)
         let usesParameters = false
@@ -438,14 +469,6 @@ class CheckHedy {
       }
     }
 
-    // Busca paraules no utilitzades
-    for (let k = 0; k < sintagma.size(); k++) {
-      const word = sintagma.get(k)
-      if (!word.used) {
-        errorsFound.push(new HHErrorType(word.text, 'hy-type-context', sintagma.start(k), sintagma.end(k), word.tag))
-      }
-    }
-
     return errorsFound
   }
 
@@ -567,6 +590,25 @@ class CheckHedy {
     return errorsFound
   }
 
+  _searchNotUsed(sintagma) {
+    const errorsFound = []
+
+    for (let k = 0; k < sintagma.size(); k++) {
+      const word = sintagma.get(k)
+
+      if (word.subphrase) {
+        errorsFound.push(...this._searchNotUsed(word.subphrase))
+      }
+
+      // Busca paraules no utilitzades
+      if (!word.used) {
+        errorsFound.push(new HHErrorType(word.text, 'hy-type-context', sintagma.start(k), sintagma.end(k), word.tag))
+      }
+    }
+
+    return errorsFound
+  }
+
   _processErrors(errors, line, lineNumber) {
     // Ajusta el mapeig d'errors
     for (let i = 0; i < errors.length; i++) {
@@ -618,6 +660,16 @@ class CheckHedy {
     }
 
     return errors
+  }
+
+  finalCheck() {
+    const err = this.memory.finalCheck()
+    if (err === 'expected') {
+      let pos = this.memory.last() ? this.memory.last().sintagmaEnd() : 0
+
+      return [new HHError('identation', 'hy-fileends-identation-expected', pos, pos + 1)]
+    }
+    return []
   }
 }
 

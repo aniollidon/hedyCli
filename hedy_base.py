@@ -11,6 +11,16 @@ import hedy
 from prefixes.normal import *
 from hedy_error import get_error_text
 
+def clean_final_lines(code):
+    # Dividim el text en línies
+    linies = code.splitlines()
+
+    # Eliminem els espais extres al final de cada línia
+    linies_neteja = [linia.rstrip() for linia in linies]
+
+    # Tornem a unir les línies amb salts de línia
+    return '\n'.join(linies_neteja)
+
 def _setup_web_app(lang):
     """
     Prepara l'entorn d'app-web per poder transpilar i gestionar les traduccions
@@ -225,14 +235,16 @@ def execute_hedy(hedy_code, level, lang='ca', keyword_lang='en', testing=None, i
                                                  + "\n  print \"$ERROR: la funció " + function['name'] + args_message +
                                                  " no existeix al módul " + extencio + "\"\n")
 
+        fhedy_code = clean_final_lines(extra_prev_hedy_code + hedy_code)
+
         if debug and extensions:
             print("Extensions actives:", extensions)
             print("Mapa de funcions a extensions:", mapa_funcions_extensio)
             print("############## CODI HEDY ###############")
-            print(extra_prev_hedy_code + hedy_code)
+            print(fhedy_code)
             print("############ FI CODI HEDY ##############")
 
-        response, transpile_result = parse(extra_prev_hedy_code + hedy_code, level, keyword_lang, microbit=microbit)
+        response, transpile_result = parse(fhedy_code, level, keyword_lang, microbit=microbit)
         pause_after_turtle = False
         foo_usage = False
 

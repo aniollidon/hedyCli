@@ -87,14 +87,41 @@ function detectBracedList(tokens) {
   let i = 0
 
   while (i < tokens.length) {
-    if (tokens[i].command === 'list_open') {
-      let phrase = [tokens[i]]
-      i++
-      while (i < tokens.length && tokens[i].command !== 'list_close') {
+    // Detect list access
+    if (
+      i + 1 < tokens.length &&
+      !tokens[i].command &&
+      tokens[i + 1].command &&
+      tokens[i + 1].command.startsWith('bracket_open')
+    ) {
+      let phrase = [tokens[i], tokens[i + 1]]
+      i = i + 2
+      while (i < tokens.length && tokens[i].command !== 'bracket_close') {
         phrase.push(tokens[i])
         i++
       }
-      if (i < tokens.length && tokens[i].command === 'list_close') {
+      if (i < tokens.length && tokens[i].command === 'bracket_close') {
+        phrase.push(tokens[i])
+        i++
+      }
+      result.push({
+        text: phrase.map(token => token.text).join(' '),
+        tag: 'list_access',
+        pos: phrase[0].pos,
+        end: phrase[phrase.length - 1].pos + phrase[phrase.length - 1].text.length,
+        type: 'list_access',
+        subphrase: phrase,
+      })
+    }
+    // Detect list definition
+    else if (tokens[i].command && tokens[i].command.startsWith('bracket_open')) {
+      let phrase = [tokens[i]]
+      i++
+      while (i < tokens.length && tokens[i].command !== 'bracket_close') {
+        phrase.push(tokens[i])
+        i++
+      }
+      if (i < tokens.length && tokens[i].command === 'bracket_close') {
         phrase.push(tokens[i])
         i++
       }
@@ -106,30 +133,6 @@ function detectBracedList(tokens) {
         type: 'braced_list',
         subphrase: phrase,
       })
-    } else {
-      result.push(tokens[i])
-      i++
-    }
-  }
-  return result
-}
-
-function detectListAccess(tokens) {
-  let result = []
-  let i = 0
-
-  while (i < tokens.length) {
-    if (i + 1 < tokens.length && tokens[i].entity && tokens[i + 1].tag === 'braced_list') {
-      let phrase = [tokens[i], tokens[i + 1]]
-      result.push({
-        text: phrase.map(token => token.text).join(' '),
-        tag: 'list_access',
-        pos: phrase[0].pos,
-        end: phrase[1].end,
-        type: 'list_access',
-        subphrase: phrase,
-      })
-      i += 2
     } else {
       result.push(tokens[i])
       i++
@@ -392,7 +395,6 @@ function detectMath(tokens) {
 
 function detectMorpho(words, hasAtRandom, hasFunctions, hasRange) {
   words = detectBracedList(words)
-  words = detectListAccess(words)
   words = detectMath(words)
   words = detectFuctionUsages(words, hasAtRandom, hasFunctions, hasRange)
   words = detectConditions(words)

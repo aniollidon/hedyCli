@@ -29,6 +29,22 @@ function onChangeHedyCode(lines, hedyLevel, diagnosticCollection, document) {
     }
   }
 
+  for (let err of hedy.finalCheck()) {
+    const error = err.get()
+    const severity =
+      error.severity === 'warning'
+        ? vscode.DiagnosticSeverity.Warning
+        : error.severity === 'info'
+        ? vscode.DiagnosticSeverity.Information
+        : vscode.DiagnosticSeverity.Error
+    const diagnostic = new vscode.Diagnostic(
+      new vscode.Range(lines.length - 1, error.start, lines.length - 1, error.end),
+      error.message,
+      severity,
+    )
+    if (error.codeerror) diagnostic.code = error.codeerror
+    diagnostics.push(diagnostic)
+  }
   diagnosticCollection.set(document.uri, diagnostics)
   return
 }

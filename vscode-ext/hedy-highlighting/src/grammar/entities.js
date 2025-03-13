@@ -122,7 +122,7 @@ class EntityDefinitions {
         const variableName = forMatch[1]
         const startChar = forMatch.index + forMatch[0].indexOf(variableName)
 
-        this.#setEntity(variableName, 'variable', scope, lineNumber, startChar)
+        this.#setEntity(variableName, 'variable', undefined, lineNumber, startChar)
 
         this.tokens.push({
           line: lineNumber,

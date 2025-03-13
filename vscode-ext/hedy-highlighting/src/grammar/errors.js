@@ -65,6 +65,10 @@ const severityAndPriority = {
     severity: 'error',
     priority: 1,
   },
+  'hy-definition-wrong-format': {
+    severity: 'error',
+    priority: 1,
+  },
   'hy-function-return-unused': {
     severity: 'warning',
     priority: 1,
@@ -141,6 +145,18 @@ const severityAndPriority = {
     severity: 'error',
     priority: 10,
   },
+  'hy-list-definition-types': {
+    severity: 'error',
+    priority: 10,
+  },
+  'hy-list-access-types': {
+    severity: 'error',
+    priority: 10,
+  },
+  'hy-bracket-needs-before-list': {
+    severity: 'warning',
+    priority: 10,
+  },
   'hy-use-elseif-instead': {
     severity: 'warning',
     priority: 10,
@@ -152,6 +168,10 @@ const severityAndPriority = {
   'hy-comma-list-needs-brackets': {
     severity: 'error',
     priority: 10,
+  },
+  'hy-access-brackets-format-arguments': {
+    severity: 'error',
+    priority: 11,
   },
   'hy-execting-parameter': {
     severity: 'error',
@@ -193,6 +213,10 @@ const severityAndPriority = {
     severity: 'warning',
     priority: 50,
   },
+  'hy-softwarn-print-list': {
+    severity: 'info',
+    priority: 50,
+  },
   'hy-pressed-needs-is': {
     severity: 'warning',
     priority: 50,
@@ -229,7 +253,27 @@ const severityAndPriority = {
     severity: 'error',
     priority: 255,
   },
-  'hy-identation': {
+  'hy-identation-not-expected': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-identation-expected': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-fileends-identation-expected': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-identation-large': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-identation-small': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-identation-misalignment': {
     severity: 'error',
     priority: 255,
   },
@@ -250,6 +294,14 @@ const severityAndPriority = {
     priority: 255,
   },
   'hy-list-open-needs-close': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-bad-definition-for-is': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-bracket-open-needs-close': {
     severity: 'error',
     priority: 255,
   },
@@ -314,6 +366,20 @@ class HHErrorVal extends HHError {
   }
 }
 
+class HHErrorVals extends HHError {
+  constructor(onText, errorCode, start, end, values) {
+    super(onText, errorCode, start, end)
+    this.values = values
+  }
+
+  _process_messsage(message) {
+    for (let key in this.values) {
+      message = message.replaceAll(`[${key}]`, this.values[key])
+    }
+    message = super._process_messsage(message)
+    return message
+  }
+}
 class HHErrorType extends HHError {
   constructor(onText, errorCode, start, end, type) {
     super(onText, errorCode, start, end)
@@ -343,6 +409,7 @@ class HHErrorLine extends HHError {
 module.exports = {
   HHError,
   HHErrorVal,
+  HHErrorVals,
   HHErrorType,
   HHErrorLine,
 }

@@ -54,8 +54,13 @@ const commandDefinition = [
     syntax: [
       {
         refused: ['entity_variable_list'],
-        levelEnd: 16,
+        levelEnd: 15,
         codeerror: 'hy-cant-print-list',
+      },
+      {
+        refused: ['entity_variable_list'],
+        levelStart: 16,
+        codeerror: 'hy-softwarn-print-list',
       },
       {
         refused: ['entity_function'],
@@ -133,6 +138,7 @@ const commandDefinition = [
   },
   {
     text: 'ask',
+    name: 'ask1',
     levelEnd: 1,
     atBegining: true,
     minElementsAfter: 1,
@@ -146,7 +152,7 @@ const commandDefinition = [
     syntax: [
       {
         refused: ['entity_variable_list'],
-        levelEnd: 16,
+        levelEnd: 15,
         codeerror: 'hy-cant-print-list',
       },
       {
@@ -235,10 +241,17 @@ const commandDefinition = [
   },
   {
     text: ',',
-    name: 'comma_list',
+    name: 'comma_bracedlist',
     levelStart: 15,
     hasBefore: /\[/g,
     minElementsAfter: 1,
+    syntax: [
+      {
+        refused: ['command_bracket_close'],
+        position: 1,
+        codeerror: 'hy-command-missing-argument-comma',
+      },
+    ],
   },
   {
     text: 'remove',
@@ -296,6 +309,7 @@ const commandDefinition = [
   },
   {
     text: 'random',
+    name: 'random_braced',
     levelStart: 16,
     hasBefore: /\[ */gu,
     hasAfter: / *\]/gu,
@@ -310,10 +324,6 @@ const commandDefinition = [
       {
         allowed: ['condition'],
         codeerror: 'hy-execting-condition',
-      },
-      {
-        refused: ['entity_variable_list'],
-        codeerror: 'hy-cant-print-list',
       },
     ],
   },
@@ -697,13 +707,38 @@ const commandDefinition = [
   },
   {
     text: '[',
-    name: 'list_open',
+    name: 'bracket_open_definition',
     levelStart: 16,
+    hasBefore: /[\p{L}_\d]+( +is +| *= *)$/gu,
     minElementsAfter: 1,
+    syntax: [
+      {
+        allowed: ['constant', 'command_comma', 'command_bracket_close'],
+        codeerror: 'hy-list-definition-types',
+      },
+    ],
+  },
+  {
+    text: '[',
+    name: 'bracket_open_access',
+    levelStart: 16,
+    elementsAfter: 2,
+    hasBefore: /[\p{L}_\d]+ *$/gu,
+    syntax: [
+      {
+        allowed: ['$number_integer', 'command_bracket_close', 'command_random_braced'],
+        codeerror: 'hy-list-access-types',
+      },
+      {
+        allowed: ['command_bracket_close'],
+        position: 2,
+        codeerror: 'hy-access-brackets-format-arguments',
+      },
+    ],
   },
   {
     text: ']',
-    name: 'list_close',
+    name: 'bracket_close',
     levelStart: 16,
     minElementsBefore: 1,
   },

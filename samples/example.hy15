@@ -10,6 +10,7 @@ if 2 > call ble with 3, 4
 else
     print 4  
 
+ll = 1, m, 2
 
 define bla with  hh, jj
     print hh

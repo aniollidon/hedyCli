@@ -47,6 +47,16 @@ class Memory {
     return this.past[this.past.length - 1]
   }
 
+  finalCheck() {
+    // Comprova que tots els scopes estiguin tancats
+    const tagPast = this.last() !== undefined ? this.last().sintagmaTag : 'action'
+    const pastIdentable =
+      tagPast === 'condition' || tagPast === 'not_condition' || tagPast === 'bucle' || tagPast === 'function_definition'
+
+    if (pastIdentable) return 'expected'
+    return true
+  }
+
   cercaIf(searchScoped = false, onScope = -1) {
     // Cerca l'últim if. Navegant enrere s'ha de trobar un condition abans que 2 o més actions.
     let countActions = 0
@@ -63,6 +73,10 @@ class Memory {
     return false
   }
 
+  getDefinedIdentation() {
+    return this._definedScopeIdentation
+  }
+
   comprovaScope(identation) {
     // Hi ha d'haver una condition//not_condition o un bucle a l'scope anterior
     // La separació entre scopes es manté
@@ -74,18 +88,21 @@ class Memory {
 
     // L'identació ha de ser múltiple de la definida
     if (identation > 0 && this._definedScopeIdentation !== -1 && identation % this._definedScopeIdentation !== 0)
-      return false
+      return 'missaligned'
 
     if (identation === identPast) {
-      if (pastIdentable) return false
+      if (pastIdentable) return 'expected'
       return true
     } else if (identation > identPast) {
-      if (pastIdentable) return true
-      return false
+      if (pastIdentable)
+        if (this._definedScopeIdentation != -1 && identPast + this._definedScopeIdentation !== identation)
+          return 'large'
+        else return true
+      return 'not_expected'
     } else {
       // identation < identPast
-      if (this._scopes.includes(identation)) return true
-      return false
+      if (this._scopes.includes(identation) && !pastIdentable) return true
+      return pastIdentable ? 'small' : 'not_expected'
     }
   }
 
