@@ -317,25 +317,25 @@ class CheckHedy {
         let usesParameters = false
 
         if (
-          commandDef.elementsAfter !== undefined ||
-          commandDef.minElementsAfter !== undefined ||
+          commandDef.argumentsAfter !== undefined ||
+          commandDef.minArgumentsAfter !== undefined ||
           commandDef.usesParameters
         ) {
-          let elementsAfter = [0]
+          let argumentsAfter = [0]
 
           if (commandDef.usesParameters) {
             if (k + 1 < sintagma.size() && sintagma.get(k + 1).entity && sintagma.get(k + 1).entity.params) {
               usesParameters = sintagma.get(k + 1).entity.params.length
-              elementsAfter = [sintagma.get(k + 1).entity.params.length * 2 + 2] // call [NAME] with [PARAM], [PARAM] // 2*params -1 (params + commas) + 2 (name & with)
+              argumentsAfter = [sintagma.get(k + 1).entity.params.length * 2 + 2] // call [NAME] with [PARAM], [PARAM] // 2*params -1 (params + commas) + 2 (name & with)
             }
-          } else if (Array.isArray(commandDef.elementsAfter)) elementsAfter = commandDef.elementsAfter
-          else elementsAfter = [commandDef.elementsAfter]
+          } else if (Array.isArray(commandDef.argumentsAfter)) argumentsAfter = commandDef.argumentsAfter
+          else argumentsAfter = [commandDef.argumentsAfter]
 
-          let endArgsMin = k + Math.min(...elementsAfter)
-          let endArgsMax = k + Math.max(...elementsAfter)
+          let endArgsMin = k + Math.min(...argumentsAfter)
+          let endArgsMax = k + Math.max(...argumentsAfter)
 
-          if (commandDef.minElementsAfter !== undefined) {
-            endArgsMin = k + commandDef.minElementsAfter
+          if (commandDef.minArgumentsAfter !== undefined) {
+            endArgsMin = k + commandDef.minArgumentsAfter
             endArgsMax = sintagma.size() // Trick to avoid for loop unexpected-argument
           }
 
@@ -357,7 +357,14 @@ class CheckHedy {
 
           // Qualsevol element després dels necessaris són erronis
           for (let j = endArgsMax + 1; j < sintagma.size(); j++) {
-            if (usesParameters)
+            if (
+              commandDef.concatOn &&
+              sintagma.get(j).command &&
+              commandDef.concatOn.includes(sintagma.get(j).command)
+            ) {
+              sintagma.markUsed(j)
+              break
+            } else if (usesParameters)
               errorsFound.push(
                 new HHErrorVal(
                   sintagma.get(1).text,
@@ -380,13 +387,13 @@ class CheckHedy {
           }
         }
 
-        if (commandDef.elementsBefore !== undefined) {
-          if (k < commandDef.elementsBefore) {
+        if (commandDef.argumentsBefore !== undefined) {
+          if (k < commandDef.argumentsBefore) {
             errorsFound.push(
-              new HHErrorVal(word.text, 'hy-command-missing-argument-before', start, end, commandDef.elementsBefore),
+              new HHErrorVal(word.text, 'hy-command-missing-argument-before', start, end, commandDef.argumentsBefore),
             )
           } else {
-            startArgsCommand = k - commandDef.elementsBefore
+            startArgsCommand = k - commandDef.argumentsBefore
           }
         }
 
@@ -395,27 +402,37 @@ class CheckHedy {
           sintagma.markUsed(j)
         }
 
-        if (commandDef.syntax) {
-          for (let sx = 0; sx < commandDef.syntax.length; sx++) {
-            const rule = commandDef.syntax[sx]
+        if (commandDef.arguments) {
+          for (let sx = 0; sx < commandDef.arguments.length; sx++) {
+            const rule = commandDef.arguments[sx]
             if (rule.levelStart && rule.levelStart > this.level) continue
             if (rule.levelEnd && rule.levelEnd < this.level) continue
+            if (rule.closedBy) {
+              if (sintagma.last().tag === rule.closedBy) sintagma.markUsed(sintagma.size() - 1)
+              else continue
+            } else {
+              for (let j = startArgsCommand; j < endArgsCommand + 1 && j < sintagma.size(); j++) {
+                if (j == k) continue // No comprova la commanda en sí mateixa
 
-            for (let j = startArgsCommand; j < endArgsCommand + 1 && j < sintagma.size(); j++) {
-              if (j == k) continue // No comprova la commanda en sí mateixa
+                const arg = sintagma.get(j)
+                const sstart = sintagma.start(j)
+                const send = sintagma.end(j)
 
-              const arg = sintagma.get(j)
-              const sstart = sintagma.start(j)
-              const send = sintagma.end(j)
+                if (
+                  commandDef.concatOn &&
+                  sintagma.get(j).command &&
+                  commandDef.concatOn.includes(sintagma.get(j).command)
+                )
+                  break // Stop checking if it's a concatOn command
 
-              if (commandDef.untilCommand && arg.command) break
-              if (rule.positionInSintagma !== undefined && rule.positionInSintagma !== k) continue
-              if (rule.position !== undefined && rule.position !== j - startArgsCommand) continue
-              if (rule.refused && !validType(arg.tag, rule.refused)) continue
-              if (rule.allowed && validType(arg.tag, rule.allowed)) continue
+                if (rule.positionInSintagma !== undefined && rule.positionInSintagma !== k) continue
+                if (rule.position !== undefined && rule.position !== j - startArgsCommand) continue
+                if (rule.refused && !validType(arg.tag, rule.refused)) continue
+                if (rule.allowed && validType(arg.tag, rule.allowed)) continue
 
-              const type = arg.couldBe ? 'command_' + arg.couldBe.command : arg.tag
-              errorsFound.push(new HHErrorType(word.text, rule.codeerror, sstart, send, type))
+                const type = arg.couldBe ? 'command_' + arg.couldBe.command : arg.tag
+                errorsFound.push(new HHErrorType(word.text, rule.codeerror, sstart, send, type))
+              }
             }
           }
         }

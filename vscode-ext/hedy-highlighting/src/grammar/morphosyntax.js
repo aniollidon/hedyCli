@@ -141,6 +141,38 @@ function detectBracedList(tokens) {
   return result
 }
 
+function detectUnquotedStrings(tokens) {
+  let result = []
+  let i = 0
+  while (i < tokens.length) {
+    if (
+      i + 1 < tokens.length &&
+      tokens[i].constant === 'string_unquoted' &&
+      tokens[i + 1].constant === 'string_unquoted'
+    ) {
+      let phrase = [tokens[i], tokens[i + 1]]
+      i = i + 2
+      while (i < tokens.length && tokens[i].constant === 'string_unquoted') {
+        phrase.push(tokens[i])
+        i++
+      }
+      result.push({
+        text: phrase.map(token => token.text).join(' '),
+        tag: 'constant_string_unquoted',
+        pos: phrase[0].pos,
+        end: phrase[phrase.length - 1].pos + phrase[phrase.length - 1].text.length,
+        type: 'constant',
+        constant: 'string_unquoted',
+        subphrase: phrase,
+      })
+    } else {
+      result.push(tokens[i])
+      i++
+    }
+  }
+  return result
+}
+
 function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, hasRange = false) {
   let result = []
   let i = 0
@@ -394,6 +426,7 @@ function detectMath(tokens) {
 }
 
 function detectMorpho(words, hasAtRandom, hasFunctions, hasRange) {
+  words = detectUnquotedStrings(words)
   words = detectBracedList(words)
   words = detectMath(words)
   words = detectFuctionUsages(words, hasAtRandom, hasFunctions, hasRange)

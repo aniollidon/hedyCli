@@ -29,6 +29,10 @@ class Sintagma {
     return this.words[0]
   }
 
+  last() {
+    return this.words[this.words.length - 1]
+  }
+
   size() {
     return this.words.length
   }

@@ -1,38 +1,5 @@
-animals = gossos, gats, pingüins
-for animal in animals
-    print "M'encanten els " animal
-    print "animal"
-    print 'animal' animal
-    print animal 'animal' "animal" "'animal" animal
-
-distances = 10, 20, 30, 40, 50, 60
-for distance in distances
-    forward distance
-
-ampolles = ampolles - 1 
-
-plat = hola
-plats = entrant, primer plat, postres, 2+2
-a = plat #Sí 
-a = plat at random #Sí
-a is plat at random #Sí  
-a = plat + 3 # Sí 
-a = plat - 3 # Sí
-a is plat * 3 # Sí
-a = plat - 3 # Sí
-b = plat, ss # No
-sss = dffdfd
-c is ask 'bla' # ddd 
-remove plat from plats # Sí
-remove plat bla from plats # no 
-add plat bla to plats # No
- 
-
-
-plats = primer plat, segon plat, postre 
-noms = Pere, Miquel
-for nom in noms
-    for plat in plats
-        menjar is ask nom ", què voldries de  " plat "?"
-        print nom " demana " menjar " com a " plat 
-
+a = j
+var is k, entorn hhh, 222, 444, k
+ll = 1,2,34
+a = 1- 2 * 4 + 5 -
+  

@@ -234,12 +234,12 @@ const specificHedyErrors = [
     highlight: 'definition',
     codeerror: 'hy-comma-list-needs-brackets',
   },
-  {
+  /*{
     commands: ['list_open'],
     levelStart: 16,
     hasAfter: /^[^\]]*$/g,
     codeerror: 'hy-list-open-needs-close',
-  },
+  },*/
   {
     commands: ['bracket_open_access'],
     levelStart: 16,
@@ -254,12 +254,12 @@ const specificHedyErrors = [
     highlight: 'line',
     codeerror: 'hy-bad-definition-for-is',
   },
-  {
+  /*{
     commands: ['bracket_open_access', 'bracket_open_definition'],
     levelStart: 16,
     hasAfter: /^[^\]]*$/g,
     codeerror: 'hy-bracket-open-needs-close',
-  },
+  },*/
 ]
 
 module.exports = specificHedyErrors

@@ -12,7 +12,7 @@ class Command {
 
     if (!this.commonErrors) this.commonErrors = []
 
-    if (!this.syntax) this.syntax = []
+    if (!this.arguments) this.arguments = []
 
     if (!this.name) this.name = this.text
   }
