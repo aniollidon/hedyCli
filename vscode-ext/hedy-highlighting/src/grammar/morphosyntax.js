@@ -87,8 +87,24 @@ function detectBracedList(tokens) {
   let i = 0
 
   while (i < tokens.length) {
-    // Detect list access
+    // Detect empty list
     if (
+      i + 1 < tokens.length &&
+      tokens[i].command &&
+      tokens[i].command.startsWith('bracket_open') &&
+      tokens[i + 1].command === 'bracket_close'
+    ) {
+      result.push({
+        text: '[]',
+        tag: 'list_empty',
+        pos: tokens[i].pos,
+        end: tokens[i + 1].pos + tokens[i + 1].text.length,
+        type: 'list_empty',
+      })
+      i = i + 2
+    }
+    // Detect list access
+    else if (
       i + 1 < tokens.length &&
       !tokens[i].command &&
       tokens[i + 1].command &&
@@ -247,7 +263,7 @@ function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, 
           nextargument = false
 
           if (i < tokens.length && tokens[i].text === ',') {
-            phrase.push(tokens[i], tokens[i])
+            phrase.push(tokens[i])
             i++
             nextargument = true
           }

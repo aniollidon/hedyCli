@@ -13,7 +13,7 @@ sleep 2
   
 lliata is  hola, ss, patata, at #ok  
 lliata is  hola, ask, patata #ok
-llista    is   print #ok  
+llist    is   print #ok  
 
 nom is ask "Bon dia com, es diu vosté?" #ok 
 nomç is ask "Bon dia com, es diu vosté?" #nok 
@@ -58,7 +58,7 @@ llista is _
 llista is hola, adeu, hola_4,
 print You enter the haunted house. 
 hola is 3+5*2*hlllll
-llista f is 5,5,5,5 
+llista f is 5,5,5,5  
 
 is hhh, 222  
 at random

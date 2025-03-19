@@ -195,7 +195,7 @@ const commandDefinition = [
       },
       {
         levelStart: 12,
-        allowed: ['$number', '$quoted', 'command_pressed'],
+        allowed: ['$number', '$quoted', 'command_pressed', '$boolean'],
         codeerror: 'hy-execting-number-string',
       },
     ],
@@ -207,7 +207,7 @@ const commandDefinition = [
     levelStart: 2,
     argumentsAfter: 1,
     concatOn: ['comma_list'],
-    hasBefore: /^[\p{L}_\d]+$/gu,
+    hasBefore: /^[\p{L}\d_]+ *(\[ *[\p{L}\d_]+ *\])?$/gu,
     arguments: [
       {
         levelEnd: 11,
@@ -238,7 +238,7 @@ const commandDefinition = [
       },
       {
         levelStart: 12,
-        allowed: ['$number', '$quoted'],
+        allowed: ['$number', '$quoted', '$boolean'],
         codeerror: 'hy-execting-number-string',
       },
     ],
@@ -250,7 +250,7 @@ const commandDefinition = [
     levelStart: 6,
     argumentsAfter: 1,
     concatOn: ['comma_list'],
-    hasBefore: /^[\p{L}_\d]+$/gu,
+    hasBefore: /^[\p{L}\d_]+ *(\[ *[\p{L}\d_]+ *\])?$/gu,
     arguments: [
       {
         levelEnd: 11,
@@ -300,7 +300,7 @@ const commandDefinition = [
     hasBefore: /\[/g,
     argumentsAfter: 1,
     argumentsBefore: 1,
-    concatOn: ['and', 'or'],
+    concatOn: ['comma_bracedlist', 'bracket_close'],
     arguments: [
       {
         refused: ['command_bracket_close'],
@@ -344,6 +344,10 @@ const commandDefinition = [
       {
         allowed: ['$number_integer'],
         codeerror: 'hy-execting-number-integer',
+      },
+      {
+        refused: ['math'],
+        codeerror: 'hy-warn-math-operation-limit',
       },
     ],
     hasBefore: /\brange/g,
@@ -685,7 +689,7 @@ const commandDefinition = [
     arguments: [
       {
         levelStart: 12,
-        allowed: ['$number', '$quoted'],
+        allowed: ['$number', '$quoted', '$boolean'],
         codeerror: 'hy-execting-number-string',
       },
       {
@@ -711,7 +715,7 @@ const commandDefinition = [
     arguments: [
       {
         levelStart: 12,
-        allowed: ['$number', '$quoted'],
+        allowed: ['$number', '$quoted', '$boolean'],
         refused: ['call'],
         codeerror: 'hy-execting-number-string',
       },
@@ -747,28 +751,16 @@ const commandDefinition = [
     ],
   },
   {
-    text: '[',
-    name: 'bracket_open_definition',
+    text: '[]',
+    name: 'list_empty',
     levelStart: 16,
-    hasBefore: /[\p{L}_\d]+( +is +| *= *)$/gu,
-    minArgumentsAfter: 1,
-    arguments: [
-      {
-        allowed: ['constant', 'command_comma', 'command_bracket_close'],
-        codeerror: 'hy-list-definition-types',
-      },
-      {
-        closedBy: 'bracket_close',
-        levelStart: 16,
-        codeerror: 'hy-bracket-open-needs-close',
-      },
-    ],
   },
   {
     text: '[',
     name: 'bracket_open_access',
     levelStart: 16,
-    argumentsAfter: 2,
+    argumentsAfter: 1,
+    closedBy: 'bracket_close',
     hasBefore: /[\p{L}_\d]+ *$/gu,
     arguments: [
       {
@@ -780,10 +772,19 @@ const commandDefinition = [
         position: 2,
         codeerror: 'hy-access-brackets-format-arguments',
       },
+    ],
+  },
+  {
+    text: '[',
+    name: 'bracket_open_definition',
+    levelStart: 16,
+    argumentsAfter: 1,
+    concatOn: ['comma_bracedlist'],
+    closedBy: 'bracket_close',
+    arguments: [
       {
-        closedBy: 'bracket_close',
-        levelStart: 16,
-        codeerror: 'hy-bracket-open-needs-close',
+        allowed: ['constant', 'command_comma', 'command_bracket_close'],
+        codeerror: 'hy-list-definition-types',
       },
     ],
   },

@@ -9,7 +9,7 @@ print bla monster_1 monster_2 monster_3
 monster_4 is ask monster 4? 
 print text #comentari
  
-# Tortuga 
+# Tortuga  
 forward 10 
 play C1  
 color red

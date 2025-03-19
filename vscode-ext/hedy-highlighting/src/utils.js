@@ -20,7 +20,7 @@ function separarParaules(codi) {
 
   while ((match = regex.exec(codi)) !== null) {
     const [_, cometesSimples, cometesDobles, paraula, numero, simbols] = match
-    const posicio = match.index // Posició inicial de la coincidència
+    let posicio = match.index // Posició inicial de la coincidència
 
     if (cometesSimples !== undefined) {
       paraules.push({ text: `'${cometesSimples}'`, pos: posicio }) // Text entre cometes simples
@@ -31,7 +31,12 @@ function separarParaules(codi) {
     } else if (numero !== undefined) {
       paraules.push({ text: numero, pos: posicio }) // Números enters o decimals
     } else if (simbols !== undefined) {
-      paraules.push({ text: simbols, pos: posicio }) // Seqüències de símbols consecutius
+      // Si els símbols inclouen [ ] : + - * / ( ), separa'ls individualment
+      const simbolsSeparats = simbols.split(/([\[\]:+\-*/()])/).filter(Boolean)
+      simbolsSeparats.forEach(simbol => {
+        paraules.push({ text: simbol, pos: posicio })
+        posicio += simbol.length
+      })
     }
   }
 

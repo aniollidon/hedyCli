@@ -3,20 +3,20 @@ if name != 'Hedy'
     print 'You are not Hedy'
 
 
-define calcula_preu_nou with quantitat, percentatge
+define calcula_preu_nou with quantitat, percentatge, j,jb
     percentatge2 = percentatge / 100
     descompte_quantitat = quantitat * percentatge
     return quantitat - descompte_quantitat
 
 preu_vell = ask "Quant hi ha a l'etiqueta de preu?" 
 descompte = ask "Amb quin percentatge de descompte?"
-  
- 
-quantitat = 4
+   
+   
+quantitat = 4 
 percentatge = 10
-print call calcula_preu_nou with quantitat, percentatge
+print call calcula_preu_nou with quantitat, 888, 888, 888
 
 preu_nou = call calcula_preu_nou with preu_vell, descompte
 print 'El nou preu és ' preu_nou ' euros'   
 
-call calcula_preu_nou with preu_vell, descompte  
+call calcula_preu_nou with preu_vell, descompte

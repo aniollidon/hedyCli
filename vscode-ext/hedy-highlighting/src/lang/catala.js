@@ -82,7 +82,7 @@ const errors = {
   },
   'hy-entity-out-of-scope': {
     message:
-      "La variable '[NAME]' s'està usant fora del seu bloc d'identació. La variable s'ha definit a la línia [LINE] que és fora del bloc actual.",
+      "La variable '[NAME]' s'està usant fora del seu bloc d'identació i pot no existir. La variable s'ha definit a la línia [LINE] que és fora del bloc actual.",
   },
   'hy-always-false': {
     message: 'La condició sempre és falsa i mai es compleix.',
@@ -201,7 +201,7 @@ const errors = {
     message: 'Al definir una funció no es poden repetir arguments ni utilitzar el nom de la mateixa funció.',
   },
   'hy-function-missing-argument': {
-    message: "La funció '[NAME]' espera [VALUE] arguments.",
+    message: "La funció '[NAME]' espera [EXPECTED] arguments, se n'han trobat [FOUND].",
   },
   'hy-function-unexpected-argument': {
     message: "La funció '[NAME]' només espera [VALUE] arguments.",
@@ -229,9 +229,17 @@ const errors = {
     message:
       'De moment no pots comparar operacions matemàtiques, és una bona idea, però encara no es pot. Guarda el resultat en una variable.',
   },
+  'hy-warn-math-operation-limit': {
+    message:
+      'De moment no pots limitar amb operacions matemàtiques, és una bona idea, però encara no es pot. Guarda el resultat en una variable.',
+  },
   'hy-warn-random-operation': {
     message:
       "De moment no pots fer operacions amb el resultat de 'at random', és una bona idea, però encara no es pot. Guarda el resultat en una variable.",
+  },
+  'hy-warn-access-set-operation': {
+    message:
+      'De moment no pots guardar directament dins una posició de la llista una operació, és una bona idea, però encara no es pot. Guarda el resultat en una variable i guarda-la posteriorment.',
   },
   'hy-random-usage': {
     message: "La comanda 'random' espera la comanda 'at' abans.",
@@ -267,7 +275,13 @@ const errors = {
     message: "La definició de 'for' necessita un 'in' enlloc de 'is'.",
   },
   'hy-bracket-open-needs-close': {
-    message: 'Falta tancar el claudàtor.',
+    message: "La comanda '[NAME]' espera que es tanqui el claudàtor.",
+  },
+  'hy-expecting-close': {
+    message: "La comanda '[NAME]' espera '[VALUE]' al final de línia.",
+  },
+  'hy-not-expecting-coma-final': {
+    message: 'No pot haver-hi una coma sola al final',
   },
 }
 
@@ -288,7 +302,13 @@ function type2text(type) {
     tipus = 'un color'
   } else if (type.startsWith('constant_note')) {
     tipus = 'una nota'
-  } else if (type.startsWith('entity_variable_list')) {
+  } else if (type.startsWith('constant_boolean')) {
+    tipus = 'un valor booleà'
+  } else if (type.startsWith('constant_blank')) {
+    tipus = 'un espai en blanc'
+  } else if (type.startsWith('list_empty')) {
+    tipus = 'una llista buida'
+  } else if (type.includes('list')) {
     tipus = 'una llista'
   } else if (type.startsWith('entity_function')) {
     tipus = 'un nom de funció'

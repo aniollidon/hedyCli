@@ -10,7 +10,7 @@ sleep 2
 
 nom is ask "Bon dia com, es diu vosté?"
  
-add hola to options
+add hola to options 
 remove hola from options
  
 variable is text dins una variable

@@ -21,7 +21,7 @@ color pink
 color black 
 color white
  
-# Errors  
+# Errors   
 print 'hola'
 print "hola" # kee
 print _ lglñ _ _ mkmk  # ?? ÉS UN ERROR

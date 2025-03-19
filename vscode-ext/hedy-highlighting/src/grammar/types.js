@@ -1,7 +1,9 @@
 const { entreCometes } = require('../utils')
 
-function detectTypeConstant(text, hasNumbers = true) {
+function detectTypeConstant(text, hasNumbers = true, hasBooleans = false) {
   const word = text.trim()
+
+  if (hasBooleans && (word === 'true' || word === 'false' || word === 'True' || word === 'False')) return 'boolean'
 
   // Si és un número
   if (hasNumbers && !isNaN(word) && !word.startsWith('.')) {
@@ -67,6 +69,14 @@ function validType(tag, list) {
         tag.startsWith('call_at_random') ||
         tag.startsWith('call_function_return') ||
         tag.startsWith('list_access')
+    } else if (list[i] === '$boolean') {
+      valid =
+        tag.includes('boolean') ||
+        tag.startsWith('entity_variable_value') ||
+        tag.startsWith('entity_parameter') ||
+        tag.startsWith('call_at_random') ||
+        tag.startsWith('call_function_return') ||
+        tag.startsWith('list_access')
     } else if (list[i] === '$quoted') {
       valid =
         tag.includes('string_quoted') ||
@@ -90,7 +100,7 @@ function validType(tag, list) {
   return false
 }
 
-function varDefinitionType(linetext, hasQuotes, hanNumbers, define_var_operator, entities) {
+function varDefinitionType(linetext, hasQuotes, hasBooleans, define_var_operator, entities) {
   const isList = enUnaLlista(linetext, linetext.length - 1, hasQuotes, define_var_operator)
   if (isList) return 'list'
   const despresIgual = define_var_operator.includes('=') ? linetext.indexOf('=') + 1 : -1
@@ -104,7 +114,7 @@ function varDefinitionType(linetext, hasQuotes, hanNumbers, define_var_operator,
   if (despres.match(/at random/)) return 'value_mixed'
   if (despres.match(/^ *call /)) return 'value_mixed'
 
-  return 'value_' + detectTypeConstant(despres)
+  return 'value_' + detectTypeConstant(despres, true, hasBooleans)
 }
 
 function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
@@ -114,6 +124,7 @@ function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
   const conteWith = text.indexOf('with')
   const conteCall = text.indexOf('call')
   let abansComa = abans.lastIndexOf(',')
+  let abansClaudator = Boolean(abans.match(/(is +|= *)\[/))
   let abansIgual = define_var_operator.includes('=') ? abans.lastIndexOf('=') : -1
   let abansIs = define_var_operator.includes('is') ? abans.lastIndexOf(' is ') : -1
 
@@ -128,7 +139,7 @@ function enUnaLlista(text, pos, hasQuotes, define_var_operator) {
       return false
   }
 
-  return (abansComa > 0 || despresComa > 0) && (abansIgual > 0 || abansIs > 0)
+  return (abansComa > 0 || despresComa > 0 || abansClaudator) && (abansIgual > 0 || abansIs > 0)
 }
 
 module.exports = {

@@ -21,6 +21,7 @@ class EntityDefinitions {
     this._level = level
     this._hasQuotes = level >= 4
     this._hasNumbers = level >= 6
+    this._hasBooleans = level >= 15
     this._hasScopes = level >= 8
     this._define_var_operator = level >= 6 ? 'is|=' : 'is'
     this._define_var_inline_bucle = level >= 7
@@ -101,7 +102,7 @@ class EntityDefinitions {
       const variableName = match[1]
       const startChar = match.index + match[0].indexOf(variableName)
 
-      const subtype = varDefinitionType(text, this._hasQuotes, this._hasNumbers, this._define_var_operator, this.names)
+      const subtype = varDefinitionType(text, this._hasQuotes, this._hasBooleans, this._define_var_operator, this.names)
 
       this.#setEntity(variableName, 'variable', scope, lineNumber, startChar, subtype)
 

@@ -61,6 +61,10 @@
       ]
     },
     {
+      "name": "constant.language.hedy15",
+      "match": "\\b(?:true|false|True|False)\\b"
+    },
+    {
       "name": "constant.numeric.hedy15",
       "match": "[0-9]+"
     },

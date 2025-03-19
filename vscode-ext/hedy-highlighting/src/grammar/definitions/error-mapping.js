@@ -20,9 +20,9 @@ const errorMapping = [
     to: 'hy-random-usage',
   },
   {
-    codeerror: 'hy-command-unexpected-argument',
+    codeerror: 'hy-expecting-close',
     on: ['['], // TODO hauria de ser bracket_open_access
-    to: 'hy-access-brackets-format-arguments',
+    to: 'hy-bracket-open-needs-close',
   },
 ]
 

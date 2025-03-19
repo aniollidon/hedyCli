@@ -254,12 +254,20 @@ const specificHedyErrors = [
     highlight: 'line',
     codeerror: 'hy-bad-definition-for-is',
   },
-  /*{
-    commands: ['bracket_open_access', 'bracket_open_definition'],
+  {
+    commands: ['variable_define_is', 'variable_define_equal'],
+    codeerror: 'hy-warn-access-set-operation',
     levelStart: 16,
-    hasAfter: /^[^\]]*$/g,
-    codeerror: 'hy-bracket-open-needs-close',
-  },*/
+    hasBefore: /\]/g,
+    hasAfter: /\+|-|\*|\//gu,
+    highlight: 'after_word',
+  },
+  {
+    commands: ['bracket_open_access', 'bracket_open_definition'],
+    codeerror: 'hy-not-expecting-coma-final',
+    hasAfter: /,(?= *$)|,(?= *\] *$)/g,
+    highlight: 'match_last',
+  },
 ]
 
 module.exports = specificHedyErrors

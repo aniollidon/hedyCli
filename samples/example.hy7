@@ -36,7 +36,7 @@ a=bla #comentari
 a =bla #comentari
 a= bla #comentari
     
-color red 
+color red  
 turn 90 
 clear
 sleep 2

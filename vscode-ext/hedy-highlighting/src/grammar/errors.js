@@ -193,6 +193,14 @@ const severityAndPriority = {
     severity: 'warning',
     priority: 20,
   },
+  'hy-warn-math-operation-limit': {
+    severity: 'warning',
+    priority: 20,
+  },
+  'hy-warn-access-set-operation': {
+    severity: 'warning',
+    priority: 20,
+  },
   'hy-after-needs-list': {
     severity: 'warning',
     priority: 50,
@@ -302,6 +310,14 @@ const severityAndPriority = {
     priority: 255,
   },
   'hy-bracket-open-needs-close': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-expecting-close': {
+    severity: 'error',
+    priority: 255,
+  },
+  'hy-not-expecting-coma-final': {
     severity: 'error',
     priority: 255,
   },

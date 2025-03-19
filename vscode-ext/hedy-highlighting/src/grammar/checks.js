@@ -25,6 +25,7 @@ class CheckHedy {
     this._usesCometesArreu = level >= 12
     this._decimals = level >= 12
     this._atrandom = level >= 3 && level <= 15
+    this._booleans = level >= 15
     this._range = level >= 11
     this._functions = level >= 12
     let beforeDef = '^'
@@ -265,7 +266,7 @@ class CheckHedy {
 
       if (words[i].type !== 'command') {
         const entity = this.entities.get(text)
-        const constant = detectTypeConstant(text)
+        const constant = detectTypeConstant(text, true, this._booleans)
 
         if (entity !== undefined) {
           words[i].type = 'entity_' + entity.type
@@ -326,7 +327,7 @@ class CheckHedy {
           if (commandDef.usesParameters) {
             if (k + 1 < sintagma.size() && sintagma.get(k + 1).entity && sintagma.get(k + 1).entity.params) {
               usesParameters = sintagma.get(k + 1).entity.params.length
-              argumentsAfter = [sintagma.get(k + 1).entity.params.length * 2 + 2] // call [NAME] with [PARAM], [PARAM] // 2*params -1 (params + commas) + 2 (name & with)
+              argumentsAfter = [usesParameters * 2 + 2] // call [NAME] with [PARAM], [PARAM] // 2*params -1 (params + commas) + 2 (name & with)
             }
           } else if (Array.isArray(commandDef.argumentsAfter)) argumentsAfter = commandDef.argumentsAfter
           else argumentsAfter = [commandDef.argumentsAfter]
@@ -341,15 +342,18 @@ class CheckHedy {
 
           endArgsCommand = endArgsMax
 
-          if (sintagma.size() <= endArgsMin) {
+          if (sintagma.size() < endArgsMin) {
             if (usesParameters)
               errorsFound.push(
-                new HHErrorVal(
+                new HHErrorVals(
                   sintagma.get(1).text,
                   'hy-function-missing-argument',
                   sintagma.start(1),
                   sintagma.end(1),
-                  usesParameters,
+                  {
+                    EXPECTED: usesParameters,
+                    FOUND: Math.round((sintagma.size() - 3) / 2),
+                  },
                 ),
               )
             else errorsFound.push(new HHErrorVal(word.text, 'hy-command-missing-argument', start, end, endArgsMin - k))
@@ -357,7 +361,10 @@ class CheckHedy {
 
           // Qualsevol element després dels necessaris són erronis
           for (let j = endArgsMax + 1; j < sintagma.size(); j++) {
-            if (
+            if (commandDef.closedBy && j == sintagma.size() - 1 && commandDef.closedBy === sintagma.get(j).command) {
+              sintagma.markUsed(j)
+              continue
+            } else if (
               commandDef.concatOn &&
               sintagma.get(j).command &&
               commandDef.concatOn.includes(sintagma.get(j).command)
@@ -384,6 +391,18 @@ class CheckHedy {
                   endArgsMax - k,
                 ),
               )
+          }
+
+          if (commandDef.closedBy && commandDef.closedBy !== sintagma.last().command) {
+            errorsFound.push(
+              new HHErrorVal(
+                word.text,
+                'hy-expecting-close',
+                sintagma.last().pos,
+                sintagma.sintagmaEnd(),
+                commandDef.closedBy,
+              ),
+            )
           }
         }
 

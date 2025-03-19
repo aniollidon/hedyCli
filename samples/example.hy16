@@ -1,17 +1,12 @@
-Mòduls = Entorn laboral, Xarxes, Operacions auxiliars, Matemàtiques, Educació física, Biologia, Anglès, Tutoria, Ciències socials
-MòdulsA = Entorn laboral, Operacions auxiliars, Tutoria
-MòdulsB = Matemàtiques, Biologia
-for Mòdul in Mòduls
-   print "Aquesta setmana a classe hem fet " Mòdul
-   if Mòdul in MòdulsA
-       print "L'Aniol n'és el professor"
-   if Mòdul = Xarxes
-       print "L'Àlex n'és el professor"
-   if Mòdul in MòdulsB
-       print "La Glòria n'és la professora"
-   if Mòdul = Educació física
-       print "En Pau n'és el professor"
-   if Mòdul = Anglès
-       print "L'Úrsula n'és la professora"
-   if Mòdul = Ciències socials
-       print "L'Anna n'és la professora
+ll = [7,9,2,1,2,8,3,3]
+len = 8
+out = []
+
+repeat len times
+    min = 999
+    for el in ll
+        if el < min
+            min = el
+    add min to out
+    remove min from ll
+print out 

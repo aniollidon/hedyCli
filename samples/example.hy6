@@ -37,14 +37,14 @@ aaa  = 5
 aaa is 5
 a is bla #comentari
 a = bla #comentari
-s a=bla #comentari
+s h = bla #comentari
 a =bla #comentari
 a= bla #comentari 
 a is hola #comentari 
 
 color red  dff gfggg  ggg  
 turn 90  
-clear
+clear 
 sleep 2
 print 4+4-3*2/1 'blabla' 4+4-3*2/1
 

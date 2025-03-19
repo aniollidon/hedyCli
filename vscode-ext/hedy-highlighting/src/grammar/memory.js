@@ -73,8 +73,8 @@ class Memory {
     return false
   }
 
-  getDefinedIdentation() {
-    return this._definedScopeIdentation
+  getDefinedIdentation(ifnotdef = 4) {
+    return this._definedScopeIdentation !== -1 ? this._definedScopeIdentation : ifnotdef
   }
 
   comprovaScope(identation) {

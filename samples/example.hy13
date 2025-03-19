@@ -53,7 +53,7 @@ define movie_recommendation with name
     if name is 'Pedro' or 'Gabriella'
         mood = ask 'What you in the mood for?'
         if mood is 'action'
-            recommended_movie = comedy_movies at random
+            recommended_movie = comedy_movies at random 
         if mood is 'romance'
             recommended_movie = romance_movies 
         if mood is 'comedy'

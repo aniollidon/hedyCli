@@ -65,6 +65,10 @@
       "match": "[0-9]+"
     },
     {
+      "name": "constant.language.hedy16",
+      "match": "\\b(?:true|false|True|False)\\b"
+    },
+    {
       "name": "keyword.command.hedy16",
       "match": "\\b(is|to|from|in|not|with|and|or)\\b|="
     },
