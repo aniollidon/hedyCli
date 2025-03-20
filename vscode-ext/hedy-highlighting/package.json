@@ -3,7 +3,7 @@
   "displayName": "Hedy",
   "icon": "img/logo.png",
   "description": "Hedy highlighting for Visual Studio Code, for all 17 levels of the language.",
-  "version": "0.0.7",
+  "version": "0.1.1",
   "main": "src/extension.js",
   "engines": {
     "vscode": "^1.94.0"
