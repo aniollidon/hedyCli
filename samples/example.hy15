@@ -25,7 +25,10 @@ l = 1,1
 b = range 3 to 3 
 
 
-if 2 >    
-    print 3
-else
-    print 4  
+if m > 
+    print 2
+
+print 3+
+
+if m>3 or 6>8
+    print "" 

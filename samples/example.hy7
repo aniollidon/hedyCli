@@ -37,7 +37,7 @@ a =bla #comentari
 a= bla #comentari
     
 color red  
-turn 90 
+turn 90  
 clear
 sleep 2
 print 4+4-3*2/1 'blabla' 4+4-3*2/1

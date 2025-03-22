@@ -70,7 +70,7 @@
     },
     {
       "name": "keyword.command.hedy17",
-      "match": "\\b(is|to|from|in|not|with|and|or)\\b|="
+      "match": "\\b(is|to|from|in|not|with|and|or)\\b|=|:"
     },
     {
       "include": "#maths"

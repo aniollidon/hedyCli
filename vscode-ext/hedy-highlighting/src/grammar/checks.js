@@ -15,6 +15,7 @@ class CheckHedy {
   constructor(level) {
     this.memory = new Memory()
     this.entities = new EntityDefinitions(level)
+    this.commandsSyntax = new hedyCommands(level)
     this.level = level
     this._usesCometesText = level > 3
     this._defineVarOp = level >= 6 ? 'is|=' : 'is'
@@ -152,7 +153,7 @@ class CheckHedy {
     errors = this._searchNotUsed(sintagma)
     if (errors.length > 0) errorsFound.push(...errors)
 
-    console.log('línia ' + (lineNumber + 1) + ':', sintagma)
+    //console.log('línia ' + (lineNumber + 1) + ':', sintagma)
 
     return errorsFound
   }
@@ -162,8 +163,7 @@ class CheckHedy {
     const positionPAE = words.findIndex(w => w.text === 'print' || w.text === 'ask' || w.text === 'echo')
 
     for (let k = 0; k < words.length; k++) {
-      for (let i = 0; i < hedyCommands.length; i++) {
-        const command = hedyCommands[i]
+      for (const command of this.commandsSyntax.getAll()) {
         let contextValid = true
 
         // Després de print, ask o echo tot és string i no comandes (exeptuant at random n3)
@@ -310,7 +310,7 @@ class CheckHedy {
       }
 
       if (word.command) {
-        const commandDef = hedyCommands.find(c => c.name === word.command)
+        const commandDef = this.commandsSyntax.getByName(word.command)
         let endArgsCommand = sintagma.size()
         let startArgsCommand = k
         if (!commandDef) continue
@@ -342,7 +342,7 @@ class CheckHedy {
 
           endArgsCommand = endArgsMax
 
-          if (sintagma.size() < endArgsMin) {
+          if (sintagma.size()-1 < endArgsMin) {
             if (usesParameters)
               errorsFound.push(
                 new HHErrorVals(
@@ -398,7 +398,7 @@ class CheckHedy {
               new HHErrorVal(
                 word.text,
                 'hy-expecting-close',
-                sintagma.last().pos,
+                sintagma.sintagmaEnd() - 1,
                 sintagma.sintagmaEnd(),
                 commandDef.closedBy,
               ),
@@ -439,6 +439,7 @@ class CheckHedy {
 
                 if (
                   commandDef.concatOn &&
+                  (j === 0 || !sintagma.get(j - 1).command) && // Can concat a command
                   sintagma.get(j).command &&
                   commandDef.concatOn.includes(sintagma.get(j).command)
                 )

@@ -24,6 +24,11 @@ const errorMapping = [
     on: ['['], // TODO hauria de ser bracket_open_access
     to: 'hy-bracket-open-needs-close',
   },
+  {
+    codeerror: 'hy-expecting-close',
+    on: ['if', 'else', 'elif', 'while', 'for'],
+    to: 'hy-missing-colon',
+  },
 ]
 
 module.exports = errorMapping

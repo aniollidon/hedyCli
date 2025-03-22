@@ -5,26 +5,26 @@ add new_word to words
 print 🧒 Say new_word, Hedy!
 print 🦜 words at random   
 
-gggg   dsadas eeeev
+gggg   dsadas eeeev      
 
 add hola to words
 remove hola from words  # Comentari
- 
+  
 words is squawk, Hedy  #comentari 
 monster_4 is ask What do you do? #comentari  
-nom is ask Bon dia com, es diu vosté? _  
+nom is ask Bon dia com, es diu vosté? _   
 
 # Errors 
 llista is hola, adeu, hola_4, words fff  
 nollista is hola #comentari
 print bb is hola
-print novariable at random fff # Hauria de tenir error 
+print bondia que tal jjjj novariable at random fff # Hauria de tenir error 
 
 is hhh, 222 
 at random eeee
 print _     
 
-var is ask 'bla'
+var is ask 'bla' 
 var is ask "bla,bla"
 
 var is el1, el2, el3  

@@ -394,6 +394,38 @@ function detectConditions(tokens) {
   return result
 }
 
+function detectNegatives(tokens) {
+  let result = []
+  let i = 0
+
+  while (i < tokens.length) {
+    // Cerca negatius
+    if (
+      i + 1 < tokens.length &&
+      tokens[i].text === '-' &&
+      tokens[i + 1].tag.startsWith('constant_number') &&
+      (i === 0 || tokens[i - 1].type === 'command')
+    ) {
+      let phrase = [tokens[i], tokens[i + 1]]
+      let pos = tokens[i].pos
+      i += 2
+      result.push({
+        text: '-' + phrase[1].text,
+        tag: phrase[1].tag + '_negative',
+        constant: phrase[1].constant + '_negative',
+        pos: pos,
+        end: phrase[phrase.length - 1].pos + phrase[phrase.length - 1].text.length,
+        type: 'constant',
+      })
+    } else {
+      result.push(tokens[i])
+      i++
+    }
+  }
+
+  return result
+}
+
 function detectMath(tokens) {
   let result = []
   let i = 0
@@ -442,6 +474,7 @@ function detectMath(tokens) {
 }
 
 function detectMorpho(words, hasAtRandom, hasFunctions, hasRange) {
+  words = detectNegatives(words)
   words = detectUnquotedStrings(words)
   words = detectBracedList(words)
   words = detectMath(words)

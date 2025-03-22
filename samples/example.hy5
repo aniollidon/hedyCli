@@ -43,7 +43,7 @@ else print 'The prince was eaten by a hippopotamus 😭'
  
 a is hola #comentari
  
-remove ddd from ddd
+remove ddd from ddd hhh
 add ppp to dsdsd
  
 aa is 2 + 2 #comentari
@@ -55,8 +55,8 @@ if A in llista print "hi és" else print "no"
 
 #Errors
 llista is _ 
-llista is hola, adeu, hola_4,
-print You enter the haunted house. 
+llista is hola, adeu, hola_4,  
+print You enter the haunted house.  
 hola is 3+5*2*hlllll
 llista f is 5,5,5,5  
 
@@ -82,3 +82,18 @@ else b is adeu
 print b
 print 
 a is ask
+ 
+
+print Benvinguts a la piscina Hedy!
+classe is ask "Llest per unir-te a la classe d'avui?"
+if classe sí
+print 'Fantàstic! t'uneixes a una classe
+print else "No t'uneixes a cap classe"
+descompte is "Tens un codi de descompte?"
+if descompte is sí
+descompte_resposta is ask "Quin és el teu codi de decompte?"
+decompte_codis = Senior4231, Estudiant8786, NouMembre6709
+if descompte_resposta is in decompte_codis
+print "Seran 3,50€" 
+"Seran 5,50€"
+print "Passi-ho bé nedant!"   

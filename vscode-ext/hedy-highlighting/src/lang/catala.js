@@ -18,7 +18,6 @@ const commands = {
   less_than_or_equal: 'menor o igual (<=)',
   compare_equalequal: 'igual (==)',
   not_equal: 'diferent (!=)',
-  random_braced: 'random',
 }
 
 const errors = {
@@ -110,7 +109,7 @@ const errors = {
       "La comanda '[NAME]' espera un número enter i després la comanda 'times'. S'ha trobat [TYPE] a la segona posició.",
   },
   'hy-execting-number-string': {
-    message: "La comanda '[NAME]' espera un número o text. S'ha trobat [TYPE].",
+    message: "La comanda '[NAME]' espera números o text. S'ha trobat [TYPE].",
   },
   'hy-execting-number-note': {
     message: "La comanda '[NAME]' espera una nota o un número. S'ha trobat [TYPE].",
@@ -283,6 +282,12 @@ const errors = {
   'hy-not-expecting-coma-final': {
     message: 'No pot haver-hi una coma sola al final',
   },
+  'hy-missing-colon': {
+    message: "La comanda '[NAME]' espera ':' al final de la línia.",
+  },
+  'hy-refused-command-for-print': {
+    message: 'Aquesta comanda no es pot imprimir directament.',
+  },
 }
 
 function command2text(command) {
@@ -322,6 +327,8 @@ function type2text(type) {
     tipus = 'una crida a una funció amb retorn'
   } else if (type.startsWith('call_function_void')) {
     tipus = 'una crida a una funció sense retorn'
+  } else if (type.startsWith('call_ask')) {
+    tipus = 'una pregunta amb ask'
   } else if (type.startsWith('call')) {
     tipus = 'una crida a una funció'
   } else if (type.startsWith('condition')) {

@@ -7,7 +7,7 @@ define calcula_preu_nou with quantitat, percentatge, j,jb
     percentatge2 = percentatge / 100
     descompte_quantitat = quantitat * percentatge
     return quantitat - descompte_quantitat
-
+ 
 preu_vell = ask "Quant hi ha a l'etiqueta de preu?" 
 descompte = ask "Amb quin percentatge de descompte?"
    

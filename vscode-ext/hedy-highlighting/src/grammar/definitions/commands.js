@@ -11,7 +11,9 @@
   + argumentsBefore: Número d'elements que ha de tenir la comanda abans (default = 0 | NO CHECK)
   + minArgumentsAfter: Número mínim d'elements que ha de tenir la comanda (default = NO CHECK)
   + minArgumentsBefore: Número mínim d'elements que ha de tenir la comanda abans (default = NO CHECK)
-  + concatOn: Quines comandes estàn permeses per concatenar accions. Per exemple 1 + 1 + 2 (default = NO CHECK)
+  + concatOn: Quines comandes estàn permeses per concatenar accions. Per exemple 1 + 1 + 2 [NO contigues](default = NO CHECK)
+  + usesParameters: Si la comanda fa servir paràmetres (default = false)
+  + closedBy: Commanda de tancament de la comanda (default = NO CHECK)
   + arguments: Array amb les restriccions de sintaxi dels elements de la comanda
     + codeerror: Codi de l'error (obligatori)
     + levelStart: Nivell on comença la restricció [inclusiu] (default =1)
@@ -19,8 +21,10 @@
     + allowed: Array amb els tags o grup de tags permesos (default = NO CHECK)
     + refused: Array amb els tags o grup de tags permesos (default = NO CHECK)
     + position: Posició de l'argument a comprovar (default =  NO CHECK)
-
-
+  + syntax: Array amb definicions de sintaxi anteriors que poden variar la sintaxi de la comanda en funció del nivell
+    + levelStart: Nivell on comença la restricció [inclusiu] (default =1)
+    + levelEnd: Nivell on acaba la restricció [inclusiu] (default =17)
+    + ... // Qualsevol restricció de sintaxi anterior
   Grups de tags
   + $number: Número + retorn de numeros (funcions, variables, etc.)
   + number_integer: Número enter + retorn de numeros (funcions, variables, etc.)
@@ -68,8 +72,17 @@ const commandDefinition = [
       },
       {
         levelStart: 4,
+        refused: ['constant_string_unquoted'],
+        codeerror: 'hy-text-must-be-quoted',
+      },
+      {
+        levelStart: 4,
         allowed: ['$number', '$quoted'],
         codeerror: 'hy-execting-number-string',
+      },
+      {
+        refused: ['command'],
+        codeerror: 'hy-refused-command-for-print',
       },
     ],
   },
@@ -156,13 +169,27 @@ const commandDefinition = [
         codeerror: 'hy-cant-print-list',
       },
       {
+        refused: ['entity_variable_list'],
+        levelStart: 16,
+        codeerror: 'hy-softwarn-print-list',
+      },
+      {
         refused: ['entity_function'],
         codeerror: 'hy-cant-print-function',
       },
       {
         levelStart: 4,
+        refused: ['constant_string_unquoted'],
+        codeerror: 'hy-text-must-be-quoted',
+      },
+      {
+        levelStart: 4,
         allowed: ['$number', '$quoted'],
         codeerror: 'hy-execting-number-string',
+      },
+      {
+        refused: ['command'],
+        codeerror: 'hy-refused-command-for-print',
       },
     ],
   },
@@ -186,6 +213,7 @@ const commandDefinition = [
     text: 'is',
     name: 'compare_is',
     levelStart: 2,
+    argumentsAfter: 1,
     hasBefore: /^(if|elif|while) .*/gu,
     arguments: [
       {
@@ -205,9 +233,18 @@ const commandDefinition = [
     text: 'is',
     name: 'variable_define_is',
     levelStart: 2,
-    argumentsAfter: 1,
     concatOn: ['comma_list'],
     hasBefore: /^[\p{L}\d_]+ *(\[ *[\p{L}\d_]+ *\])?$/gu,
+    syntax: [
+      {
+        minArgumentsAfter: 1,
+        levelEnd: 11,
+      },
+      {
+        argumentsAfter: 1,
+        levelStart: 12,
+      },
+    ],
     arguments: [
       {
         levelEnd: 11,
@@ -248,9 +285,18 @@ const commandDefinition = [
     text: '=',
     name: 'variable_define_equal',
     levelStart: 6,
-    argumentsAfter: 1,
     concatOn: ['comma_list'],
     hasBefore: /^[\p{L}\d_]+ *(\[ *[\p{L}\d_]+ *\])?$/gu,
+    syntax: [
+      {
+        minArgumentsAfter: 1,
+        levelEnd: 11,
+      },
+      {
+        argumentsAfter: 1,
+        levelStart: 12,
+      },
+    ],
     arguments: [
       {
         levelEnd: 11,
@@ -363,32 +409,35 @@ const commandDefinition = [
   {
     text: 'random',
     levelStart: 3,
-    levelEnd: 15,
-    argumentsAfter: 0,
-    hasBefore: /at\b/gu,
-  },
-  {
-    text: 'random',
-    name: 'random_braced',
-    levelStart: 16,
-    hasBefore: /\[ */gu,
-    hasAfter: / *\]/gu,
-    argumentsAfter: 1,
+    syntax: [
+      {
+        levelEnd: 15,
+        argumentsAfter: 0,
+        hasBefore: /at\b/gu,
+      },
+      {
+        levelStart: 16,
+        hasBefore: /\[ */gu,
+        hasAfter: / *\]/gu,
+        argumentsAfter: 1,
+      },
+    ],
   },
   {
     text: 'if',
     levelStart: 5,
     atBegining: true,
     argumentsAfter: 1,
+    syntax: [
+      {
+        closedBy: 'colon',
+        levelStart: 17,
+      },
+    ],
     arguments: [
       {
         allowed: ['condition'],
         codeerror: 'hy-execting-condition',
-      },
-      {
-        closedBy: 'command_colon',
-        levelStart: 17,
-        codeerror: 'hy-missing-colon',
       },
     ],
   },
@@ -397,11 +446,10 @@ const commandDefinition = [
     levelStart: 5,
     atBegining: true,
     argumentsAfter: 0,
-    arguments: [
+    syntax: [
       {
-        closedBy: 'command_colon',
+        closedBy: 'colon',
         levelStart: 17,
-        codeerror: 'hy-missing-colon',
       },
     ],
   },
@@ -482,10 +530,11 @@ const commandDefinition = [
         position: 2,
         codeerror: 'hy-execting-command-times',
       },
+    ],
+    syntax: [
       {
-        closedBy: 'command_colon',
+        closedBy: 'colon',
         levelStart: 17,
-        codeerror: 'hy-missing-colon',
       },
     ],
   },
@@ -504,6 +553,12 @@ const commandDefinition = [
       {
         allowed: ['condition'],
         codeerror: 'hy-execting-condition',
+      },
+    ],
+    syntax: [
+      {
+        closedBy: 'colon',
+        levelStart: 17,
       },
     ],
   },
@@ -527,10 +582,11 @@ const commandDefinition = [
         allowed: ['entity_function', 'entity_parameter', 'command_with', 'command_comma_argument'],
         codeerror: 'hy-execting-function-definition',
       },
+    ],
+    syntax: [
       {
-        closedBy: 'command_colon',
+        closedBy: 'colon',
         levelStart: 17,
-        codeerror: 'hy-missing-colon',
       },
     ],
   },
@@ -743,10 +799,11 @@ const commandDefinition = [
         allowed: ['condition'],
         codeerror: 'hy-execting-condition',
       },
+    ],
+    syntax: [
       {
-        closedBy: 'command_colon',
+        closedBy: 'colon',
         levelStart: 17,
-        codeerror: 'hy-missing-colon',
       },
     ],
   },
@@ -764,7 +821,7 @@ const commandDefinition = [
     hasBefore: /[\p{L}_\d]+ *$/gu,
     arguments: [
       {
-        allowed: ['$number_integer', 'command_bracket_close', 'command_random_braced'],
+        allowed: ['$number_integer', 'command_bracket_close', 'command_random'],
         codeerror: 'hy-list-access-types',
       },
       {
@@ -804,10 +861,11 @@ const commandDefinition = [
         allowed: ['condition'],
         codeerror: 'hy-execting-condition',
       },
+    ],
+    syntax: [
       {
-        closedBy: 'command_colon',
+        closedBy: 'colon',
         levelStart: 17,
-        codeerror: 'hy-missing-colon',
       },
     ],
   },
