@@ -2,7 +2,7 @@
 Instal·la l'[extensió](https://marketplace.visualstudio.com/items?itemName=aniollidon.hedy-highlighting)
 
 # Passos d'instal·lació HedyCli a linux (ordinadors alumnes)
-```
+```bash
 # Clonar repo i posar codi a lloc
 git clone https://github.com/aniollidon/hedyCli.git
 cd hedyCli
