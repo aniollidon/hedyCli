@@ -12,9 +12,9 @@ print text #comentari
 # Tortuga  
 forward 10  
 play C1  
-color red
+color red 
 turn 90  
- 
+  
 # Constants   
 a is hola 
 b is 2
