@@ -1,5 +1,5 @@
 # Extensió VSCODE
-Innstal·la l'[extensió](https://marketplace.visualstudio.com/items?itemName=aniollidon.hedy-highlighting)
+Instal·la l'[extensió](https://marketplace.visualstudio.com/items?itemName=aniollidon.hedy-highlighting)
 
 # Passos d'instal·lació HedyCli a linux (ordinadors alumnes)
 ```
