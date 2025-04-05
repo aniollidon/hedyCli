@@ -38,7 +38,7 @@ forward 10 10 # Només ha d'acceptar un parametre?
 turn left left # Només ha d'acceptar un paràmetre
 
 # Sense arguments 
-color 
+color  
 turn
 forward
 play

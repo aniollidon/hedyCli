@@ -9,4 +9,4 @@ repeat len times
             min = el
     add min to out
     remove min from ll
-print out 
+print out  

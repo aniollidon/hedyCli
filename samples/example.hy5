@@ -79,7 +79,7 @@ a is ask "hola"
 if a is "hola" b is hola  
 else b is adeu 
 
-print b
+print b 
 print 
 a is ask
  

@@ -3,118 +3,209 @@
   "displayName": "Hedy",
   "icon": "img/logo.png",
   "description": "Hedy highlighting for Visual Studio Code, for all 17 levels of the language.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "src/extension.js",
   "engines": {
     "vscode": "^1.94.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aniollidon/hedyCli.git"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
   "categories": [
     "Programming Languages"
   ],
   "contributes": {
     "languages": [
       {
-      "id": "hedy1",
-      "aliases": ["hedy1", "Hedy1"],
-      "extensions": [".hy1"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy2",
-      "aliases": ["hedy2", "Hedy2"],
-      "extensions": [".hy2"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy3",
-      "aliases": ["hedy3", "Hedy3"],
-      "extensions": [".hy3"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy4",
-      "aliases": ["hedy4", "Hedy4"],
-      "extensions": [".hy4"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy5",
-      "aliases": ["hedy5", "Hedy5"],
-      "extensions": [".hy5"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy6",
-      "aliases": ["hedy6", "Hedy6"],
-      "extensions": [".hy6"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy7",
-      "aliases": ["hedy7", "Hedy7"],
-      "extensions": [".hy7"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy8",
-      "aliases": ["hedy8", "Hedy8"],
-      "extensions": [".hy8"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy9",
-      "aliases": ["hedy9", "Hedy9"],
-      "extensions": [".hy9"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy10",
-      "aliases": ["hedy10", "Hedy10"],
-      "extensions": [".hy10"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy11",
-      "aliases": ["hedy11", "Hedy11"],
-      "extensions": [".hy11"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy12",
-      "aliases": ["hedy12", "Hedy12"],
-      "extensions": [".hy12"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy13",
-      "aliases": ["hedy13", "Hedy13"],
-      "extensions": [".hy13"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy14",
-      "aliases": ["hedy14", "Hedy14"],
-      "extensions": [".hy14"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy15",
-      "aliases": ["hedy15", "Hedy15"],
-      "extensions": [".hy15"],
-      "configuration": "./language-configuration.json"
-    },
-    {
-      "id": "hedy16",
-      "aliases": ["hedy16", "Hedy16"],
-      "extensions": [".hy16"],
-      "configuration": "./language-configuration.after16.json"
-    },
-    {
-      "id": "hedy17",
-      "aliases": ["hedy17", "Hedy17"],
-      "extensions": [".hy17"],
-      "configuration": "./language-configuration.after16.json"
-    }],
+        "id": "hedy1",
+        "aliases": [
+          "hedy1",
+          "Hedy1"
+        ],
+        "extensions": [
+          ".hy1"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy2",
+        "aliases": [
+          "hedy2",
+          "Hedy2"
+        ],
+        "extensions": [
+          ".hy2"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy3",
+        "aliases": [
+          "hedy3",
+          "Hedy3"
+        ],
+        "extensions": [
+          ".hy3"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy4",
+        "aliases": [
+          "hedy4",
+          "Hedy4"
+        ],
+        "extensions": [
+          ".hy4"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy5",
+        "aliases": [
+          "hedy5",
+          "Hedy5"
+        ],
+        "extensions": [
+          ".hy5"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy6",
+        "aliases": [
+          "hedy6",
+          "Hedy6"
+        ],
+        "extensions": [
+          ".hy6"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy7",
+        "aliases": [
+          "hedy7",
+          "Hedy7"
+        ],
+        "extensions": [
+          ".hy7"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy8",
+        "aliases": [
+          "hedy8",
+          "Hedy8"
+        ],
+        "extensions": [
+          ".hy8"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy9",
+        "aliases": [
+          "hedy9",
+          "Hedy9"
+        ],
+        "extensions": [
+          ".hy9"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy10",
+        "aliases": [
+          "hedy10",
+          "Hedy10"
+        ],
+        "extensions": [
+          ".hy10"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy11",
+        "aliases": [
+          "hedy11",
+          "Hedy11"
+        ],
+        "extensions": [
+          ".hy11"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy12",
+        "aliases": [
+          "hedy12",
+          "Hedy12"
+        ],
+        "extensions": [
+          ".hy12"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy13",
+        "aliases": [
+          "hedy13",
+          "Hedy13"
+        ],
+        "extensions": [
+          ".hy13"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy14",
+        "aliases": [
+          "hedy14",
+          "Hedy14"
+        ],
+        "extensions": [
+          ".hy14"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy15",
+        "aliases": [
+          "hedy15",
+          "Hedy15"
+        ],
+        "extensions": [
+          ".hy15"
+        ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "hedy16",
+        "aliases": [
+          "hedy16",
+          "Hedy16"
+        ],
+        "extensions": [
+          ".hy16"
+        ],
+        "configuration": "./language-configuration.after16.json"
+      },
+      {
+        "id": "hedy17",
+        "aliases": [
+          "hedy17",
+          "Hedy17"
+        ],
+        "extensions": [
+          ".hy17"
+        ],
+        "configuration": "./language-configuration.after16.json"
+      }
+    ],
     "grammars": [
       {
         "language": "hedy1",
