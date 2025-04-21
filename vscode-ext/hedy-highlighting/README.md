@@ -9,6 +9,9 @@ more complex syntax and additional concepts.
 
 Hedy is maintained by the Hedy Foundation (Stichting Hedy).
 
+This extension is maintained by aniollidon who is not related with Hedy team apart from a great admiration for the work
+they have done.
+
 ## This extension
 
 This extension adds error highlighting and language support for Hedy programming language on Visual Studio Code. It

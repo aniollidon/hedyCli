@@ -12,11 +12,15 @@ preu_vell = ask "Quant hi ha a l'etiqueta de preu?"
 descompte = ask "Amb quin percentatge de descompte?"
    
    
-quantitat = 4 
+quantitat = 4  
 percentatge = 10
-print call calcula_preu_nou with quantitat, 888, 888, 888
+print call calcula_preu_nou with quantitat, 888, 888, 888 
 
 preu_nou = call calcula_preu_nou with preu_vell, descompte
-print 'El nou preu és ' preu_nou ' euros'   
+print 'El nou preu és ' preu_nou ' euros'  
+ll = 2,7
+l = ll at random
 
-call calcula_preu_nou with preu_vell, descompte
+g = call calcula_preu_nou with ll at random , 7, 9+9, 0
+
+

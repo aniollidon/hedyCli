@@ -11,7 +11,7 @@ else
 print "hola with hola"
  
 define song with place, place2
-    print place2  
+    print place2 
     print 'My Bonnie is over the ' place 
  
 call song with 'ocean' , 6 
@@ -26,7 +26,7 @@ define linia_1 with nota_1, nota_2, nota_3
     play D4 
     play E4
     play _
-    play _
+    play _ 
     play _
 
 prova is "a"

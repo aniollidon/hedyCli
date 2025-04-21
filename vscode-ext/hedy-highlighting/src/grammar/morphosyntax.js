@@ -189,7 +189,7 @@ function detectUnquotedStrings(tokens) {
   return result
 }
 
-function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, hasRange = false) {
+function detectLanguageFunctions(tokens, hasAtRandom = false, hasRange = false) {
   let result = []
   let i = 0
 
@@ -235,9 +235,22 @@ function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, 
         subphrase: phrase,
       })
       i += move
+    } else {
+      result.push(tokens[i])
+      i++
     }
+  }
+
+  return result
+}
+
+function detectFuctionUsages(tokens) {
+  let result = []
+  let i = 0
+
+  while (i < tokens.length) {
     // Function calls
-    else if (hasFunctions && tokens[i].command === 'call') {
+    if (tokens[i].command === 'call') {
       const pos = tokens[i].pos
       const phrase = [tokens[i]]
       i++
@@ -253,11 +266,7 @@ function detectFuctionUsages(tokens, hasAtRandom = false, hasFunctions = false, 
         i++
 
         let nextargument = true
-        while (
-          i < tokens.length &&
-          nextargument &&
-          (tokens[i].tag.startsWith('entity_variable') || tokens[i].tag.startsWith('constant'))
-        ) {
+        while (i < tokens.length && nextargument && !tokens[i].command) {
           phrase.push(tokens[i])
           i++
           nextargument = false
@@ -478,7 +487,8 @@ function detectMorpho(words, hasAtRandom, hasFunctions, hasRange) {
   words = detectUnquotedStrings(words)
   words = detectBracedList(words)
   words = detectMath(words)
-  words = detectFuctionUsages(words, hasAtRandom, hasFunctions, hasRange)
+  words = detectLanguageFunctions(words, hasAtRandom, hasRange)
+  if (hasFunctions) words = detectFuctionUsages(words)
   words = detectConditions(words)
   words = detectAndOr(words)
   words = detectPrintUsages(words)

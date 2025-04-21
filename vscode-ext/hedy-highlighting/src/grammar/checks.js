@@ -153,7 +153,7 @@ class CheckHedy {
     errors = this._searchNotUsed(sintagma)
     if (errors.length > 0) errorsFound.push(...errors)
 
-    //console.log('línia ' + (lineNumber + 1) + ':', sintagma)
+    console.log('línia ' + (lineNumber + 1) + ':', sintagma)
 
     return errorsFound
   }
@@ -327,7 +327,7 @@ class CheckHedy {
           if (commandDef.usesParameters) {
             if (k + 1 < sintagma.size() && sintagma.get(k + 1).entity && sintagma.get(k + 1).entity.params) {
               usesParameters = sintagma.get(k + 1).entity.params.length
-              argumentsAfter = [usesParameters * 2 + 2] // call [NAME] with [PARAM], [PARAM] // 2*params -1 (params + commas) + 2 (name & with)
+              argumentsAfter = [usesParameters * 2 + 1] // call [NAME] with [PARAM], [PARAM] // 2*params -1 (params + commas) + 2 (name & with)
             }
           } else if (Array.isArray(commandDef.argumentsAfter)) argumentsAfter = commandDef.argumentsAfter
           else argumentsAfter = [commandDef.argumentsAfter]
@@ -342,7 +342,7 @@ class CheckHedy {
 
           endArgsCommand = endArgsMax
 
-          if (sintagma.size()-1 < endArgsMin) {
+          if (sintagma.size() - 1 < endArgsMin) {
             if (usesParameters)
               errorsFound.push(
                 new HHErrorVals(
