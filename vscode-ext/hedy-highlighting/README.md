@@ -19,11 +19,9 @@ supports the 17 levels of the language, leaving aside level 18, as it is fully c
 automatically detected from file extensions (_.hy1, _.hy2, ... \*.hy17)
 
 - ⚠️ This extension only supports English keywords.
-- ⚠️ Errors will be provided by default in Catalan, an English translation is avaiable at
-  [settings](command:workbench.action.openSettings?%22@ext:aniollidon.hedy-highlighting%22).
+- ⚠️ Errors will be provided by default in Catalan, an English translation is avaiable at settings.
 
 ## Settings
 
-At extension [settings](command:workbench.action.openSettings?%22@ext:aniollidon.hedy-highlighting%22) you will be able
-to change the language. Also you can disable error underlining and variable tracking, leaving just the syntax
-highlighting.
+At extension settings you will be able to change the language. Also you can disable error underlining and variable
+tracking, leaving just the syntax highlighting.
