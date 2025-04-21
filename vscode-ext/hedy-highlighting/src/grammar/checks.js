@@ -153,7 +153,7 @@ class CheckHedy {
     errors = this._searchNotUsed(sintagma)
     if (errors.length > 0) errorsFound.push(...errors)
 
-    console.log('línia ' + (lineNumber + 1) + ':', sintagma)
+    //console.log('línia ' + (lineNumber + 1) + ':', sintagma)
 
     return errorsFound
   }
