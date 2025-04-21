@@ -14,7 +14,7 @@ define song with place, place2
     print place2  
     print 'My Bonnie is over the ' place 
  
-call song with 'ocean' 
+call song with 'ocean' , 6 
 call song with 'sea' 
 call song with 'ocean'
 
@@ -30,7 +30,7 @@ define linia_1 with nota_1, nota_2, nota_3
     play _
 
 prova is "a"
-call linia_1 with 29, 31, 30, prova
+call linia_1 with 29, 31, 30, prova 
 call linia_1 with 29, 28, 0
 call linia_1 with 32, 31, 30
 
@@ -63,14 +63,14 @@ define movie_recommendation with name
 
 name = ask 'Who is watching?'
 recommendation = ask 'Would you like a recommendation?'
-if recommendation is 'yes'
+if recommendation is 'yes' 
     call movie_recommendation with name
-else
-    print 'No problem!'
-
+else   
+    print 'No problem!' 
+ 
 # Errors 
-if recommendation == recommendation
-    print 'No problem!'
+if recommendation == recommendation   
+    print 'No problem!'  
 if recommendation is recommendation 
     print 'No problem!'
 if recommendation = recommendation

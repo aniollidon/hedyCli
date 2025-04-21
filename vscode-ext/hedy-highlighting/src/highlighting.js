@@ -4,6 +4,7 @@ const { EntityDefinitions } = require('./grammar/entities')
 const tokenTypes = ['function', 'variable', 'parameter']
 const tokenModifiers = ['declaration', 'use']
 const legend = new vscode.SemanticTokensLegend(tokenTypes, tokenModifiers)
+const disposables = []
 
 class Provider {
   constructor(level) {
@@ -38,14 +39,22 @@ class Provider {
 
 function activate() {
   for (let level = 2; level < 18; level++) {
-    vscode.languages.registerDocumentSemanticTokensProvider(
+    const disposable = vscode.languages.registerDocumentSemanticTokensProvider(
       { language: `hedy${level}`, scheme: 'file' },
       new Provider(level),
       legend,
     )
+    disposables.push(disposable)
+  }
+}
+
+function deactivate() {
+  for (const disposable of disposables) {
+    disposable.dispose()
   }
 }
 
 module.exports = {
   activate,
+  deactivate,
 }

@@ -6,4 +6,4 @@ for nombre in nombres
     print nombre ' pertenece a ' casas at random
     print nombre ' es mejor en ' asignaturas at random
     print nombre ' su gran miedo es ' miedos at random
- 
+    

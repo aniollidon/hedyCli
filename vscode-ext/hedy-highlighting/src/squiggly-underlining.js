@@ -1,5 +1,6 @@
 const vscode = require('vscode')
 const { CheckHedy } = require('./grammar/checks')
+const disposables = []
 
 function onChangeHedyCode(lines, hedyLevel, diagnosticCollection, document) {
   const diagnostics = []
@@ -112,15 +113,16 @@ class QuickFixCodeActionProvider {
 
 function activate() {
   for (let level = 1; level < 18; level++) {
-    vscode.languages.registerCodeActionsProvider(
+    const codeActProvDisposable = vscode.languages.registerCodeActionsProvider(
       { language: `hedy${level}`, scheme: 'file' },
       new QuickFixCodeActionProvider(level),
     )
+    disposables.push(codeActProvDisposable)
   }
 
   let diagnosticCollection = vscode.languages.createDiagnosticCollection('hedy_errors')
 
-  vscode.workspace.onDidChangeTextDocument(event => {
+  const onTextChangeDisposable = vscode.workspace.onDidChangeTextDocument(event => {
     if (!event.document.languageId.startsWith('hedy')) return
     if (event.contentChanges.length === 0) return
     const hedyLevel = parseInt(event.document.languageId.replace('hedy', ''))
@@ -134,8 +136,18 @@ function activate() {
       throw error
     }
   })
+
+  disposables.push(onTextChangeDisposable)
+  disposables.push(diagnosticCollection)
+}
+
+function deactivate() {
+  disposables.forEach(disposable => {
+    disposable.dispose()
+  })
 }
 
 module.exports = {
   activate,
+  deactivate,
 }

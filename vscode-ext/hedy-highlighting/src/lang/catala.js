@@ -1,3 +1,7 @@
+const texts = {
+  reloading: "S'està reiniciant l'extensió hedy-highlighting...",
+}
+
 const commands = {
   compare_is: 'is (comparació)',
   variable_define_is: 'is (definició de variable)',
@@ -352,4 +356,10 @@ function error2text(errorcode) {
   if (!res.messageZero) res.messageZero = res.message
   return res
 }
-module.exports = { command2text, type2text, error2text }
+
+function getText(code) {
+  if (texts[code]) return texts[code]
+  return code
+}
+
+module.exports = { command2text, type2text, error2text, getText }

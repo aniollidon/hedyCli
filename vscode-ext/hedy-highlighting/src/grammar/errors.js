@@ -1,4 +1,4 @@
-const lang = require('../lang/catala.js')
+const lang = require('../lang/lang.js')
 
 const severityAndPriority = {
   'hy-type-context': { severity: 'error', priority: 0 },
@@ -166,6 +166,7 @@ class HHErrorType extends HHError {
 
   _process_messsage(message) {
     message = message.replace('[TYPE]', lang.type2text(this.type))
+    message = message.replace('[LOWERTYPE]', lang.type2text(this.type).toLowerCase())
     message = super._process_messsage(message)
     return message
   }
