@@ -322,6 +322,29 @@
           "description": "Habilitar o deshabilitar el seguiment de variables."
         }
       }
-    }
+    },
+    "commands": [
+      {
+        "command": "hedy.showPreviewToSide",
+        "title": "View Hedy Preview",
+        "category": "Hedy",
+        "icon": "$(open-preview)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "hedy.showPreviewToSide",
+          "when": "resourceLangId =~ /hedy.*/",
+          "group": "navigation"
+        }
+      ]
+    },
+    "commandPalette": [
+      {
+        "command": "hedy.showPreviewToSide",
+        "when": "resourceLangId =~ /hedy.*/"
+      }
+    ]
   }
 }
