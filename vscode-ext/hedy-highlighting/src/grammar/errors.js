@@ -53,6 +53,7 @@ const severityAndPriority = {
   'hy-warn-storing-condition': { severity: 'warning', priority: 20 },
   'hy-warn-math-operation-compare': { severity: 'warning', priority: 20 },
   'hy-warn-math-operation-limit': { severity: 'warning', priority: 20 },
+  'hy-warn-or-and-exclusive-condition': { severity: 'warning', priority: 20 },
   'hy-warn-access-set-operation': { severity: 'warning', priority: 20 },
   'hy-after-needs-list': { severity: 'warning', priority: 50 },
   'hy-before-needs-list': { severity: 'warning', priority: 50 },

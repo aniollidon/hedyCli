@@ -292,6 +292,10 @@ const errors = {
   'hy-refused-command-for-print': {
     message: 'Aquesta comanda no es pot imprimir directament.',
   },
+  'hy-warn-or-and-exclusive-condition': {
+    message:
+      "Tot i que és una bona idea, encara no es poden fer servir alhora 'or' i 'and' en una mateixa condició. Fes servir més d'un 'if'.",
+  },
 }
 
 function command2text(command) {

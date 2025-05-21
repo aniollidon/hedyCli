@@ -268,6 +268,19 @@ const specificHedyErrors = [
     hasAfter: /,(?= *$)|,(?= *\] *$)/g,
     highlight: 'match_last',
   },
+
+  {
+    commands: ['or'],
+    codeerror: 'hy-warn-or-and-exclusive-condition',
+    hasAfter: /\band\b/g,
+    highlight: 'line',
+  },
+  {
+    commands: ['and'],
+    codeerror: 'hy-warn-or-and-exclusive-condition',
+    hasAfter: /\bor\b/g,
+    highlight: 'line',
+  },
 ]
 
 module.exports = specificHedyErrors

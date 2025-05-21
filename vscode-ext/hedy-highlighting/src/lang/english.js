@@ -291,6 +291,10 @@ const errors = {
   'hy-refused-command-for-print': {
     message: 'This command cannot be printed directly.',
   },
+  'hy-warn-or-and-exclusive-condition': {
+    message:
+      "Currently you cannot use 'or' and 'and' in the same condition, it's a good idea, but not yet possible. You could use another 'if' instead.",
+  },
 }
 
 function command2text(command) {
