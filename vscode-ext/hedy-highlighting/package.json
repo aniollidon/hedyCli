@@ -4,7 +4,7 @@
   "publisher": "aniollidon",
   "icon": "img/logo.png",
   "description": "Hedy highlighting for Visual Studio Code, for all 17 levels of the language.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "main": "src/extension.js",
   "engines": {
     "vscode": "^1.94.0"
