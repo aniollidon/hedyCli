@@ -9,7 +9,7 @@ more complex syntax and additional concepts.
 
 Hedy is maintained by the Hedy Foundation (Stichting Hedy).
 
-This extension is maintained by aniollidon who is not related with Hedy team apart from a great admiration for the work
+This extension is maintained by aniollidon who is not related with Hedy team, apart from a great admiration for the work
 they have done.
 
 ## This extension
@@ -19,18 +19,17 @@ supports the 17 levels of the language, leaving aside level 18, as it is fully c
 automatically detected from file extensions (_.hy1, _.hy2, ... \*.hy17)
 
 - ⚠️ This extension only supports English keywords.
-- ⚠️ Errors will be provided by default in Catalan, an English translation is available  at settings.
+- ⚠️ Errors will be provided by default in Catalan, an English translation is available at settings.
 
 ### Extension Usage
+
 First create a file with .hy\[LEVEL\] extension. VS Code will highlight and correct your code.
 
-+ You can execute your code with your command line, installing [hedyCli](https://github.com/aniollidon/hedyCli).
+- You can execute your code with your command line, installing [hedyCli](https://github.com/aniollidon/hedyCli).
 
-+ You can also play with your code at [hedy.org](hedy.org)
+- You can also play with your code at [hedy.org](hedy.org)
 
-+ Or you can preview your Hedy code by clicking preview button that will appear on the right corner.
-
-
+- Or you can preview your Hedy code by clicking preview button that will appear on the right corner.
 
 ## Settings
 
