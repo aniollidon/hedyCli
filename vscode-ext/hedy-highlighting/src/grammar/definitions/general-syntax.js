@@ -43,7 +43,7 @@ const hedyGeneralSyntax = [
     subphrase: 0,
     levelStart: 14,
     codeerror: 'hy-function-return-unused',
-  },
+  }
 ]
 
 module.exports = hedyGeneralSyntax

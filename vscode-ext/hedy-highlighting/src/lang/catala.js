@@ -296,6 +296,9 @@ const errors = {
     message:
       "Tot i que és una bona idea, encara no es poden fer servir alhora 'or' i 'and' en una mateixa condició. Fes servir més d'un 'if'.",
   },
+  'hy-string-must-end-with-quotes': {
+    message: "S'ha obert unes cometes però no s'han tancat.",
+  },
 }
 
 function command2text(command) {

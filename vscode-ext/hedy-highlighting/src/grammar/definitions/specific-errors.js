@@ -268,7 +268,6 @@ const specificHedyErrors = [
     hasAfter: /,(?= *$)|,(?= *\] *$)/g,
     highlight: 'match_last',
   },
-
   {
     commands: ['or'],
     codeerror: 'hy-warn-or-and-exclusive-condition',
@@ -281,6 +280,12 @@ const specificHedyErrors = [
     hasAfter: /\bor\b/g,
     highlight: 'line',
   },
+  {
+    tags: ["constant_string_quoted"],
+    match: /^(['"])(?!.*\1).*/gu,
+    codeerror: 'hy-string-must-end-with-quotes',
+    highlight: 'word',
+  }
 ]
 
 module.exports = specificHedyErrors

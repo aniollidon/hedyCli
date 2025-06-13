@@ -4,7 +4,7 @@ const severityAndPriority = {
   'hy-type-context': { severity: 'error', priority: 0 },
   'hy-recomended-equal': { severity: 'info', priority: 0 },
   'hy-recomended-equalequal': { severity: 'info', priority: 0 },
-  'hy-entity-changes-content-type': { severity: 'warning', priority: 0 },
+  'hy-entity-changes-content-type': { severity: 'info', priority: 0 },
   'hy-lines-must-start-with': { severity: 'error', priority: 1 },
   'hy-else-elif-needs-if': { severity: 'error', priority: 1 },
   'hy-execting-number-string': { severity: 'error', priority: 2 },
@@ -84,6 +84,7 @@ const severityAndPriority = {
   'hy-not-expecting-coma-final': { severity: 'error', priority: 254 },
   'hy-missing-colon': { severity: 'error', priority: 254 },
   'hy-blanks-not-allowed': { severity: 'error', priority: 255 },
+  'hy-string-must-end-with-quotes': { severity: 'error', priority: 255 },
 }
 
 class HHError {

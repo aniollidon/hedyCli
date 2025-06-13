@@ -109,7 +109,9 @@ function varDefinitionType(linetext, hasQuotes, hasBooleans, define_var_operator
   const despres = linetext.substring(pos, linetext.length).trim()
 
   if (despres.match(/\+|-|\*|\//)) return 'value_mixed'
-  if (entities[despres.trim()]) return 'value_mixed'
+  if (entities[despres.trim()]) {
+    return entities[despres.trim()].subtype || 'value_mixed'
+  }
   if (despres.match(/^ *ask /)) return 'value_mixed'
   if (despres.match(/at random/)) return 'value_mixed'
   if (despres.match(/^ *call /)) return 'value_mixed'

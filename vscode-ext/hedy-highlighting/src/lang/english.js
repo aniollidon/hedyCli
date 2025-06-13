@@ -295,6 +295,9 @@ const errors = {
     message:
       "Currently you cannot use 'or' and 'and' in the same condition, it's a good idea, but not yet possible. You could use another 'if' instead.",
   },
+  'hy-string-must-end-with-quotes': {
+    message: 'Quotes have been opened but not closed.',
+  },
 }
 
 function command2text(command) {

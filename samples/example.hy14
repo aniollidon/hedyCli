@@ -24,3 +24,4 @@ l = ll at random
 g = call calcula_preu_nou with ll at random , 7, 9+9, 0
 
 
+call calcula_preu_nou with preu_vell, descompte
