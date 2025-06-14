@@ -1,5 +1,10 @@
 const texts = {
   reloading: "S'està reiniciant l'extensió hedy-highlighting...",
+  copilot_disable_question: 'Vols desactivar GitHub Copilot per als fitxers Hedy?',
+  copilot_disabled: 'GitHub Copilot desactivat per als fitxers Hedy',
+  copilot_error: 'Error al configurar GitHub Copilot: ',
+  yes: 'Sí',
+  no: 'No'
 }
 
 const commands = {

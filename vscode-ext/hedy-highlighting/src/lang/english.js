@@ -1,5 +1,10 @@
 const texts = {
   reloading: 'The extension hedy-highlighting is being reload...',
+  copilot_disable_question: 'Do you want to disable GitHub Copilot for Hedy files?',
+  copilot_disabled: 'GitHub Copilot disabled for Hedy files',
+  copilot_error: 'Error configuring GitHub Copilot: ',
+  yes: 'Yes',
+  no: 'No'
 }
 
 const commands = {
